@@ -77,8 +77,8 @@ void Error_Handler(void);
 #define SHUTDOWN_GPIO_Port GPIOA
 #define LEFT_Pin GPIO_PIN_5
 #define LEFT_GPIO_Port GPIOA
-#define PA6_Pin GPIO_PIN_6
-#define PA6_GPIO_Port GPIOA
+#define PA6_TEMPERATURE_Pin GPIO_PIN_6
+#define PA6_TEMPERATURE_GPIO_Port GPIOA
 #define RIGHT_Pin GPIO_PIN_7
 #define RIGHT_GPIO_Port GPIOA
 #define UP_Pin GPIO_PIN_4
@@ -99,8 +99,8 @@ void Error_Handler(void);
 #define LCD_MISO_GPIO_Port GPIOB
 #define LCD_MOSI_Pin GPIO_PIN_15
 #define LCD_MOSI_GPIO_Port GPIOB
-#define LDC_LED_Pin GPIO_PIN_6
-#define LDC_LED_GPIO_Port GPIOC
+#define LCD_LED_Pin GPIO_PIN_6
+#define LCD_LED_GPIO_Port GPIOC
 #define S1_Pin GPIO_PIN_7
 #define S1_GPIO_Port GPIOC
 #define S2_Pin GPIO_PIN_8
@@ -123,6 +123,12 @@ void Error_Handler(void);
 #define S6_GPIO_Port GPIOC
 #define S7_Pin GPIO_PIN_11
 #define S7_GPIO_Port GPIOC
+#define S8_Pin GPIO_PIN_12
+#define S8_GPIO_Port GPIOC
+#define RTC_SCL_Pin GPIO_PIN_6
+#define RTC_SCL_GPIO_Port GPIOB
+#define RTC_SDA_Pin GPIO_PIN_7
+#define RTC_SDA_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
