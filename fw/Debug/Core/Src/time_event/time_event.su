@@ -1,0 +1,7 @@
+../Core/Src/time_event/time_event.c:15:6:time_event_start	16	static
+../Core/Src/time_event/time_event.c:22:6:time_event_stop	16	static
+../Core/Src/time_event/time_event.c:29:6:time_event_is_active	16	static
+../Core/Src/time_event/time_event.c:34:6:time_event_update	16	static
+../Core/Src/time_event/time_event.c:49:6:time_event_is_raised	16	static
+../Core/Src/time_event/time_event.c:54:6:time_event_set_pending_update	16	static
+../Core/Src/time_event/time_event.c:59:6:time_event_get_pending_update	4	static
