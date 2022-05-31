@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "time_event.h"
+#include "ring_buffer.h"
+#include "evt_mgmt_fsm.h"
 
 /* USER CODE END Includes */
 
@@ -101,6 +103,8 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+  evt_mgmt_handle_t evt_mgmt_fsm = evt_mgmt_fsm_get();
+  evt_mgmt_fsm_init(evt_mgmt_fsm);
 
   /* USER CODE END 2 */
 
@@ -112,6 +116,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    evt_mgmt_fsm_run(evt_mgmt_fsm);
     time_events_poll_update();
   }
   /* USER CODE END 3 */

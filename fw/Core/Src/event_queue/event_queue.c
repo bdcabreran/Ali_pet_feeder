@@ -89,7 +89,7 @@ uint8_t event_queue_read(event_queue_t *queue, event_t *evt)
     return read_st;
 }
 
-void event_queue_fetch(event_queue_t *queue, event_t *evt)
+uint8_t event_queue_fetch(event_queue_t *queue, event_t *evt)
 {
     ring_buffer_st_t read_st = RING_BUFF_OK;
 

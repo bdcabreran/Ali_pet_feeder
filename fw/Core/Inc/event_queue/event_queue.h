@@ -34,10 +34,12 @@ typedef struct
 }event_queue_t;
 
 void event_queue_init(event_queue_t *, uint8_t *buff, uint8_t buff_len);
+uint8_t event_queue_get_pending(event_queue_t *queue);
 uint8_t event_queue_write(event_queue_t *queue, event_t *evt);
 uint8_t event_queue_read(event_queue_t *queue, event_t *evt);
-void event_queue_fetch(event_queue_t *queue, event_t *evt);
+uint8_t event_queue_fetch(event_queue_t *queue, event_t *evt);
 void event_queue_reset(event_queue_t *);
+
 
 #endif 
 

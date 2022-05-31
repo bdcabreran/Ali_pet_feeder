@@ -8,6 +8,7 @@
                 "${workspaceFolder}/Core/Inc/API",
                 "${workspaceFolder}/Core/Inc/event_queue",
                 "${workspaceFolder}/Core/Inc/printf_dbg",
+                "${workspaceFolder}/Core/Inc/FSMs/event_manager",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F1xx",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
                 "${workspaceFolder}/Drivers/CMSIS/Include",
