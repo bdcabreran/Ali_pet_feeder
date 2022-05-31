@@ -282,11 +282,11 @@ uint8_t ring_buffer_read(ring_buffer_handle_t rb, uint8_t *data, size_t data_len
     {
         if (!ring_buffer_get(rb, &data[data_counter++]))
         {
-            return 0;
+            return RING_BUFF_ERROR;
         }
     }
 
-    return 1;
+    return RING_BUFF_OK;
 }
 
 /**
@@ -308,7 +308,7 @@ uint8_t ring_buffer_fetch(ring_buffer_handle_t rb, uint8_t *data, size_t data_le
 
     if (data_len > ring_buffer_get_data_len(rb))
     {
-        return 0;
+        return RING_BUFF_ERROR;
     }
     else
     {
@@ -319,7 +319,7 @@ uint8_t ring_buffer_fetch(ring_buffer_handle_t rb, uint8_t *data, size_t data_le
         }
     }
 
-    return 1;
+    return RING_BUFF_OK;
 }
 
 /**@} */

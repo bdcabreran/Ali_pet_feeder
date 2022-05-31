@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "ring_buffer.h": "c",
+        "printf_dbg.h": "c",
+        "event_queue.h": "c",
+        "stdio.h": "c",
+        "stdint.h": "c",
+        "evt_manager_fsm.h": "c",
+        "evt_mgmt_fsm.h": "c"
+    }
+}
