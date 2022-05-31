@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "ring_buffer.h": "c",
+        "printf_dbg.h": "c",
+        "event_queue.h": "c",
+        "stdio.h": "c",
+        "stdint.h": "c"
+    }
+}
