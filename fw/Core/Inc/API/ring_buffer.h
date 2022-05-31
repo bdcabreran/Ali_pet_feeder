@@ -20,6 +20,7 @@ typedef enum
 	RING_BUFF_OK = 0x00,
 	RING_BUFF_FULL,
 	RING_BUFF_NOT_ENOUGH_SPACE,
+	RING_BUFF_ERROR,
 
 }ring_buffer_st_t;
 

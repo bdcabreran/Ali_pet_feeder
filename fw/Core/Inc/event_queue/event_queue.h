@@ -12,12 +12,12 @@ typedef struct
     uint8_t evt;
     uint8_t fsm_src; 
     uint8_t fsm_dst;
-    uint8_t data_len;
+    uint8_t payload_len;
 }event_header_t;
 
 typedef struct
 {
-    uint8_t data[EVENT_MAX_PAYLOAD_SIZE];
+    uint8_t buff[EVENT_MAX_PAYLOAD_SIZE];
 }event_payload_t;
 
 
@@ -34,11 +34,10 @@ typedef struct
 }event_queue_t;
 
 void event_queue_init(event_queue_t *, uint8_t *buff, uint8_t buff_len);
-void event_queue_get_pending(event_queue_t *);
-void event_queue_write(event_queue_t *);
+uint8_t event_queue_write(event_queue_t *queue, event_t *evt);
+uint8_t event_queue_read(event_queue_t *queue, event_t *evt);
+void event_queue_fetch(event_queue_t *queue, event_t *evt);
 void event_queue_reset(event_queue_t *);
-void event_queue_fetch(event_queue_t *);
-void event_queue_read(event_queue_t *);
 
 #endif 
 
