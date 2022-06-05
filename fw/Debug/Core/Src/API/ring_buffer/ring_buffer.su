@@ -1,0 +1,15 @@
+../Core/Src/API/ring_buffer/ring_buffer.c:36:13:head_ptr_advance	16	static
+../Core/Src/API/ring_buffer/ring_buffer.c:55:13:tail_ptr_retreat	16	static
+../Core/Src/API/ring_buffer/ring_buffer.c:76:9:is_ring_buffer_empty	16	static
+../Core/Src/API/ring_buffer/ring_buffer.c:89:9:is_ring_buffer_full	16	static
+../Core/Src/API/ring_buffer/ring_buffer.c:103:22:ring_buffer_init	24	static
+../Core/Src/API/ring_buffer/ring_buffer.c:124:6:ring_buffer_free	16	static
+../Core/Src/API/ring_buffer/ring_buffer.c:135:6:ring_buffer_reset	16	static
+../Core/Src/API/ring_buffer/ring_buffer.c:149:8:ring_buffer_get_data_len	24	static
+../Core/Src/API/ring_buffer/ring_buffer.c:176:8:ring_buffer_get_capacity	16	static
+../Core/Src/API/ring_buffer/ring_buffer.c:188:8:ring_buffer_get_free_space	24	static
+../Core/Src/API/ring_buffer/ring_buffer.c:200:6:ring_buffer_put	16	static
+../Core/Src/API/ring_buffer/ring_buffer.c:216:9:ring_buffer_get	24	static
+../Core/Src/API/ring_buffer/ring_buffer.c:241:18:ring_buffer_write	32	static
+../Core/Src/API/ring_buffer/ring_buffer.c:275:9:ring_buffer_read	32	static
+../Core/Src/API/ring_buffer/ring_buffer.c:300:9:ring_buffer_fetch	32	static
