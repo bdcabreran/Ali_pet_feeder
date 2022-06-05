@@ -22,7 +22,6 @@ void evt_mgmt_fsm_init(evt_mgmt_handle_t handle);
 void evt_mgmt_fsm_run(evt_mgmt_handle_t handle);
 
 uint8_t evt_mgmt_write(evt_mgmt_handle_t handle, event_t *event);
-uint8_t evt_mgmt_read(evt_mgmt_handle_t handle, event_t *event);
 uint8_t evt_mgmt_fetch(evt_mgmt_handle_t handle, event_t *event);
 
 #endif 
