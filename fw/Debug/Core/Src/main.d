@@ -27,6 +27,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
+ ../Core/Src/../lcd/lcd_api.h ../Core/Src/../lcd/lcd.h \
+ ../Core/Src/../lcd/../Fonts/fonts.h \
  ../Core/Inc/API/time_event/time_event.h \
  ../Core/Inc/API/ring_buffer/ring_buffer.h \
  ../Core/Inc/FSMs/event_manager/evt_mgmt_fsm.h \
@@ -60,6 +62,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
+../Core/Src/../lcd/lcd_api.h:
+../Core/Src/../lcd/lcd.h:
+../Core/Src/../lcd/../Fonts/fonts.h:
 ../Core/Inc/API/time_event/time_event.h:
 ../Core/Inc/API/ring_buffer/ring_buffer.h:
 ../Core/Inc/FSMs/event_manager/evt_mgmt_fsm.h:
