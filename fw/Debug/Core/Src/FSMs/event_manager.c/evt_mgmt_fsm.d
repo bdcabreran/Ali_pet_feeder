@@ -1,8 +1,10 @@
 Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.o: \
  ../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c \
  ../Core/Inc/FSMs/event_manager/evt_mgmt_fsm.h \
- ../Core/Inc/event_queue/event_queue.h ../Core/Inc/API/ring_buffer.h \
- ../Core/Inc/printf_dbg/printf_dbg.h ../Core/Inc/printf_dbg/itm_dbg.h \
+ ../Core/Inc/API/event_queue/event_queue.h \
+ ../Core/Inc/API/ring_buffer/ring_buffer.h \
+ ../Core/Inc/API/printf_dbg/printf_dbg.h \
+ ../Core/Inc/API/printf_dbg/itm_dbg.h \
  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h \
  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h \
  ../Drivers/CMSIS/Include/core_cm3.h \
@@ -32,10 +34,10 @@ Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.o: \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 ../Core/Inc/FSMs/event_manager/evt_mgmt_fsm.h:
-../Core/Inc/event_queue/event_queue.h:
-../Core/Inc/API/ring_buffer.h:
-../Core/Inc/printf_dbg/printf_dbg.h:
-../Core/Inc/printf_dbg/itm_dbg.h:
+../Core/Inc/API/event_queue/event_queue.h:
+../Core/Inc/API/ring_buffer/ring_buffer.h:
+../Core/Inc/API/printf_dbg/printf_dbg.h:
+../Core/Inc/API/printf_dbg/itm_dbg.h:
 ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:
 ../Drivers/CMSIS/Include/core_cm3.h:

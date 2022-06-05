@@ -45,11 +45,12 @@
 									<listOptionValue builtIn="false" value="../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F1xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
-									<listOptionValue builtIn="false" value="../Core/Inc/API"/>
-									<listOptionValue builtIn="false" value="../Core/Inc/printf_dbg"/>
-									<listOptionValue builtIn="false" value="../Core/Inc/time_event"/>
-									<listOptionValue builtIn="false" value="../Core/Inc/event_queue"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/event_manager"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/API"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/API/printf_dbg"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/API/event_queue"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/API/time_event"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/API/ring_buffer"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1414022680" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>

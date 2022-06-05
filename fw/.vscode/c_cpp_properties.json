@@ -5,10 +5,17 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/Core/Inc",
+
+                /*API includes */
                 "${workspaceFolder}/Core/Inc/API",
-                "${workspaceFolder}/Core/Inc/event_queue",
-                "${workspaceFolder}/Core/Inc/printf_dbg",
+                "${workspaceFolder}/Core/Inc/API/event_queue",
+                "${workspaceFolder}/Core/Inc/API/ring_buffer",
+                "${workspaceFolder}/Core/Inc/API/time_event",
+                "${workspaceFolder}/Core/Inc/API/printf_dbg",
+
+                /*FSM includes */
                 "${workspaceFolder}/Core/Inc/FSMs/event_manager",
+                
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F1xx",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
                 "${workspaceFolder}/Drivers/CMSIS/Include",
