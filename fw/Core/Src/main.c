@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "stdio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "time_event.h"
@@ -105,6 +105,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   evt_mgmt_handle_t evt_mgmt_fsm = evt_mgmt_fsm_get();
   evt_mgmt_fsm_init(evt_mgmt_fsm);
+
+  printf("Hello world");
 
   /* USER CODE END 2 */
 

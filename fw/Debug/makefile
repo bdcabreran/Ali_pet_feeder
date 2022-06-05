@@ -11,11 +11,11 @@ RM := rm -rf
 -include sources.mk
 -include Drivers/STM32F1xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
--include Core/Src/time_event/subdir.mk
--include Core/Src/printf_dbg/subdir.mk
--include Core/Src/event_queue/subdir.mk
 -include Core/Src/FSMs/event_manager.c/subdir.mk
--include Core/Src/API/subdir.mk
+-include Core/Src/API/time_event/subdir.mk
+-include Core/Src/API/ring_buffer/subdir.mk
+-include Core/Src/API/printf_dbg/subdir.mk
+-include Core/Src/API/event_queue/subdir.mk
 -include Core/Src/subdir.mk
 -include objects.mk
 
@@ -65,8 +65,8 @@ all: main-build
 main-build: pet_feeder.elf secondary-outputs
 
 # Tool invocations
-pet_feeder.elf pet_feeder.map: $(OBJS) $(USER_OBJS) C:\Users\User09\Documents\Ali_pet_feeder\fw\STM32F103R8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "pet_feeder.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\User09\Documents\Ali_pet_feeder\fw\STM32F103R8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pet_feeder.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+pet_feeder.elf pet_feeder.map: $(OBJS) $(USER_OBJS) C:\Users\BAYRON\Documents\Ali_pet_feeder\fw\STM32F103R8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "pet_feeder.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\BAYRON\Documents\Ali_pet_feeder\fw\STM32F103R8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pet_feeder.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
