@@ -9,8 +9,7 @@
  * 
  */
 
-#include "sdtint.h"
-
+#if 0
 const uint8_t battery_container [] = 
 {
 
@@ -66,3 +65,4 @@ const uint8_t slider_disable [] =
 {
 
 }
+#endif

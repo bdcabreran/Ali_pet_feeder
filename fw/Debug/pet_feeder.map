@@ -653,6 +653,36 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x217 ./Core/Src/API/time_event/time_irq_update.o
  .debug_macro   0x0000000000000000      0x8d1 ./Core/Src/API/time_event/time_irq_update.o
  .debug_macro   0x0000000000000000       0x83 ./Core/Src/API/time_event/time_irq_update.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/ui_pictures/icons.o
+ .text          0x0000000000000000        0x0 ./Core/Src/API/ui_pictures/icons.o
+ .data          0x0000000000000000        0x0 ./Core/Src/API/ui_pictures/icons.o
+ .bss           0x0000000000000000        0x0 ./Core/Src/API/ui_pictures/icons.o
+ .debug_info    0x0000000000000000       0x21 ./Core/Src/API/ui_pictures/icons.o
+ .debug_abbrev  0x0000000000000000       0x13 ./Core/Src/API/ui_pictures/icons.o
+ .debug_aranges
+                0x0000000000000000       0x18 ./Core/Src/API/ui_pictures/icons.o
+ .debug_macro   0x0000000000000000       0x11 ./Core/Src/API/ui_pictures/icons.o
+ .debug_macro   0x0000000000000000      0xa6c ./Core/Src/API/ui_pictures/icons.o
+ .debug_line    0x0000000000000000       0x44 ./Core/Src/API/ui_pictures/icons.o
+ .debug_str     0x0000000000000000     0x2c9b ./Core/Src/API/ui_pictures/icons.o
+ .comment       0x0000000000000000       0x51 ./Core/Src/API/ui_pictures/icons.o
+ .ARM.attributes
+                0x0000000000000000       0x2d ./Core/Src/API/ui_pictures/icons.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/ui_pictures/static_background.o
+ .text          0x0000000000000000        0x0 ./Core/Src/API/ui_pictures/static_background.o
+ .data          0x0000000000000000        0x0 ./Core/Src/API/ui_pictures/static_background.o
+ .bss           0x0000000000000000        0x0 ./Core/Src/API/ui_pictures/static_background.o
+ .debug_info    0x0000000000000000       0x21 ./Core/Src/API/ui_pictures/static_background.o
+ .debug_abbrev  0x0000000000000000       0x13 ./Core/Src/API/ui_pictures/static_background.o
+ .debug_aranges
+                0x0000000000000000       0x18 ./Core/Src/API/ui_pictures/static_background.o
+ .debug_macro   0x0000000000000000       0x11 ./Core/Src/API/ui_pictures/static_background.o
+ .debug_macro   0x0000000000000000      0xa6c ./Core/Src/API/ui_pictures/static_background.o
+ .debug_line    0x0000000000000000       0x50 ./Core/Src/API/ui_pictures/static_background.o
+ .debug_str     0x0000000000000000     0x2ca7 ./Core/Src/API/ui_pictures/static_background.o
+ .comment       0x0000000000000000       0x51 ./Core/Src/API/ui_pictures/static_background.o
+ .ARM.attributes
+                0x0000000000000000       0x2d ./Core/Src/API/ui_pictures/static_background.o
  .group         0x0000000000000000        0xc ./Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.o
  .group         0x0000000000000000        0xc ./Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.o
  .group         0x0000000000000000        0xc ./Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.o
@@ -3968,6 +3998,8 @@ LOAD ./Core/Src/API/printf_dbg/printf_dbg.o
 LOAD ./Core/Src/API/ring_buffer/ring_buffer.o
 LOAD ./Core/Src/API/time_event/time_event.o
 LOAD ./Core/Src/API/time_event/time_irq_update.o
+LOAD ./Core/Src/API/ui_pictures/icons.o
+LOAD ./Core/Src/API/ui_pictures/static_background.o
 LOAD ./Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.o
 LOAD ./Core/Src/main.o
 LOAD ./Core/Src/stm32f1xx_hal_msp.o
