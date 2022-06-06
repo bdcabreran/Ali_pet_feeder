@@ -36,8 +36,8 @@ typedef enum
 typedef enum
 {
     EVT_INT_INVALID = 0,
-    EVT_UNREAD_EVENT,
-    EVT_NOTIFICATION_DONE,
+    EVT_INT_UNREAD_EVENT,
+    EVT_INT_NOTIFICATION_DONE,
 }evt_mgmt_ev_int_t;
 
 typedef struct 
@@ -125,13 +125,13 @@ static void exit_action_wait_event(evt_mgmt_handle_t handle)
 static void during_action_wait_event(evt_mgmt_handle_t handle)
 {
     if(event_queue_get_pending(&handle->iface.queue))
-        handle->event.internal = EVT_UNREAD_EVENT;
+        handle->event.internal = EVT_INT_UNREAD_EVENT;
 }
 
 static void wait_event_on_react(evt_mgmt_handle_t handle)
 {
     bool did_transition = true;
-    if(handle->event.internal == EVT_UNREAD_EVENT)
+    if(handle->event.internal == EVT_INT_UNREAD_EVENT)
     {
         exit_action_wait_event(handle);
         enter_seq_notify_event(handle);
@@ -172,12 +172,12 @@ static void entry_action_notify_event(evt_mgmt_handle_t handle)
         break;
     }
 
-    handle->event.internal = EVT_NOTIFICATION_DONE;
+    handle->event.internal = EVT_INT_NOTIFICATION_DONE;
 }
 
 static void notify_event_on_react(evt_mgmt_handle_t handle)
 {
-    if(handle->event.internal == EVT_NOTIFICATION_DONE)
+    if(handle->event.internal == EVT_INT_NOTIFICATION_DONE)
     {
         enter_seq_wait_event(handle);
     }
@@ -188,11 +188,6 @@ static void notify_event_on_react(evt_mgmt_handle_t handle)
 uint8_t evt_mgmt_write(evt_mgmt_handle_t handle, event_t *event)
 {
     return event_queue_write(&handle->iface.queue, event);
-}
-
-uint8_t evt_mgmt_read(evt_mgmt_handle_t handle, event_t *event)
-{
-    return event_queue_read(&handle->iface.queue, event);
 }
 
 uint8_t evt_mgmt_fetch(evt_mgmt_handle_t handle, event_t *event)
