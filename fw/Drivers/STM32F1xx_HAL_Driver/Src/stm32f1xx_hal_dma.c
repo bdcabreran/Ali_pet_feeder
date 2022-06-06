@@ -608,7 +608,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
   /* Half Transfer Complete Interrupt management ******************************/
   if (((flag_it & (DMA_FLAG_HT1 << hdma->ChannelIndex)) != RESET) && ((source_it & DMA_IT_HT) != RESET))
   {
-    /* Disable the half transfer interrupt if the DMA mode is not CIRCULAR */
+    /* Disable the half transfer interrupt if the DMA mode is not RING */
     if((hdma->Instance->CCR & DMA_CCR_CIRC) == 0U)
     {
       /* Disable the half transfer interrupt */
