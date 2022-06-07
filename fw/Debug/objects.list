@@ -11,7 +11,7 @@
 "./Core/Src/API/time_event/time_irq_update.o"
 "./Core/Src/API/ui_pictures/icons.o"
 "./Core/Src/API/ui_pictures/static_background.o"
-"./Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.o"
+"./Core/Src/FSMs/event_manager/evt_mgmt_fsm.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32f1xx_hal_msp.o"
 "./Core/Src/stm32f1xx_it.o"
