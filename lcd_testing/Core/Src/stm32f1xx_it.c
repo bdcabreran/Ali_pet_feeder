@@ -199,6 +199,7 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f1xx.s).                    */
 /******************************************************************************/
 
+#if 0
 /**
   * @brief This function handles DMA1 channel4 global interrupt.
   */
@@ -226,6 +227,7 @@ void DMA1_Channel5_IRQHandler(void)
 
   /* USER CODE END DMA1_Channel5_IRQn 1 */
 }
+#endif 
 
 /**
   * @brief This function handles EXTI line[15:10] interrupts.
