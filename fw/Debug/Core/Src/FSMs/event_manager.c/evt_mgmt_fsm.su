@@ -1,0 +1,14 @@
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:82:19:evt_mgmt_fsm_get	4	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:90:13:fsm_set_next_state	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:96:6:evt_mgmt_fsm_run	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:106:6:evt_mgmt_fsm_init	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:114:13:enter_seq_wait_event	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:120:13:exit_action_wait_event	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:125:13:during_action_wait_event	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:131:13:wait_event_on_react	24	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:148:13:enter_seq_notify_event	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:155:13:entry_action_notify_event	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:178:13:notify_event_on_react	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:188:9:evt_mgmt_write	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:193:9:evt_mgmt_read	16	static
+../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c:198:9:evt_mgmt_fetch	16	static
