@@ -100,7 +100,7 @@ int main(void)
   BSP_LCD_Init();
   /* USER CODE BEGIN 2 */
 
-  BSP_LCD_SetBackColor(0x55AA);
+//  BSP_LCD_SetBackColor(0x55AA);
   BSP_LCD_SetFont(&Font24);
   BSP_LCD_DisplayStringAt(0, 0, "Hello LCD!", CENTER_MODE);
 
