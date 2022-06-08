@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "lcd_api.h"
+#include "bmp.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -62,7 +63,7 @@ static void MX_SPI2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+extern const BITMAPSTRUCT beer_60x100_16;
 /* USER CODE END 0 */
 
 /**
@@ -103,6 +104,8 @@ int main(void)
 //  BSP_LCD_SetBackColor(0x55AA);
   BSP_LCD_SetFont(&Font24);
   BSP_LCD_DisplayStringAt(0, 0, "Hello LCD!", CENTER_MODE);
+
+  BSP_LCD_DrawBitmap(0,0, (uint8_t*)&beer_60x100_16);
 
   /* USER CODE END 2 */
 
