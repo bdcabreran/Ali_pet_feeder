@@ -5,12 +5,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Core/Icons/battery.c \
 ../Core/Icons/beer_60x100_16.c 
 
 OBJS += \
+./Core/Icons/battery.o \
 ./Core/Icons/beer_60x100_16.o 
 
 C_DEPS += \
+./Core/Icons/battery.d \
 ./Core/Icons/beer_60x100_16.d 
 
 
@@ -21,7 +24,7 @@ Core/Icons/%.o Core/Icons/%.su: ../Core/Icons/%.c Core/Icons/subdir.mk
 clean: clean-Core-2f-Icons
 
 clean-Core-2f-Icons:
-	-$(RM) ./Core/Icons/beer_60x100_16.d ./Core/Icons/beer_60x100_16.o ./Core/Icons/beer_60x100_16.su
+	-$(RM) ./Core/Icons/battery.d ./Core/Icons/battery.o ./Core/Icons/battery.su ./Core/Icons/beer_60x100_16.d ./Core/Icons/beer_60x100_16.o ./Core/Icons/beer_60x100_16.su
 
 .PHONY: clean-Core-2f-Icons
 
