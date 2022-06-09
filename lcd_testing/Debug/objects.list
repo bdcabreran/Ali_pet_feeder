@@ -3,6 +3,8 @@
 "./Core/Fonts/font20.o"
 "./Core/Fonts/font24.o"
 "./Core/Fonts/font8.o"
+"./Core/Icons/battery.o"
+"./Core/Icons/beer_60x100_16.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32f1xx_hal_msp.o"
 "./Core/Src/stm32f1xx_it.o"
