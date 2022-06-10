@@ -64,9 +64,17 @@ static void MX_SPI2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-extern const BITMAPSTRUCT battery_icon;
-extern const BITMAPSTRUCT recording_icon;
 
+extern const BITMAPSTRUCT back_icon;
+extern const BITMAPSTRUCT batt_error_icon;
+extern const BITMAPSTRUCT batt_warning_icon;
+extern const BITMAPSTRUCT battery_icon;
+extern const BITMAPSTRUCT drawers_icon;
+extern const BITMAPSTRUCT enable_icon;
+extern const BITMAPSTRUCT play_icon;
+extern const BITMAPSTRUCT recording_icon;
+extern const BITMAPSTRUCT thermostat_icon;
+extern const BITMAPSTRUCT trash_icon;
 /* USER CODE END 0 */
 
 /**
@@ -112,10 +120,36 @@ int main(void)
 //  BSP_LCD_FillRect(0,0, BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
 
   //BSP_LCD_DrawRect(BSP_LCD_GetXSize()/2, BSP_LCD_GetYSize()/2, battery_icon.infoHeader.biWidth + 2, battery_icon.infoHeader.biHeight + 2);
-  BSP_LCD_DrawHLine(BSP_LCD_GetXSize()/2 + 1, BSP_LCD_GetYSize()/2 + battery_icon.infoHeader.biHeight +1, battery_icon.infoHeader.biWidth);
-  BSP_LCD_DrawBitmap(BSP_LCD_GetXSize()/2 + 1 , BSP_LCD_GetYSize()/2 + 1, (uint8_t*)&battery_icon);
+//  BSP_LCD_DrawHLine(BSP_LCD_GetXSize()/2 + 1, BSP_LCD_GetYSize()/2 + battery_icon.infoHeader.biHeight +1, battery_icon.infoHeader.biWidth);
+//  BSP_LCD_DrawBitmap(BSP_LCD_GetXSize()/2 + 1 , BSP_LCD_GetYSize()/2 + 1, (uint8_t*)&battery_icon);
 
+//  BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&back_icon);
+//  HAL_Delay(1000);
+  BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&batt_error_icon);
+  HAL_Delay(1000);
+  BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&batt_warning_icon);
+  HAL_Delay(1000);
+  BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&battery_icon);
+  HAL_Delay(1000);
+//  BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&drawers_icon);
+//  HAL_Delay(1000);
+  BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&enable_icon);
+  HAL_Delay(1000);
+  BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&play_icon);
+  HAL_Delay(1000);
   BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&recording_icon);
+  HAL_Delay(1000);
+  BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&thermostat_icon);
+  HAL_Delay(1000);
+  BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&trash_icon);
+  HAL_Delay(1000);
+
+
+
+
+
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
