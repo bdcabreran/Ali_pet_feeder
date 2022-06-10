@@ -63,8 +63,9 @@ static void MX_SPI2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-extern const BITMAPSTRUCT beer_60x100_16;
-extern const BITMAPSTRUCT battery;
+
+extern const BITMAPSTRUCT battery_icon;
+extern const BITMAPSTRUCT recording_icon;
 
 /* USER CODE END 0 */
 
@@ -109,8 +110,12 @@ int main(void)
 
 //  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
 //  BSP_LCD_FillRect(0,0, BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
-  BSP_LCD_DrawBitmap(0,0, (uint8_t*)&battery);
 
+  //BSP_LCD_DrawRect(BSP_LCD_GetXSize()/2, BSP_LCD_GetYSize()/2, battery_icon.infoHeader.biWidth + 2, battery_icon.infoHeader.biHeight + 2);
+  BSP_LCD_DrawHLine(BSP_LCD_GetXSize()/2 + 1, BSP_LCD_GetYSize()/2 + battery_icon.infoHeader.biHeight +1, battery_icon.infoHeader.biWidth);
+  BSP_LCD_DrawBitmap(BSP_LCD_GetXSize()/2 + 1 , BSP_LCD_GetYSize()/2 + 1, (uint8_t*)&battery_icon);
+
+  BSP_LCD_DrawBitmap(0  , 0, (uint8_t*)&recording_icon);
   /* USER CODE END 2 */
 
   /* Infinite loop */
