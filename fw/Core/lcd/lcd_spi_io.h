@@ -50,8 +50,8 @@
    - 0..2: 0 = no DMA, 1 = DMA1, 2 = DMA2
    - 1..7: DMA channel (DMA request mapping)
    - 1..3: DMA priority (0=low..3=very high) */
-#define LCD_DMA_TX        0, 0, 0
-#define LCD_DMA_RX        0, 0, 0
+#define LCD_DMA_TX        1, 5, 1
+#define LCD_DMA_RX        1, 4, 1
 
 /* DMA interrupt priority (see NVIC_SetPriority function, default value: 15) */
 #define LCD_DMA_IRQ_PR    15

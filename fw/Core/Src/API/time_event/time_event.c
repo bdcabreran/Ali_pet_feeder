@@ -12,7 +12,7 @@
 
 bool volatile pending_time_update = false;
 
-void time_event_start(time_event_t *time_event, const uint32_t time_ms)
+void time_event_start(time_event_t *time_event, const uint16_t time_ms)
 {
     time_event->tick_cnt = time_ms;
     time_event->active = true;

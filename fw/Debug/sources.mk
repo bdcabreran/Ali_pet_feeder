@@ -22,12 +22,14 @@ C_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 Core/Fonts \
+Core/Icons \
+Core/Src/API/buttons \
 Core/Src/API/event_queue \
 Core/Src/API/printf_dbg \
 Core/Src/API/ring_buffer \
 Core/Src/API/time_event \
-Core/Src/API/ui_pictures \
 Core/Src/FSMs/event_manager \
+Core/Src/FSMs/ui \
 Core/Src \
 Core/Startup \
 Core/lcd \

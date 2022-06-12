@@ -5,13 +5,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.c 
+../Core/Src/FSMs/event_manager.c/event_manager_fsm.c 
 
 OBJS += \
-./Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.o 
+./Core/Src/FSMs/event_manager.c/event_manager_fsm.o 
 
 C_DEPS += \
-./Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.d 
+./Core/Src/FSMs/event_manager.c/event_manager_fsm.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -21,7 +21,7 @@ Core/Src/FSMs/event_manager.c/%.o Core/Src/FSMs/event_manager.c/%.su: ../Core/Sr
 clean: clean-Core-2f-Src-2f-FSMs-2f-event_manager-2e-c
 
 clean-Core-2f-Src-2f-FSMs-2f-event_manager-2e-c:
-	-$(RM) ./Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.d ./Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.o ./Core/Src/FSMs/event_manager.c/evt_mgmt_fsm.su
+	-$(RM) ./Core/Src/FSMs/event_manager.c/event_manager_fsm.d ./Core/Src/FSMs/event_manager.c/event_manager_fsm.o ./Core/Src/FSMs/event_manager.c/event_manager_fsm.su
 
 .PHONY: clean-Core-2f-Src-2f-FSMs-2f-event_manager-2e-c
 
