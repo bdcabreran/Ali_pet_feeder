@@ -127,7 +127,7 @@ void ui_fsm_set_ext_event(ui_handle_t handle, event_t *event)
     if(event->header.fsm_src == BTN_FSM)
     {
         ui_fsm_dbg("btn event detected\r\n");
-        handle->event.btn = event->header.evt;
+        handle->event.btn = event->header.name;
     }
 }
 

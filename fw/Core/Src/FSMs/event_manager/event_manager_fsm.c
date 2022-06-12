@@ -160,13 +160,12 @@ static void entry_action_notify_event(event_manager_handle_t handle)
                  handle->iface.event.header.fsm_src,
                  handle->iface.event.header.fsm_dst);
 
-    switch (handle->iface.event.header.fsm_src)
+    switch (handle->iface.event.header.fsm_dst)
     {
-    /* 
-    case FSM_TEMPERATURE_CTRL : 
-        temp_ctrl_fsm_write_evt(&temp_fsm, &handle->iface.event);
-    break;
-    */
+        case UI_FSM:
+        {
+            ui_fsm_set_ext_event(ui_fsm_get(), &handle->iface.event);
+        }
     
     default:
         break;

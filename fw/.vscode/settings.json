@@ -5,6 +5,8 @@
         "stm32f1xx_hal.h": "c",
         "printf_dbg.h": "c",
         "time_event.h": "c",
-        "buttons.h": "c"
+        "buttons.h": "c",
+        "event_queue.h": "c",
+        "typeinfo": "c"
     }
 }

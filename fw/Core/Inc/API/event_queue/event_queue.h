@@ -9,7 +9,7 @@
 
 typedef struct 
 {
-    uint8_t evt;
+    uint8_t name;
     uint8_t fsm_src; 
     uint8_t fsm_dst;
     uint8_t payload_len;
