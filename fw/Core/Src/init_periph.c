@@ -300,6 +300,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(ENTER_GPIO_Port, &GPIO_InitStruct);
+
+
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);   // enter-> B0
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn); // left -> A5, down -> C5, right -> A7
   HAL_NVIC_EnableIRQ(EXTI4_IRQn);   // up   -> C4, 

@@ -34,6 +34,7 @@ void btn_debounce_run(navigation_btn_t *btn)
 
     for (size_t i = 0; i < btn_cnt; i++)
     {
+        time_event_update(&btn_ptr->debounce);
         if(time_event_is_raised(&btn_ptr->debounce))
         {
             if(HAL_GPIO_ReadPin(btn_ptr->gpio.port, btn_ptr->gpio.pin) == GPIO_PIN_RESET)
@@ -99,6 +100,13 @@ void btn_debounce_run(navigation_btn_t *btn)
     if (btn->enter.pressed)
     {
         printf("btn enter pressed\r\n");
+    }
+
+    btn_ptr = &btn->up;
+    for (size_t i = 0; i < btn_cnt; i++)
+    {
+        btn_ptr->pressed = false;
+        btn_ptr++;
     }
 }
 

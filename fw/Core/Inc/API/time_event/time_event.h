@@ -11,12 +11,12 @@
 
 typedef struct
 {
-    uint32_t tick_cnt;
+    uint16_t tick_cnt;
     bool active;
     bool raised;
 }time_event_t;
 
-void time_event_start(time_event_t *time_event, const uint32_t time_ms);
+void time_event_start(time_event_t *time_event, const uint16_t time_ms);
 void time_event_stop(time_event_t *time_event);
 bool time_event_is_active(time_event_t *time_event);
 bool time_event_is_raised(time_event_t *time_event);

@@ -86,7 +86,8 @@ ui_handle_t ui_fsm_get(void)
 
 void ui_fsm_init(ui_handle_t handle)
 {
-    
+
+	main_menu_enter_seq(handle);
 }
 
 void ui_fsm_run(ui_handle_t handle)
