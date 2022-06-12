@@ -48,12 +48,13 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F1xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="../Core/lcd"/>
-									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/event_manager"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/API"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/API/printf_dbg"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/API/event_queue"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/API/time_event"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/API/ring_buffer"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/ui"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/API/buttons"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1414022680" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -79,8 +80,9 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.809683646" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1757351197.326583282" name="ili9488.h" rcbsApplicability="disable" resourcePath="Core/lcd/ili9488.h" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry excluding="lcd/ili9488.h|lcd/ili9488.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 					</sourceEntries>
 				</configuration>

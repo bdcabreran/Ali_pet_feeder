@@ -210,7 +210,7 @@ typedef struct __DMA_HandleTypeDef
   * @{
   */
 #define DMA_NORMAL         0x00000000U                  /*!< Normal mode                  */
-#define DMA_RING       ((uint32_t)DMA_CCR_CIRC)     /*!< Circular mode                */
+#define DMA_CIRCULAR       ((uint32_t)DMA_CCR_CIRC)     /*!< Circular mode                */
 /**
   * @}
   */
@@ -427,7 +427,7 @@ uint32_t HAL_DMA_GetError(DMA_HandleTypeDef *hdma);
                                        ((SIZE) == DMA_MDATAALIGN_WORD ))
 
 #define IS_DMA_MODE(MODE) (((MODE) == DMA_NORMAL )  || \
-                           ((MODE) == DMA_RING))
+                           ((MODE) == DMA_CIRCULAR))
 
 #define IS_DMA_PRIORITY(PRIORITY) (((PRIORITY) == DMA_PRIORITY_LOW )   || \
                                    ((PRIORITY) == DMA_PRIORITY_MEDIUM) || \

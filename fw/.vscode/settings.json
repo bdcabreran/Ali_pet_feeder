@@ -1,6 +1,10 @@
 {
-	"files.associations": {
-		"main.h": "c",
-		"stm32f1xx_hal.h": "c"
-	}
+    "files.associations": {
+        "main.h": "c",
+        "lcd_api.h": "c",
+        "stm32f1xx_hal.h": "c",
+        "printf_dbg.h": "c",
+        "time_event.h": "c",
+        "buttons.h": "c"
+    }
 }

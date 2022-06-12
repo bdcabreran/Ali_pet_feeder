@@ -12,9 +12,11 @@
                 "${workspaceFolder}/Core/Inc/API/ring_buffer",
                 "${workspaceFolder}/Core/Inc/API/time_event",
                 "${workspaceFolder}/Core/Inc/API/printf_dbg",
+                "${workspaceFolder}/Core/Inc/API/buttons",
 
                 /*FSM includes */
                 "${workspaceFolder}/Core/Inc/FSMs/event_manager",
+                "${workspaceFolder}/Core/Inc/FSMs/ui",
                 
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F1xx",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F1xx/Include",

@@ -12,13 +12,16 @@ RM := rm -rf
 -include Drivers/STM32F1xx_HAL_Driver/Src/subdir.mk
 -include Core/lcd/subdir.mk
 -include Core/Startup/subdir.mk
+-include Core/Src/FSMs/ui/subdir.mk
 -include Core/Src/FSMs/event_manager/subdir.mk
 -include Core/Src/API/ui_pictures/subdir.mk
 -include Core/Src/API/time_event/subdir.mk
 -include Core/Src/API/ring_buffer/subdir.mk
 -include Core/Src/API/printf_dbg/subdir.mk
 -include Core/Src/API/event_queue/subdir.mk
+-include Core/Src/API/buttons/subdir.mk
 -include Core/Src/subdir.mk
+-include Core/Icons/subdir.mk
 -include Core/Fonts/subdir.mk
 -include objects.mk
 
