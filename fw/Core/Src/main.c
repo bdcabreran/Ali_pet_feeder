@@ -30,11 +30,16 @@ int main(void)
   event_manager_handle_t evm_fsm = event_manager_fsm_get();
   event_manager_fsm_init(evm_fsm);
 
+  /*Init UI */
+  ui_handle_t ui_fsm = ui_fsm_get();
+  ui_fsm_init(ui_fsm);
+
   printf("Ali Pet Feeder Project\r\n");
 
   /* Infinite loop */
   while (1)
   {
+    ui_fsm_run(ui_fsm);
     event_manager_fsm_run(evm_fsm);
     time_events_poll_update();
   }

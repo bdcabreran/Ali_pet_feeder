@@ -5,12 +5,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Core/Src/FSMs/ui/ui_draw.c \
 ../Core/Src/FSMs/ui/ui_fsm.c 
 
 OBJS += \
+./Core/Src/FSMs/ui/ui_draw.o \
 ./Core/Src/FSMs/ui/ui_fsm.o 
 
 C_DEPS += \
+./Core/Src/FSMs/ui/ui_draw.d \
 ./Core/Src/FSMs/ui/ui_fsm.d 
 
 
@@ -21,7 +24,7 @@ Core/Src/FSMs/ui/%.o Core/Src/FSMs/ui/%.su: ../Core/Src/FSMs/ui/%.c Core/Src/FSM
 clean: clean-Core-2f-Src-2f-FSMs-2f-ui
 
 clean-Core-2f-Src-2f-FSMs-2f-ui:
-	-$(RM) ./Core/Src/FSMs/ui/ui_fsm.d ./Core/Src/FSMs/ui/ui_fsm.o ./Core/Src/FSMs/ui/ui_fsm.su
+	-$(RM) ./Core/Src/FSMs/ui/ui_draw.d ./Core/Src/FSMs/ui/ui_draw.o ./Core/Src/FSMs/ui/ui_draw.su ./Core/Src/FSMs/ui/ui_fsm.d ./Core/Src/FSMs/ui/ui_fsm.o ./Core/Src/FSMs/ui/ui_fsm.su
 
 .PHONY: clean-Core-2f-Src-2f-FSMs-2f-ui
 

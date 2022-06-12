@@ -7,6 +7,7 @@
         "time_event.h": "c",
         "buttons.h": "c",
         "event_queue.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "ui_draw.h": "c"
     }
 }

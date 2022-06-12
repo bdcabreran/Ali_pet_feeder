@@ -14,7 +14,6 @@ RM := rm -rf
 -include Core/Startup/subdir.mk
 -include Core/Src/FSMs/ui/subdir.mk
 -include Core/Src/FSMs/event_manager/subdir.mk
--include Core/Src/API/ui_pictures/subdir.mk
 -include Core/Src/API/time_event/subdir.mk
 -include Core/Src/API/ring_buffer/subdir.mk
 -include Core/Src/API/printf_dbg/subdir.mk

@@ -2,6 +2,7 @@
 #include "printf_dbg.h"
 #include "buttons.h"
 #include "time_event.h"
+#include "ui_draw.h"
 
 /**@brief Enable/Disable debug messages */
 #define UI_FSM_DEBUG 0
@@ -86,6 +87,7 @@ ui_handle_t ui_fsm_get(void)
 
 void ui_fsm_init(ui_handle_t handle)
 {
+    ui_battery_init(&ui_battery);
 
 	main_menu_enter_seq(handle);
 }
@@ -144,6 +146,34 @@ static void main_menu_enter_seq(ui_handle_t handle)
 
 static void entry_action_main_menu(ui_handle_t handle)
 {
+    /*1. draw battery */
+    // ui_win_show(&ui_battery.win, true);
+    // HAL_Delay(1000);
+    // ui_win_show(&ui_battery.win, false);
+
+    // ui_battery_show(&ui_battery, true);
+    // ui_win_show(&ui_battery.win, true);
+    // HAL_Delay(1000);
+    // ui_battery_show(&ui_battery, false);
+
+    ui_win_show(&ui_battery.win, true);
+    ui_battery_show(&ui_battery, true);
+    ui_battery_warn(&ui_battery, true);
+    HAL_Delay(1000);
+    ui_battery_warn(&ui_battery, false);
+    ui_battery_error(&ui_battery, true);
+    HAL_Delay(1000);
+    ui_battery_error(&ui_battery, false);
+
+    ui_battery_charge(&ui_battery, 15, true);
+    HAL_Delay(2000);
+    ui_battery_charge(&ui_battery, 99, true);
+    HAL_Delay(2000);
+    ui_battery_charge(&ui_battery, 9, true);
+    HAL_Delay(2000);
+
+
+
     /*1. put icons in the main screen with the updated values */
     /*2. put cursor in the first navigation item */
     /*3. start timer to update gui */
@@ -175,6 +205,10 @@ static void main_menu_on_react(ui_handle_t handle)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////////// Drawing Functions  ///////////////////////////////////////////
 
 
 

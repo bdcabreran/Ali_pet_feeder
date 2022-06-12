@@ -186,7 +186,5 @@ void btn_debounce_run(navigation_btn_t *btn)
         btn_ptr->pressed = false;
         btn_ptr++;
     }
-
-
 }
 
