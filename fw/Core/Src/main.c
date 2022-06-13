@@ -34,7 +34,7 @@ int main(void)
   ui_handle_t ui_fsm = ui_fsm_get();
   ui_fsm_init(ui_fsm);
 
-  printf("Ali Pet Feeder Project\r\n");
+  printf("Pet Feeder V%s\r\n", FW_VERSION);
 
   /* Infinite loop */
   while (1)
