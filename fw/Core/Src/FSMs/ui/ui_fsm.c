@@ -87,7 +87,9 @@ ui_handle_t ui_fsm_get(void)
 
 void ui_fsm_init(ui_handle_t handle)
 {
-    ui_battery_init(&ui_battery);
+    // ui_battery_init(&ui_battery);
+    // ui_drawers_init(&ui_drawers);
+    ui_feeder_config_init(&ui_feeder_conf);
 
 	main_menu_enter_seq(handle);
 }
@@ -147,36 +149,28 @@ static void main_menu_enter_seq(ui_handle_t handle)
 static void entry_action_main_menu(ui_handle_t handle)
 {
     /*1. draw battery */
-    // ui_win_show(&ui_battery.win, true);
-    // HAL_Delay(1000);
-    // ui_win_show(&ui_battery.win, false);
-
     // ui_battery_show(&ui_battery, true);
-    // ui_win_show(&ui_battery.win, true);
-    // HAL_Delay(1000);
-    // ui_battery_show(&ui_battery, false);
-
-    ui_win_show(&ui_battery.win, true);
-    ui_battery_show(&ui_battery, true);
-    ui_battery_warn(&ui_battery, true);
-    HAL_Delay(1000);
-    ui_battery_warn(&ui_battery, false);
-    ui_battery_error(&ui_battery, true);
-    HAL_Delay(1000);
-    ui_battery_error(&ui_battery, false);
-
-    ui_battery_charge(&ui_battery, 15, true);
-    HAL_Delay(2000);
-    ui_battery_charge(&ui_battery, 99, true);
-    HAL_Delay(2000);
-    ui_battery_charge(&ui_battery, 9, true);
-    HAL_Delay(2000);
-
-
-
     /*1. put icons in the main screen with the updated values */
     /*2. put cursor in the first navigation item */
     /*3. start timer to update gui */
+    ui_feeder_config_init(&ui_feeder_conf);
+
+    for (size_t i = 0; i < FEEDER_MEALn; i++)
+    {
+        ui_feeder_config_set_open_time_hour(&ui_feeder_conf, i, i);
+        HAL_Delay(500);
+        ui_feeder_config_confirm_open_time_hour(&ui_feeder_conf, i, i);
+        HAL_Delay(500);
+        ui_feeder_config_set_open_time_min(&ui_feeder_conf, i, i + 30);
+        HAL_Delay(500);
+        ui_feeder_config_confirm_open_time_min(&ui_feeder_conf, i, i + 30);
+        HAL_Delay(500);
+        ui_feeder_config_set_am_fm(&ui_feeder_conf, i, TIME_AM);
+        HAL_Delay(500);
+        ui_feeder_config_confirm_am_fm(&ui_feeder_conf, i, TIME_AM);
+        HAL_Delay(500);
+    }
+
     time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
 }
 

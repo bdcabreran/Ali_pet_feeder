@@ -31,7 +31,6 @@
 "./Core/Src/syscalls.o"
 "./Core/Src/sysmem.o"
 "./Core/Src/system_stm32f1xx.o"
-"./Core/Src/tiny_printf.o"
 "./Core/Startup/startup_stm32f103r8tx.o"
 "./Core/lcd/ili9341.o"
 "./Core/lcd/lcd_api.o"
