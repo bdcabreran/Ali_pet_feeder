@@ -4,7 +4,14 @@
 /* device specific information */
 #define PROJECT_NAME "ALI Pet Feeder"
 #define HW_VERSION "V2_20220506"
-#define FW_VERSION "1.0.20220529"
+
+#define FW_MAYOR  "1"
+#define FW_MIDDLE "0"
+#define FW_MINOR  "0"
+#define FW_DATE   "20220529"
+
+#define FW_VERSION FW_MAYOR"."FW_MIDDLE"."FW_MINOR"-"FW_DATE
+
 #define MCU "STM32F030xC"        
 
 #endif

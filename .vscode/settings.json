@@ -1,0 +1,7 @@
+{
+	"files.associations": {
+		"event_manager_fsm.h": "c",
+		"init_periph.h": "c",
+		"buttons.h": "c"
+	}
+}

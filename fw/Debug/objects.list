@@ -1,4 +1,5 @@
 "./Core/Fonts/font12.o"
+"./Core/Fonts/font150.o"
 "./Core/Fonts/font16.o"
 "./Core/Fonts/font20.o"
 "./Core/Fonts/font24.o"

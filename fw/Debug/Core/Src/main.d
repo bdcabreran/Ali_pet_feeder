@@ -32,7 +32,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/API/event_queue/event_queue.h \
  ../Core/Inc/API/ring_buffer/ring_buffer.h ../Core/Inc/FSMs/ui/ui_fsm.h \
  ../Core/Inc/API/buttons/buttons.h \
- ../Core/Inc/API/time_event/time_event.h
+ ../Core/Inc/API/time_event/time_event.h ../Core/Inc/target_version.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -69,3 +69,4 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/FSMs/ui/ui_fsm.h:
 ../Core/Inc/API/buttons/buttons.h:
 ../Core/Inc/API/time_event/time_event.h:
+../Core/Inc/target_version.h:
