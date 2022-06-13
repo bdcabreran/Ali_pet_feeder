@@ -89,8 +89,6 @@ void ui_fsm_init(ui_handle_t handle)
 {
     // ui_battery_init(&ui_battery);
     // ui_drawers_init(&ui_drawers);
-    ui_feeder_config_init(&ui_feeder_conf);
-
 	main_menu_enter_seq(handle);
 }
 
@@ -149,27 +147,62 @@ static void main_menu_enter_seq(ui_handle_t handle)
 static void entry_action_main_menu(ui_handle_t handle)
 {
     /*1. draw battery */
-    // ui_battery_show(&ui_battery, true);
     /*1. put icons in the main screen with the updated values */
     /*2. put cursor in the first navigation item */
     /*3. start timer to update gui */
-    ui_feeder_config_init(&ui_feeder_conf);
+    ui_battery_init(&ui_battery);
+    ui_battery_show(&ui_battery, true);
+    ui_battery_charge(&ui_battery, 99, true);
+    ui_drawers_init(&ui_drawers);
+    // ui_feeder_menu_init(&ui_feeder_menu);
+    ui_date_time_init(&ui_date_time_menu);
+    HAL_Delay(2000);
 
-    for (size_t i = 0; i < FEEDER_MEALn; i++)
-    {
-        ui_feeder_config_set_open_time_hour(&ui_feeder_conf, i, i);
-        HAL_Delay(500);
-        ui_feeder_config_confirm_open_time_hour(&ui_feeder_conf, i, i);
-        HAL_Delay(500);
-        ui_feeder_config_set_open_time_min(&ui_feeder_conf, i, i + 30);
-        HAL_Delay(500);
-        ui_feeder_config_confirm_open_time_min(&ui_feeder_conf, i, i + 30);
-        HAL_Delay(500);
-        ui_feeder_config_set_am_fm(&ui_feeder_conf, i, TIME_AM);
-        HAL_Delay(500);
-        ui_feeder_config_confirm_am_fm(&ui_feeder_conf, i, TIME_AM);
-        HAL_Delay(500);
-    }
+#if 0
+   feeder_config_t config;
+
+   config.set = FEEDER_CNF_OPEN_TIME_AM_FM;
+   config.meal = FEEDER_MEAL_BREAKFAST;
+   config.time.am_fm = TIME_AM;
+   config.select = UI_ITEM_SELECT;
+
+    ui_feeder_menu_set_config(&ui_feeder_menu, &config);
+    HAL_Delay(1000);
+
+    config.select = UI_ITEM_DESELECT;
+    ui_feeder_menu_set_config(&ui_feeder_menu, &config);
+    HAL_Delay(1000);
+
+    config.set = FEEDER_CNF_DATE_DAILY;
+   config.meal = 0; //na
+   config.date.daily_en = DAILY_MEAL_DISABLE;
+   config.select = UI_ITEM_SELECT;
+    ui_feeder_menu_set_config(&ui_feeder_menu, &config);
+    HAL_Delay(1000);
+
+   config.date.daily_en = DAILY_MEAL_ENABLE;
+   config.select = UI_ITEM_SELECT;
+    ui_feeder_menu_set_config(&ui_feeder_menu, &config);
+    HAL_Delay(1000);
+
+    config.date.daily_en = DAILY_MEAL_ENABLE;
+   config.select = UI_ITEM_DESELECT;
+    ui_feeder_menu_set_config(&ui_feeder_menu, &config);
+    HAL_Delay(1000);
+#endif 
+
+    date_time_config_t config;
+    config.item = DATE_TIME_CNF_HOUR;
+    config.select = UI_ITEM_SELECT;
+    config.time.hour = 5;
+    ui_date_time_set_config(&ui_date_time_menu, &config);
+    HAL_Delay(1000);
+
+    config.select = UI_ITEM_DESELECT;
+    ui_date_time_set_config(&ui_date_time_menu, &config);
+    HAL_Delay(1000);
+
+
 
     time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
 }

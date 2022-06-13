@@ -37,7 +37,40 @@ typedef enum
     FEEDER_MEAL_DINNER,
     FEEDER_MEAL_SNACK_3,
     FEEDER_MEALn,
-}feeder_meals_t;
+}feeder_meal_t;
+
+typedef enum
+{
+    FEEDER_CNF_OPEN_TIME_HOUR,
+    FEEDER_CNF_OPEN_TIME_MIN,
+    FEEDER_CNF_OPEN_TIME_AM_FM,
+    FEEDER_CNF_CLOSE_TIME_HOUR,
+    FEEDER_CNF_CLOSE_TIME_MIN,
+    FEEDER_CNF_CLOSE_TIME_AM_FM,
+    FEEDER_CNF_DATE_DAY,
+    FEEDER_CNF_DATE_MONTH,
+    FEEDER_CNF_DATE_DAILY,
+}feeder_meal_config_t;
+
+typedef enum
+{
+    DATE_TIME_CNF_HOUR,
+    DATE_TIME_CNF_MIN,
+    DATE_TIME_CNF_DAY,
+    DATE_TIME_CNF_MONTH,
+}date_time_config_items_t;
+
+typedef enum
+{
+    UI_ITEM_SELECT,
+    UI_ITEM_DESELECT,
+}ui_select_t;
+
+typedef enum
+{
+    DAILY_MEAL_ENABLE,
+    DAILY_MEAL_DISABLE
+}daily_enable_t;
 
 typedef enum
 {
@@ -45,6 +78,53 @@ typedef enum
     TIME_FM,
     TIMEn,
 }time_am_fm_t;
+
+typedef struct
+{
+    feeder_meal_t meal;
+    feeder_meal_config_t set;
+    union
+    {
+        struct
+        {
+            uint8_t hour;
+            uint8_t minute;
+            time_am_fm_t am_fm;
+        } time;
+
+        struct
+        {
+            uint8_t day;
+            uint8_t month;
+            daily_enable_t daily_en;
+        }date;
+    };
+    ui_select_t select;
+
+}feeder_config_t;
+
+
+typedef struct
+{
+    date_time_config_items_t item;
+    union
+    {
+        struct
+        {
+            uint8_t hour;
+            uint8_t min;
+            time_am_fm_t am_fm;
+        } time;
+
+        struct
+        {
+            uint8_t day;
+            uint8_t month;
+        }date;
+    };
+    ui_select_t select;
+
+}date_time_config_t;
 
 typedef enum
 {
@@ -54,7 +134,6 @@ typedef enum
     DRAWER_4,
     DRAWERn,
 }drawers_t;
-
 
 typedef struct
 {
@@ -192,13 +271,11 @@ typedef struct
     struct {
         uint16_t x;
         uint16_t y;
-        char val[3];
     }hour;
 
     struct {
         uint16_t x;
         uint16_t y;
-        char val[3];
     }min;
 
     struct {
@@ -213,13 +290,11 @@ typedef struct
     struct {
         uint16_t x;
         uint16_t y;
-        char val[3];
     }month;
 
     struct {
         uint16_t x;
         uint16_t y;
-        char val[3];
     }day;
 
 }date_config_t;
@@ -240,14 +315,26 @@ typedef struct
     }win;
 
     feeder_time_date_t config[FEEDER_MEALn];
-}feeder_config_t;
+}feeder_menu_t;
+
+typedef struct
+{
+    struct 
+    {
+        ui_window_t main;
+    }win;
+
+    time_config_t time;
+    date_config_t date;
+}date_time_menu_t;
 
 extern ui_battery_t ui_battery;
 extern ui_thermostat_t ui_thermostat;
 extern ui_drawers_t ui_drawers;
 extern ui_date_time_t ui_date_time;
 extern ui_thermostat_config_t ui_therm_conf;
-extern feeder_config_t ui_feeder_conf;
+extern feeder_menu_t ui_feeder_menu;
+extern date_time_menu_t ui_date_time_menu;
 
 /* Common functions */
 void ui_win_show(ui_window_t *win,uint16_t color, bool show);
@@ -263,14 +350,14 @@ void ui_battery_charge(ui_battery_t *batt, uint8_t batt_level, bool show);
 void ui_drawers_init(ui_drawers_t *drawers);
 void ui_drawers_select(ui_drawers_t *drawers, uint8_t drawer_no);
 
-/* Feeder Configuration functions */
-void ui_feeder_config_init(feeder_config_t *feeder_conf);
-void ui_feeder_config_set_open_time_hour(feeder_config_t *feeder_conf, uint8_t meal, uint8_t open_hour);
-void ui_feeder_config_confirm_open_time_hour(feeder_config_t *feeder_conf, uint8_t meal, uint8_t open_hour);
-void ui_feeder_config_set_open_time_min(feeder_config_t *feeder_conf, uint8_t meal, uint8_t open_min);
-void ui_feeder_config_confirm_open_time_min(feeder_config_t *feeder_conf, uint8_t meal, uint8_t open_min);
-void ui_feeder_config_set_am_fm(feeder_config_t *feeder_conf, uint8_t meal, uint8_t am_fm);
-void ui_feeder_config_confirm_am_fm(feeder_config_t *feeder_conf, uint8_t meal, uint8_t am_fm);
+/* Feeder Menu functions */
+void ui_feeder_menu_init(feeder_menu_t *menu);
+void ui_feeder_menu_set_config(feeder_menu_t *menu, feeder_config_t *fc);
+
+/* Date Time Functions */
+void ui_date_time_init(date_time_menu_t *menu);
+void ui_date_time_set_config(date_time_menu_t *menu, date_time_config_t *dtc);
+
 
 
 
