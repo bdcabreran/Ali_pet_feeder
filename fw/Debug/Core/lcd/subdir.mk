@@ -5,17 +5,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Core/lcd/ili9341.c \
+../Core/lcd/ili9488.c \
 ../Core/lcd/lcd_api.c \
 ../Core/lcd/lcd_spi_io.c 
 
 OBJS += \
-./Core/lcd/ili9341.o \
+./Core/lcd/ili9488.o \
 ./Core/lcd/lcd_api.o \
 ./Core/lcd/lcd_spi_io.o 
 
 C_DEPS += \
-./Core/lcd/ili9341.d \
+./Core/lcd/ili9488.d \
 ./Core/lcd/lcd_api.d \
 ./Core/lcd/lcd_spi_io.d 
 
@@ -27,7 +27,7 @@ Core/lcd/%.o Core/lcd/%.su: ../Core/lcd/%.c Core/lcd/subdir.mk
 clean: clean-Core-2f-lcd
 
 clean-Core-2f-lcd:
-	-$(RM) ./Core/lcd/ili9341.d ./Core/lcd/ili9341.o ./Core/lcd/ili9341.su ./Core/lcd/lcd_api.d ./Core/lcd/lcd_api.o ./Core/lcd/lcd_api.su ./Core/lcd/lcd_spi_io.d ./Core/lcd/lcd_spi_io.o ./Core/lcd/lcd_spi_io.su
+	-$(RM) ./Core/lcd/ili9488.d ./Core/lcd/ili9488.o ./Core/lcd/ili9488.su ./Core/lcd/lcd_api.d ./Core/lcd/lcd_api.o ./Core/lcd/lcd_api.su ./Core/lcd/lcd_spi_io.d ./Core/lcd/lcd_spi_io.o ./Core/lcd/lcd_spi_io.su
 
 .PHONY: clean-Core-2f-lcd
 

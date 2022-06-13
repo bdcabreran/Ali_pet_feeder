@@ -87,8 +87,8 @@ ui_handle_t ui_fsm_get(void)
 
 void ui_fsm_init(ui_handle_t handle)
 {
-    ui_battery_init(&ui_battery);
-
+    // ui_battery_init(&ui_battery);
+    // ui_drawers_init(&ui_drawers);
 	main_menu_enter_seq(handle);
 }
 
@@ -147,36 +147,63 @@ static void main_menu_enter_seq(ui_handle_t handle)
 static void entry_action_main_menu(ui_handle_t handle)
 {
     /*1. draw battery */
-    // ui_win_show(&ui_battery.win, true);
-    // HAL_Delay(1000);
-    // ui_win_show(&ui_battery.win, false);
-
-    // ui_battery_show(&ui_battery, true);
-    // ui_win_show(&ui_battery.win, true);
-    // HAL_Delay(1000);
-    // ui_battery_show(&ui_battery, false);
-
-    ui_win_show(&ui_battery.win, true);
-    ui_battery_show(&ui_battery, true);
-    ui_battery_warn(&ui_battery, true);
-    HAL_Delay(1000);
-    ui_battery_warn(&ui_battery, false);
-    ui_battery_error(&ui_battery, true);
-    HAL_Delay(1000);
-    ui_battery_error(&ui_battery, false);
-
-    ui_battery_charge(&ui_battery, 15, true);
-    HAL_Delay(2000);
-    ui_battery_charge(&ui_battery, 99, true);
-    HAL_Delay(2000);
-    ui_battery_charge(&ui_battery, 9, true);
-    HAL_Delay(2000);
-
-
-
     /*1. put icons in the main screen with the updated values */
     /*2. put cursor in the first navigation item */
     /*3. start timer to update gui */
+    ui_battery_init(&ui_battery);
+    ui_battery_show(&ui_battery, true);
+    ui_battery_charge(&ui_battery, 99, true);
+    ui_drawers_init(&ui_drawers);
+    // ui_feeder_menu_init(&ui_feeder_menu);
+    ui_date_time_init(&ui_date_time_menu);
+    HAL_Delay(2000);
+
+#if 0
+   feeder_config_t config;
+
+   config.set = FEEDER_CNF_OPEN_TIME_AM_FM;
+   config.meal = FEEDER_MEAL_BREAKFAST;
+   config.time.am_fm = TIME_AM;
+   config.select = UI_ITEM_SELECT;
+
+    ui_feeder_menu_set_config(&ui_feeder_menu, &config);
+    HAL_Delay(1000);
+
+    config.select = UI_ITEM_DESELECT;
+    ui_feeder_menu_set_config(&ui_feeder_menu, &config);
+    HAL_Delay(1000);
+
+    config.set = FEEDER_CNF_DATE_DAILY;
+   config.meal = 0; //na
+   config.date.daily_en = DAILY_MEAL_DISABLE;
+   config.select = UI_ITEM_SELECT;
+    ui_feeder_menu_set_config(&ui_feeder_menu, &config);
+    HAL_Delay(1000);
+
+   config.date.daily_en = DAILY_MEAL_ENABLE;
+   config.select = UI_ITEM_SELECT;
+    ui_feeder_menu_set_config(&ui_feeder_menu, &config);
+    HAL_Delay(1000);
+
+    config.date.daily_en = DAILY_MEAL_ENABLE;
+   config.select = UI_ITEM_DESELECT;
+    ui_feeder_menu_set_config(&ui_feeder_menu, &config);
+    HAL_Delay(1000);
+#endif 
+
+    date_time_config_t config;
+    config.item = DATE_TIME_CNF_HOUR;
+    config.select = UI_ITEM_SELECT;
+    config.time.hour = 5;
+    ui_date_time_set_config(&ui_date_time_menu, &config);
+    HAL_Delay(1000);
+
+    config.select = UI_ITEM_DESELECT;
+    ui_date_time_set_config(&ui_date_time_menu, &config);
+    HAL_Delay(1000);
+
+
+
     time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
 }
 
