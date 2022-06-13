@@ -22,6 +22,7 @@
 "./Core/Src/API/time_event/time_event.o"
 "./Core/Src/API/time_event/time_irq_update.o"
 "./Core/Src/FSMs/event_manager/event_manager_fsm.o"
+"./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o"
 "./Core/Src/FSMs/ui/ui_draw.o"
 "./Core/Src/FSMs/ui/ui_fsm.o"
 "./Core/Src/gpio_irq.o"

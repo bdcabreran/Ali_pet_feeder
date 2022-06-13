@@ -1404,6 +1404,195 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x83 ./Core/Src/FSMs/event_manager/event_manager_fsm.o
  .debug_macro   0x0000000000000000       0x10 ./Core/Src/FSMs/event_manager/event_manager_fsm.o
  .debug_macro   0x0000000000000000       0x2e ./Core/Src/FSMs/event_manager/event_manager_fsm.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .text          0x0000000000000000        0x0 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .data          0x0000000000000000        0x0 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .bss           0x0000000000000000        0x0 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .bss.feeder_scheduler_fsm
+                0x0000000000000000       0x10 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .text.feeder_scheduler_fsm_get
+                0x0000000000000000       0x14 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .text.feeder_scheduler_fsm_init
+                0x0000000000000000       0x12 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .text.feeder_scheduler_fsm_run
+                0x0000000000000000       0x38 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .text.fsm_set_next_state
+                0x0000000000000000       0x16 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .text.feeder_scheduler_fsm_time_update
+                0x0000000000000000       0x36 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .text.feeder_scheduler_fsm_set_ext_event
+                0x0000000000000000       0x14 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .text.main_menu_enter_seq
+                0x0000000000000000       0x12 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .text.entry_action_main_menu
+                0x0000000000000000       0x12 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .text.main_menu_on_react
+                0x0000000000000000       0x50 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_info    0x0000000000000000      0x5a5 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_abbrev  0x0000000000000000      0x18f ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_aranges
+                0x0000000000000000       0x60 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_ranges  0x0000000000000000       0x50 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x3f3 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0xa6c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x4c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x18 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x94 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x3c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x34 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x16 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x57 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x97 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x341 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0xfd ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x10 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x16 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x43 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x34 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x10 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x58 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x71 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x1c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x12a ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x10 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x6a ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x1c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x52 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x10 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x52 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0xd5 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x1c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x3d ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x16 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x145 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x103 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x1df ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x16 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x16 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x35 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x16 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x29 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x10 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x2e ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x1c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0xbd ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0xd23 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000     0xe09e ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x6d ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x22d ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000     0x3468 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x56 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x5be ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x289 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x1cb ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x114 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x1b2 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x27 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x136 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x1bc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x34 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x3c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x57 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x46a ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x1b5 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x88 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x241 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x287 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x141 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x217 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x8d1 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x83 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x10 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x2e ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x1ba ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000       0x10 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_line    0x0000000000000000      0xb2b ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_str     0x0000000000000000    0x8dc66 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .comment       0x0000000000000000       0x51 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_frame   0x0000000000000000      0x168 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .ARM.attributes
+                0x0000000000000000       0x2d ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .group         0x0000000000000000        0xc ./Core/Src/FSMs/ui/ui_draw.o
  .group         0x0000000000000000        0xc ./Core/Src/FSMs/ui/ui_draw.o
  .group         0x0000000000000000        0xc ./Core/Src/FSMs/ui/ui_draw.o
@@ -5292,6 +5481,7 @@ LOAD ./Core/Src/API/ring_buffer/ring_buffer.o
 LOAD ./Core/Src/API/time_event/time_event.o
 LOAD ./Core/Src/API/time_event/time_irq_update.o
 LOAD ./Core/Src/FSMs/event_manager/event_manager_fsm.o
+LOAD ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
 LOAD ./Core/Src/FSMs/ui/ui_draw.o
 LOAD ./Core/Src/FSMs/ui/ui_fsm.o
 LOAD ./Core/Src/gpio_irq.o

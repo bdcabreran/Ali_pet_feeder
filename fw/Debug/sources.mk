@@ -29,6 +29,7 @@ Core/Src/API/printf_dbg \
 Core/Src/API/ring_buffer \
 Core/Src/API/time_event \
 Core/Src/FSMs/event_manager \
+Core/Src/FSMs/feeder_scheduler \
 Core/Src/FSMs/ui \
 Core/Src \
 Core/Startup \
