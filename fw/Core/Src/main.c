@@ -10,6 +10,7 @@
 #include "init_periph.h"
 #include "event_manager_fsm.h"
 #include "buttons.h"
+#include "target_version.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/

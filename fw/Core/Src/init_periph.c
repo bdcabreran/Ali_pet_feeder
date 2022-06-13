@@ -12,6 +12,7 @@
 
 #include "init_periph.h"
 #include "lcd_api.h"
+#include "itm_dbg.h"
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;

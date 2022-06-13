@@ -6,6 +6,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Core/Fonts/font12.c \
+../Core/Fonts/font150.c \
 ../Core/Fonts/font16.c \
 ../Core/Fonts/font20.c \
 ../Core/Fonts/font24.c \
@@ -13,6 +14,7 @@ C_SRCS += \
 
 OBJS += \
 ./Core/Fonts/font12.o \
+./Core/Fonts/font150.o \
 ./Core/Fonts/font16.o \
 ./Core/Fonts/font20.o \
 ./Core/Fonts/font24.o \
@@ -20,6 +22,7 @@ OBJS += \
 
 C_DEPS += \
 ./Core/Fonts/font12.d \
+./Core/Fonts/font150.d \
 ./Core/Fonts/font16.d \
 ./Core/Fonts/font20.d \
 ./Core/Fonts/font24.d \
@@ -33,7 +36,7 @@ Core/Fonts/%.o Core/Fonts/%.su: ../Core/Fonts/%.c Core/Fonts/subdir.mk
 clean: clean-Core-2f-Fonts
 
 clean-Core-2f-Fonts:
-	-$(RM) ./Core/Fonts/font12.d ./Core/Fonts/font12.o ./Core/Fonts/font12.su ./Core/Fonts/font16.d ./Core/Fonts/font16.o ./Core/Fonts/font16.su ./Core/Fonts/font20.d ./Core/Fonts/font20.o ./Core/Fonts/font20.su ./Core/Fonts/font24.d ./Core/Fonts/font24.o ./Core/Fonts/font24.su ./Core/Fonts/font8.d ./Core/Fonts/font8.o ./Core/Fonts/font8.su
+	-$(RM) ./Core/Fonts/font12.d ./Core/Fonts/font12.o ./Core/Fonts/font12.su ./Core/Fonts/font150.d ./Core/Fonts/font150.o ./Core/Fonts/font150.su ./Core/Fonts/font16.d ./Core/Fonts/font16.o ./Core/Fonts/font16.su ./Core/Fonts/font20.d ./Core/Fonts/font20.o ./Core/Fonts/font20.su ./Core/Fonts/font24.d ./Core/Fonts/font24.o ./Core/Fonts/font24.su ./Core/Fonts/font8.d ./Core/Fonts/font8.o ./Core/Fonts/font8.su
 
 .PHONY: clean-Core-2f-Fonts
 
