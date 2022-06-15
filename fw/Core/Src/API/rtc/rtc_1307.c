@@ -17,6 +17,19 @@
 
 extern I2C_HandleTypeDef hi2c1;
 
+#define DS1307_WRITE_REG(...)
+
+#define DS1307_READ_REG(...)
+
+uint8_t second;
+uint8_t minute;
+uint8_t hour;
+uint8_t dayOfWeek;// day of week, 1 = Monday
+uint8_t dayOfMonth;
+uint8_t month;
+uint16_t year;
+
+
 void init_ds1307(void){
 
 }
@@ -79,3 +92,72 @@ bool readBit(uint8_t reg_addr, uint8_t bit_num);
 
 
 
+uint8_t decToBcd(uint8_t val) {
+    return ((val / 10 * 16) + (val % 10));
+}
+
+//Convert binary coded decimal to normal decimal numbers
+uint8_t bcdToDec(uint8_t val) {
+    return ((val / 16 * 10) + (val % 16));
+}
+
+
+/*Function: The clock timing will start */
+void startClock(void) {      // set the ClockHalt bit low to start the rtc
+    DS1307_WRITE_REG((uint8_t)0x00);                      // Register 0x00 holds the oscillator start/stop bit
+    DS1307_READ_REG(1);
+//    second = Wire.read() & 0x7f;       // save actual seconds and AND sec with bit 7 (sart/stop bit) = clock started
+    DS1307_WRITE_REG((uint8_t)0x00,seconds);
+    
+}
+
+/*Function: The clock timing will stop */
+void stopClock(void) {       // set the ClockHalt bit high to stop the rtc
+    DS1307_WRITE_REG((uint8_t)0x00);                      // Register 0x00 holds the oscillator start/stop bit
+    //second = DS1307_READ_REG( 1) | 0x80;
+    DS1307_WRITE_REG((uint8_t)0x00, seconds);
+}
+/****************************************************************/
+/*Function: Read time and date from RTC */
+void getTime() {
+    // Reset the register pointer
+    DS1307_WRITE_REG((uint8_t)0x00);
+    DS1307_READ_REG( 7);
+    // A few of these need masks because certain bits are control bits
+#if 0
+	/** TODO:convert to multiple reg read*/
+    second     = bcdToDec(Wire.read() & 0x7f);
+    minute     = bcdToDec(Wire.read());
+    hour       = bcdToDec(Wire.read() & 0x3f);// Need to change this if 12 hour am/pm
+    dayOfWeek  = bcdToDec(Wire.read());
+    dayOfMonth = bcdToDec(Wire.read());
+    month      = bcdToDec(Wire.read());
+    year       = bcdToDec(Wire.read());
+#endif
+}
+/*******************************************************************/
+/*Frunction: Write the time that includes the date to the RTC chip */
+void set_time() {
+    DS1307_WRITE_REG((uint8_t)0x00);
+    DS1307_WRITE_REG(decToBcd(second));// 0 to bit 7 starts the clock
+    DS1307_WRITE_REG(decToBcd(minute));
+    DS1307_WRITE_REG(decToBcd(hour));  // If you want 12 hour am/pm you need to set bit 6
+    DS1307_WRITE_REG(decToBcd(dayOfWeek));
+    DS1307_WRITE_REG(decToBcd(dayOfMonth));
+    DS1307_WRITE_REG(decToBcd(month));
+    DS1307_WRITE_REG(decToBcd(year));
+}
+void fillByHMS(uint8_t _hour, uint8_t _minute, uint8_t _second) {
+    // assign variables
+    hour   = _hour;
+    minute = _minute;
+    second = _second;
+}
+void fillByYMD(uint16_t _year, uint8_t _month, uint8_t _day) {
+    year = _year - 2000;
+    month = _month;
+    dayOfMonth = _day;
+}
+void fillDayOfWeek(uint8_t _dow) {
+    dayOfWeek = _dow;
+}
