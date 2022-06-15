@@ -1134,6 +1134,150 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x35 ./Core/Src/API/ring_buffer/ring_buffer.o
  .debug_macro   0x0000000000000000       0x16 ./Core/Src/API/ring_buffer/ring_buffer.o
  .debug_macro   0x0000000000000000       0x29 ./Core/Src/API/ring_buffer/ring_buffer.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .text          0x0000000000000000        0x0 ./Core/Src/API/rtc/rtc_1307.o
+ .data          0x0000000000000000        0x0 ./Core/Src/API/rtc/rtc_1307.o
+ .bss           0x0000000000000000        0x0 ./Core/Src/API/rtc/rtc_1307.o
+ .text.init_ds1307
+                0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_1307.o
+ .text.readRegister
+                0x0000000000000000       0x44 ./Core/Src/API/rtc/rtc_1307.o
+ .text.writeRegister
+                0x0000000000000000       0x50 ./Core/Src/API/rtc/rtc_1307.o
+ .text.readMultipleRegisters
+                0x0000000000000000       0x1c ./Core/Src/API/rtc/rtc_1307.o
+ .text.writeMultipleRegisters
+                0x0000000000000000       0x1c ./Core/Src/API/rtc/rtc_1307.o
+ .debug_info    0x0000000000000000      0x7a1 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_abbrev  0x0000000000000000      0x1aa ./Core/Src/API/rtc/rtc_1307.o
+ .debug_aranges
+                0x0000000000000000       0x40 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_ranges  0x0000000000000000       0x30 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x1e9 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0xa6c ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x22d ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x2e ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x8e ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x51 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x103 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x6a ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x1df ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x1c ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0xbd ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0xd23 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000     0xe09e ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x6d ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000     0x3468 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x174 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x5c ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x5be ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x289 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x1cb ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x114 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x1b2 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x27 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x136 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x1bc ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x34 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x3c ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x57 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x46a ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x1b5 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x88 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x241 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x287 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x141 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x217 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x8d1 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x83 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000      0x1b4 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_line    0x0000000000000000      0x74b ./Core/Src/API/rtc/rtc_1307.o
+ .debug_str     0x0000000000000000    0x89972 ./Core/Src/API/rtc/rtc_1307.o
+ .comment       0x0000000000000000       0x51 ./Core/Src/API/rtc/rtc_1307.o
+ .debug_frame   0x0000000000000000       0xc8 ./Core/Src/API/rtc/rtc_1307.o
+ .ARM.attributes
+                0x0000000000000000       0x2d ./Core/Src/API/rtc/rtc_1307.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_api.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_api.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_api.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_api.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_api.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_api.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_api.o
+ .group         0x0000000000000000        0xc ./Core/Src/API/rtc/rtc_api.o
+ .text          0x0000000000000000        0x0 ./Core/Src/API/rtc/rtc_api.o
+ .data          0x0000000000000000        0x0 ./Core/Src/API/rtc/rtc_api.o
+ .bss           0x0000000000000000        0x0 ./Core/Src/API/rtc/rtc_api.o
+ .text.rtc_init
+                0x0000000000000000       0x16 ./Core/Src/API/rtc/rtc_api.o
+ .text.rtc_set_time
+                0x0000000000000000       0x16 ./Core/Src/API/rtc/rtc_api.o
+ .text.rtc_get_time
+                0x0000000000000000       0x22 ./Core/Src/API/rtc/rtc_api.o
+ .debug_info    0x0000000000000000      0x198 ./Core/Src/API/rtc/rtc_api.o
+ .debug_abbrev  0x0000000000000000       0xe7 ./Core/Src/API/rtc/rtc_api.o
+ .debug_aranges
+                0x0000000000000000       0x30 ./Core/Src/API/rtc/rtc_api.o
+ .debug_ranges  0x0000000000000000       0x20 ./Core/Src/API/rtc/rtc_api.o
+ .debug_macro   0x0000000000000000       0x86 ./Core/Src/API/rtc/rtc_api.o
+ .debug_macro   0x0000000000000000      0xa6c ./Core/Src/API/rtc/rtc_api.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/API/rtc/rtc_api.o
+ .debug_macro   0x0000000000000000       0x8e ./Core/Src/API/rtc/rtc_api.o
+ .debug_macro   0x0000000000000000       0x51 ./Core/Src/API/rtc/rtc_api.o
+ .debug_macro   0x0000000000000000      0x103 ./Core/Src/API/rtc/rtc_api.o
+ .debug_macro   0x0000000000000000       0x6a ./Core/Src/API/rtc/rtc_api.o
+ .debug_macro   0x0000000000000000      0x1df ./Core/Src/API/rtc/rtc_api.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Src/API/rtc/rtc_api.o
+ .debug_line    0x0000000000000000      0x3e9 ./Core/Src/API/rtc/rtc_api.o
+ .debug_str     0x0000000000000000     0x3cbb ./Core/Src/API/rtc/rtc_api.o
+ .comment       0x0000000000000000       0x51 ./Core/Src/API/rtc/rtc_api.o
+ .debug_frame   0x0000000000000000       0x88 ./Core/Src/API/rtc/rtc_api.o
+ .ARM.attributes
+                0x0000000000000000       0x2d ./Core/Src/API/rtc/rtc_api.o
  .group         0x0000000000000000        0xc ./Core/Src/API/time_event/time_event.o
  .group         0x0000000000000000        0xc ./Core/Src/API/time_event/time_event.o
  .group         0x0000000000000000        0xc ./Core/Src/API/time_event/time_event.o
@@ -1479,8 +1623,6 @@ Discarded input sections
  .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
- .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
- .group         0x0000000000000000        0xc ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .text          0x0000000000000000        0x0 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .data          0x0000000000000000        0x0 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .bss           0x0000000000000000        0x0 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
@@ -1503,13 +1645,13 @@ Discarded input sections
  .text.entry_action_main_menu
                 0x0000000000000000       0x12 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .text.main_menu_on_react
-                0x0000000000000000       0x50 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
- .debug_info    0x0000000000000000      0x5a5 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+                0x0000000000000000       0x1a ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_info    0x0000000000000000      0x535 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .debug_abbrev  0x0000000000000000      0x18f ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .debug_aranges
                 0x0000000000000000       0x60 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .debug_ranges  0x0000000000000000       0x50 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
- .debug_macro   0x0000000000000000      0x3f3 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_macro   0x0000000000000000      0x3e5 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .debug_macro   0x0000000000000000      0xa6c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .debug_macro   0x0000000000000000       0x22 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .debug_macro   0x0000000000000000       0x4c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
@@ -1585,10 +1727,8 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x83 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .debug_macro   0x0000000000000000       0x10 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .debug_macro   0x0000000000000000       0x2e ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
- .debug_macro   0x0000000000000000      0x1ba ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
- .debug_macro   0x0000000000000000       0x10 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
- .debug_line    0x0000000000000000      0xb2b ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
- .debug_str     0x0000000000000000    0x8dc66 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_line    0x0000000000000000      0xb0c ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
+ .debug_str     0x0000000000000000    0x8d461 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .comment       0x0000000000000000       0x51 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .debug_frame   0x0000000000000000      0x168 ./Core/Src/FSMs/feeder_scheduler/feeder_scheduler.o
  .ARM.attributes
@@ -5478,6 +5618,8 @@ LOAD ./Core/Src/API/event_queue/event_queue.o
 LOAD ./Core/Src/API/printf_dbg/itm_dbg.o
 LOAD ./Core/Src/API/printf_dbg/printf_dbg.o
 LOAD ./Core/Src/API/ring_buffer/ring_buffer.o
+LOAD ./Core/Src/API/rtc/rtc_1307.o
+LOAD ./Core/Src/API/rtc/rtc_api.o
 LOAD ./Core/Src/API/time_event/time_event.o
 LOAD ./Core/Src/API/time_event/time_irq_update.o
 LOAD ./Core/Src/FSMs/event_manager/event_manager_fsm.o

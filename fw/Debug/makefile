@@ -16,6 +16,7 @@ RM := rm -rf
 -include Core/Src/FSMs/feeder_scheduler/subdir.mk
 -include Core/Src/FSMs/event_manager/subdir.mk
 -include Core/Src/API/time_event/subdir.mk
+-include Core/Src/API/rtc/subdir.mk
 -include Core/Src/API/ring_buffer/subdir.mk
 -include Core/Src/API/printf_dbg/subdir.mk
 -include Core/Src/API/event_queue/subdir.mk

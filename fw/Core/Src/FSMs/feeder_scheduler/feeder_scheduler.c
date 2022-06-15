@@ -1,8 +1,7 @@
 #include "feeder_scheduler.h"
 #include "printf_dbg.h"
-#include "buttons.h"
 #include "time_event.h"
-
+#include "rct_api.h"
 /**@brief Enable/Disable debug messages */
 #define feeder_scheduler_FSM_DEBUG 0
 #define feeder_scheduler_FSM_TAG "ui : "
@@ -52,7 +51,7 @@ typedef struct
 
 typedef struct 
 {
-    btn_ev_ext_t btn;
+    // btn_ev_ext_t btn;
     feeder_scheduler_ev_int_t  internal;
     feeder_scheduler_ev_time_t time;
 }feeder_scheduler_event_t;
@@ -208,6 +207,7 @@ static void entry_action_main_menu(feeder_scheduler_handle_t handle)
 static void main_menu_on_react(feeder_scheduler_handle_t handle)
 {
     /*navigation key update item selection*/
+/*
     switch (handle->event.btn)
     {
         case EVT_EXT_BTN_UP_PRESSED:              break;
@@ -222,7 +222,7 @@ static void main_menu_on_react(feeder_scheduler_handle_t handle)
     default:
         break;
     }
-
+*/
     if(time_event_is_raised(&handle->event.time.update_gui)== true)
     {
         /*Update GUI*/
