@@ -5,6 +5,7 @@
 #include "time_event.h"
 
 #define DEBOUNCE_TIME_MS (50)
+#define DEBOUNCE_TIME_DOWN_KEY_MS (200)
 
 /**
  * @brief Internal Events 

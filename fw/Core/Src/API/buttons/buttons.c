@@ -146,9 +146,23 @@ static btn_ev_ext_t btn_enter_key_combination(navigation_btn_t *btn)
     return EVT_EXT_BTN_INVALID;
 }
 
+static void poll_down_key_pressed(navigation_btn_t *btn)
+{
+    static GPIO_PinState pin_st = GPIO_PIN_SET;
+    if (HAL_GPIO_ReadPin(DOWN_GPIO_Port, DOWN_Pin) != pin_st)
+    {
+        pin_st = HAL_GPIO_ReadPin(DOWN_GPIO_Port, DOWN_Pin);
+        if(!time_event_is_active(&btn->down.debounce))
+            time_event_start(&navigation_btn.down.debounce, DEBOUNCE_TIME_MS);
+    }
+}
 
 void btn_debounce_run(navigation_btn_t *btn)
 {
+    /*down button cannot be set IT mode, we have to do polling*/
+    poll_down_key_pressed(btn);
+
+    /*update debounce time for all buttons */
     uint8_t btn_cnt = sizeof(navigation_btn_t)/sizeof(push_button_t);
     push_button_t *btn_ptr = &btn->up;
 
