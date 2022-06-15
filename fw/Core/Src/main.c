@@ -16,25 +16,6 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 
-uint8_t gpio_task_update(void)
-{
-	static uint32_t counter_millis = 0;
-
-	if(HAL_GetTick() - counter_millis > 500)
-	{
-		counter_millis = HAL_GetTick();
-
-		if(HAL_GPIO_ReadPin(DOWN_GPIO_Port, DOWN_Pin) == GPIO_PIN_RESET)
-		{
-			printf("Button is pressed\r\n");
-		}
-		else
-		{
-			printf("Button is not pressed\r\n");
-		}
-	}
-
-}
 
 /**
   * @brief  The application entry point.
@@ -63,8 +44,6 @@ int main(void)
     ui_fsm_run(ui_fsm);
     event_manager_fsm_run(evm_fsm);
     time_events_poll_update();
-//    gpio_task_update();
-
   }
 }
 

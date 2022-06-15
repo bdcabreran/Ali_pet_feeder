@@ -55,6 +55,7 @@
 									<listOptionValue builtIn="false" value="../Core/Inc/API/ring_buffer"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/ui"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/API/buttons"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/drawer"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1414022680" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>

@@ -165,8 +165,16 @@ static void entry_action_notify_event(event_manager_handle_t handle)
         case UI_FSM:
         {
             ui_fsm_set_ext_event(ui_fsm_get(), &handle->iface.event);
-        }
+        }break; 
     
+        case DRAWER_FSM:
+        {
+            drawer_fsm_set_ext_evt(&handle->iface.event);
+        }break; 
+
+
+
+
     default:
         break;
     }

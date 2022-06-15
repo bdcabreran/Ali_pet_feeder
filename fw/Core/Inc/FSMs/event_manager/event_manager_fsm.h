@@ -19,6 +19,7 @@ typedef enum
 {
     UI_FSM,
     BTN_FSM,
+    DRAWER_FSM,
 
 }fsm_list_t;
 

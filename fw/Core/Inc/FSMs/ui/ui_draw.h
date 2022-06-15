@@ -16,16 +16,18 @@
 #include "lcd_api.h"
 #include "bmp.h"
 #include "stdbool.h"
+#include "drawer_fsm.h"
+#include "power_fsm.h"
 
 extern BITMAPSTRUCT battery_icon[];
 extern BITMAPSTRUCT batt_error_icon[];
 extern BITMAPSTRUCT batt_warning_icon[];
 
-#define DRAWER_SELECTION_FONT Font20
+#define DRAWER_NUMBER_FONT Font20
 #define DRAWER_SELECTION_COLOR LCD_COLOR_BLUE
 
 #define FEEDER_HEADER_FONT  Font16
-#define FEEDER_CONFIG_SELECTION_COLOR  LCD_COLOR_BLUE
+#define UI_SELECTION_COLOR  LCD_COLOR_BLUE
 
 
 typedef enum
@@ -59,6 +61,7 @@ typedef enum
     DATE_TIME_CNF_DAY,
     DATE_TIME_CNF_MONTH,
 }date_time_config_items_t;
+
 
 typedef enum
 {
@@ -104,6 +107,7 @@ typedef struct
 }feeder_config_t;
 
 
+
 typedef struct
 {
     date_time_config_items_t item;
@@ -126,15 +130,6 @@ typedef struct
 
 }date_time_config_t;
 
-typedef enum
-{
-    DRAWER_1,
-    DRAWER_2,
-    DRAWER_3,
-    DRAWER_4,
-    DRAWERn,
-}drawers_t;
-
 typedef struct
 {
     uint16_t x; 
@@ -150,37 +145,6 @@ typedef struct
     BITMAPSTRUCT *ptr;
 }ui_icon_t;
 
-typedef struct
-{
-    uint16_t x; 
-    uint16_t y;
-    sFONT    *font; 
-}ui_font_t;
-
-typedef struct
-{
-    struct
-    {
-        ui_window_t main;
-    }win;
-
-    struct
-    {
-        ui_window_t charge;
-    }form;
-
-    struct
-    {
-        ui_icon_t   icon_batt;
-        ui_icon_t   icon_error;
-        ui_icon_t   icon_warn;
-    }icon;
-
-    struct
-    {
-        ui_font_t   charge;
-    }text;
-}ui_battery_t;
 
 typedef struct
 {
@@ -328,6 +292,28 @@ typedef struct
     date_config_t date;
 }date_time_menu_t;
 
+
+//------------- Battery Configuration ----------------//
+typedef struct
+{
+    struct { ui_window_t main;   }win;
+    struct { ui_window_t charge; }form;
+    struct {
+        ui_icon_t   batt;
+        ui_icon_t   error;
+        ui_icon_t   warn;
+    }icon;
+    ui_window_t  text;
+}ui_battery_t;
+
+typedef struct 
+{
+    battery_st_t set;
+    uint8_t      charge;
+    ui_select_t  select;
+}ui_battery_config;
+//-----------------------------------------------------//
+
 extern ui_battery_t ui_battery;
 extern ui_thermostat_t ui_thermostat;
 extern ui_drawers_t ui_drawers;
@@ -336,28 +322,46 @@ extern ui_thermostat_config_t ui_therm_conf;
 extern feeder_menu_t ui_feeder_menu;
 extern date_time_menu_t ui_date_time_menu;
 
-/* Common functions */
-void ui_win_show(ui_window_t *win,uint16_t color, bool show);
 
-/* Battery related functions */
-void ui_battery_init(ui_battery_t *batt);
-void ui_battery_show(ui_battery_t *batt, bool show);
-void ui_battery_error(ui_battery_t *batt, bool show);
-void ui_battery_warn(ui_battery_t *batt, bool show);
-void ui_battery_charge(ui_battery_t *batt, uint8_t batt_level, bool show);
+/* Battery Icon related functions */
+void ui_battery_icon_init(ui_battery_t *batt);
+void ui_battery_icon_show(ui_battery_t *batt, bool show);
+void ui_battery_icon_set_config(ui_battery_t *batt, ui_battery_config *config);
 
 /* Drawers related functions */
 void ui_drawers_init(ui_drawers_t *drawers);
-void ui_drawers_select(ui_drawers_t *drawers, uint8_t drawer_no);
+void ui_drawers_show(ui_drawers_t *drawers, bool show);
+void ui_drawers_set_config(ui_drawers_t *drawers, uint8_t drawer_no);
 
-/* Feeder Menu functions */
+/* Feeder Config Menu functions */
 void ui_feeder_menu_init(feeder_menu_t *menu);
-void ui_feeder_menu_set_config(feeder_menu_t *menu, feeder_config_t *fc);
+void ui_feeder_menu_show(feeder_menu_t *menu);
+void ui_feeder_menu_set_config(feeder_menu_t *menu, feeder_config_t *config);
 
-/* Date Time Functions */
+/* Date Time Config Menu Functions */
 void ui_date_time_init(date_time_menu_t *menu);
-void ui_date_time_set_config(date_time_menu_t *menu, date_time_config_t *dtc);
+void ui_date_time_show(date_time_menu_t *menu);
+void ui_date_time_set_config(date_time_menu_t *menu, date_time_config_t *config);
 
+/* Thermostat icon Functions */
+void ui_thermostat_icon_init(date_time_menu_t *menu);
+void ui_thermostat_icon_show(date_time_menu_t *menu);
+void ui_thermostat_icon_set_config(date_time_menu_t *menu, date_time_config_t *config);
+
+/* Thermostat Config Menu Functions */
+void ui_thermostat_menu_init(date_time_menu_t *menu);
+void ui_thermostat_menu_show(date_time_menu_t *menu);
+void ui_thermostat_menu_set_config(date_time_menu_t *menu, date_time_config_t *config);
+
+/* Pet Call Icon Function */
+void ui_pet_call_icon_init(pet_call_icon_menu_t *menu);
+void ui_pet_call_icon_show(pet_call_icon_menu_t *menu);
+void ui_pet_call_icon_set_config(pet_call_icon_menu_t *menu, pet_call_icon_config_t *config);
+
+/* Pet Call Config Menu Function */
+void ui_pet_call_menu_init(pet_call_menu_t *menu);
+void ui_pet_call_menu_show(pet_call_menu_t *menu);
+void ui_pet_call_menu_set_config(pet_call_menu_t *menu, pet_call_menu_config_t *config);
 
 
 
