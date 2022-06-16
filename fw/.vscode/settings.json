@@ -8,6 +8,10 @@
         "buttons.h": "c",
         "event_queue.h": "c",
         "typeinfo": "c",
-        "ui_draw.h": "c"
+        "ui_draw.h": "c",
+        "stdbool.h": "c",
+        "event_manager_fsm.h": "c",
+        "power_fsm.h": "c",
+        "feeder_fsm.h": "c"
     }
 }

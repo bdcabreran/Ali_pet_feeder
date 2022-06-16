@@ -5,8 +5,8 @@ ui_thermostat_t ui_thermostat;
 ui_drawers_t ui_drawers;
 ui_date_time_t ui_date_time;
 ui_thermostat_config_t ui_therm_conf;
-feeder_menu_t ui_feeder_menu;
-date_time_menu_t ui_date_time_menu;
+ui_feeder_menu_t ui_feeder_menu;
+ui_date_time_menu_t ui_date_time_menu;
 
 typedef struct
 {
@@ -15,15 +15,17 @@ typedef struct
     uint16_t y;
 } label_t;
 
-static const char *set_am_fm[TIMEn] = {"AM", "FM"}; 
-
-static const label_t drawer_label[DRAWERn] =
+typedef struct
 {
-    {"1",  7, 7  },
-    {"2", 66, 7  },
-    {"3",  7, 41 },
-    {"4", 66, 41 }};
+    uint16_t x;
+    uint16_t y;
+} pos_t;
 
+static const char *am_fm_str[TIMEn] = {"AM", "FM"}; 
+
+
+
+//////////////////////////////////// Static Common Functions  //////////////////////////////////////////////
 
 static void ui_show_win(ui_window_t *win, uint16_t color, bool show)
 {
@@ -90,13 +92,13 @@ void ui_battery_icon_init(ui_battery_t *batt)
     batt->icon.warn.x = batt->icon.batt.x + 16;
     batt->icon.warn.y = batt->icon.batt.y + 16;
 
-    batt->form.charge.x = batt->icon.batt.x + 17;
-    batt->form.charge.y = batt->icon.batt.y + 8;
-    batt->form.charge.h = batt->icon.batt.ptr->infoHeader.biHeight - 16;
-    batt->form.charge.w = batt->icon.batt.ptr->infoHeader.biWidth - 24;
+    batt->shape.charge.x = batt->icon.batt.x + 17;
+    batt->shape.charge.y = batt->icon.batt.y + 8;
+    batt->shape.charge.h = batt->icon.batt.ptr->infoHeader.biHeight - 16;
+    batt->shape.charge.w = batt->icon.batt.ptr->infoHeader.biWidth - 24;
 
-    batt->text.x = batt->form.charge.x + 15;
-    batt->text.y = batt->form.charge.y + 10;
+    batt->text.x = batt->shape.charge.x + 15;
+    batt->text.y = batt->shape.charge.y + 10;
 }
 
 void ui_battery_icon_show(ui_battery_t *batt, bool show)
@@ -115,42 +117,42 @@ void ui_battery_icon_show(ui_battery_t *batt, bool show)
 
 static void ui_battery_draw_charge(ui_battery_t *batt, uint8_t batt_lvl)
 {
-    float width = batt->form.charge.w * (batt_lvl / 100.0);
+    float width = batt->shape.charge.w * (batt_lvl / 100.0);
     uint8_t str[5] = {0};
     sprintf(str, "%d%%", batt_lvl);
 
-    uint8_t temp_w = batt->form.charge.w;
-    batt->form.charge.w = (int)width;
+    uint8_t temp_w = batt->shape.charge.w;
+    batt->shape.charge.w = (int)width;
         
     /*Critical battery level */
     if(width > 0 && width < 7)
     {
-        ui_fill_win(&batt->form.charge, LCD_COLOR_RED);
+        ui_fill_win(&batt->shape.charge, LCD_COLOR_RED);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR);   
     }
 
     /*Low battery level */
     if(width >= 7  && width < 30)
     {
-        ui_fill_win(&batt->form.charge, LCD_COLOR_YELLOW);
+        ui_fill_win(&batt->shape.charge, LCD_COLOR_YELLOW);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR); 
     }
 
     /*Medium battery level */
     if(width >= 30  && width < 70)
     {
-        ui_fill_win(&batt->form.charge, LCD_COLOR_YELLOW);
+        ui_fill_win(&batt->shape.charge, LCD_COLOR_YELLOW);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR); 
     }
 
     /*High battery level */
     if(width >= 70  && width <= 100)
     {
-        ui_fill_win(&batt->form.charge, LCD_COLOR_GREEN);
+        ui_fill_win(&batt->shape.charge, LCD_COLOR_GREEN);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR); 
     }
 
-    batt->form.charge.w = temp_w;
+    batt->shape.charge.w = temp_w;
 }
 
 void ui_battery_icon_set_config(ui_battery_t *batt, ui_battery_config *config)
@@ -162,7 +164,7 @@ void ui_battery_icon_set_config(ui_battery_t *batt, ui_battery_config *config)
         ui_show_win(&batt->win.main, LCD_DEFAULT_BACKCOLOR, false);
     
     /*Clear charging info */
-    ui_clear_win(&batt->form.charge); 
+    ui_clear_win(&batt->shape.charge); 
 
     switch (config->set)
     {
@@ -182,20 +184,37 @@ void ui_drawers_init(ui_drawers_t *drawers)
     drawers->win.main.h = 81;
     drawers->win.main.w = 132;
 
-    drawers->form.main_frame.x = drawers->win.main.x + 4;
-    drawers->form.main_frame.y = drawers->win.main.y + 4;
-    drawers->form.main_frame.h = drawers->win.main.h - 8;
-    drawers->form.main_frame.w = drawers->win.main.w - 8;
+    drawers->shape.main.x = drawers->win.main.x + 4;
+    drawers->shape.main.y = drawers->win.main.y + 4;
+    drawers->shape.main.h = drawers->win.main.h - 8;
+    drawers->shape.main.w = drawers->win.main.w - 8;
 
-    drawers->form.single_frame.w = 50;
-    drawers->form.single_frame.h = 25;
+    drawers->shape.single.w = 50;
+    drawers->shape.single.h = 25;
 }
 
 void ui_drawers_show(ui_drawers_t *drawers, bool show)
 {
+    static const pos_t drawer_pos[DRAWERn] = { {7, 7}, {66, 7}, {7, 41}, {66, 41} };
+
+    uint8_t str_buff[5] = {};
+
     if(show)
     {
+        ui_show_win(&drawers->shape.main, LCD_DEFAULT_TEXTCOLOR, true);
 
+        for (uint8_t i = 0; i < DRAWERn; i++)
+        {
+            drawers->shape.single.x = drawers->shape.main.x + drawer_pos[i].x;
+            drawers->shape.single.y = drawers->shape.main.y + drawer_pos[i].y;
+            ui_show_win(&drawers->shape.single, LCD_DEFAULT_TEXTCOLOR, true);
+
+            ui_window_t text_pos;
+            text_pos.x = drawers->shape.single.x + 15;
+            text_pos.y = drawers->shape.single.y + 4;
+            sprintf(str_buff,"%d", DRAWERn + 1);
+            ui_display_string(&text_pos, str_buff, &Font16, LCD_DEFAULT_TEXTCOLOR);
+        }
     }
     else
     {
@@ -203,50 +222,304 @@ void ui_drawers_show(ui_drawers_t *drawers, bool show)
     }
 }
 
-void ui_drawers_set_config(ui_drawers_t *drawers, uint8_t drawer_no);
+void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawer_config *config)
+{   
+    ui_drawers_show(drawers, true);
+    sFONT    *font = &Font20;
 
+    /*Paint select battery item property*/
+    if (config->select.main == UI_ITEM_SELECT)
+    {
+        font = &Font24;
+        ui_show_win(&drawers->win.main, UI_SELECTION_COLOR, true);
+    }
+    else
+    {
+        ui_show_win(&drawers->win.main, UI_SELECTION_COLOR, true);
+    }
 
-void ui_drawers_select(ui_drawers_t *drawers, uint8_t drawer_no)
-{
-    /*Clean All Drawers */
-    ui_drawers_clean(drawers);
+    /*Paint select battery item property*/
+    if (config->select.single == UI_ITEM_SELECT)
+    {
+        static const pos_t drawer_pos[DRAWERn] = { {7, 7}, {66, 7}, {7, 41}, {66, 41} };
+        drawers->shape.single.x = drawers->shape.main.x + drawer_pos[config->drawer.no].x;
+        drawers->shape.single.y = drawers->shape.main.y + drawer_pos[config->drawer.no].y;
+        ui_show_win(&drawers->shape.single, UI_SELECTION_COLOR, true);
 
-    drawers->form.single_frame.x = drawers->form.main_frame.x + drawer_label[drawer_no].x;
-    drawers->form.single_frame.y = drawers->form.main_frame.y + drawer_label[drawer_no].y;
-    ui_show_win(&drawers->form.single_frame, DRAWER_SELECTION_COLOR, true);
-    BSP_LCD_SetTextColor(DRAWER_SELECTION_COLOR);
-    BSP_LCD_SetFont(&DRAWER_NUMBER_FONT);
+        ui_window_t text_pos;
+        text_pos.x = drawers->shape.single.x + 15;
+        text_pos.y = drawers->shape.single.y + 4;
 
-    BSP_LCD_DisplayStringAt(drawers->form.single_frame.x + 15, drawers->form.single_frame.y + 4, drawer_label[drawer_no].name, LEFT_MODE);
-    BSP_LCD_SetTextColor(LCD_DEFAULT_TEXTCOLOR);
-    BSP_LCD_SetFont(LCD_DEFAULT_TEXTCOLOR);
+        uint8_t str_buff[5];
+        sprintf(str_buff, "%d", config->drawer.no + 1);
+        ui_display_string(&text_pos, str_buff, &font, UI_SELECTION_COLOR);
+    }
+
+    switch (config->drawer.st)
+    {
+        case DRAWER_ST_OPEN:    { /* place drawing operations for this state here */ } break;
+        case DRAWER_ST_OPENING: { /* place drawing operations for this state here */ } break;
+        case DRAWER_ST_CLOSE:   { /* place drawing operations for this state here */ } break;
+        case DRAWER_ST_CLOSING: { /* place drawing operations for this state here */ } break;
+    default:
+        break;
+    }
 }
 
 //////////////////////////////////// Feeder Config Menu Related Functions //////////////////////////////////////////
-void ui_feeder_menu_init(feeder_menu_t *menu);
-void ui_feeder_menu_show(feeder_menu_t *menu);
-void ui_feeder_menu_set_config(feeder_menu_t *menu, feeder_config_t *config);
+void ui_feeder_menu_init(ui_feeder_menu_t *menu)
+{
+    /*position in the screen */
+    menu->win.main.x = 19;
+    menu->win.main.y = 98;
+    menu->win.main.w = 442;
+    menu->win.main.h = 216;
+    menu->win.daily.x = menu->win.main.x + 393;
+    menu->win.daily.y = menu->win.main.y + 39;
+    menu->win.daily.w = 36;
+    menu->win.daily.h = 18;
+
+    static const label_t header[4] = { {"OPEN_TIME",102, 2}, {"CLOSE_TIME",208, 2}, {"DATE",325, 2}, {"DAILY",380, 2}};
+
+    static const char *meals[FEEDER_MEALn] = {{"Breakfast"}, {"Snack 1"}, {"Lunch"},{"Snack 2"},{"Dinner"}, {"Snack 3"}};
+
+    for (int i = 0; i < FEEDER_MEALn; i++)
+    {       
+        ui_window_t text_pos;
+        text_pos.x = header->x;
+        text_pos.y = header->y;
+        ui_display_string(&text_pos, header->name, &Font16, LCD_DEFAULT_TEXTCOLOR);
+    }
+
+    for (int i = 0; i < FEEDER_MEALn; i++)
+    {
+        // meal selection 
+        ui_window_t text_pos;
+        text_pos.x = 2;
+        text_pos.y = 33*(i + 1);
+        ui_display_string(&text_pos, meals[i], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+        // open hour 
+        menu->meal_td[i].time.open.hour.x    = menu->win.main.x + (10 + 102);
+        menu->meal_td[i].time.open.hour.y    = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.open.min.x     = menu->win.main.x + (10 + 102 + 30);
+        menu->meal_td[i].time.open.min.y     = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.open.am_fm.x   = menu->win.main.x + (10 + 102 + 50);
+        menu->meal_td[i].time.open.am_fm.y   = menu->win.main.y + (i+1)*(33);
+
+        // close hour
+        menu->meal_td[i].time.close.hour.x   = menu->win.main.x + (10 + 209);
+        menu->meal_td[i].time.close.hour.y   = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.close.min.x    = menu->win.main.x + (10 + 209 + 30);
+        menu->meal_td[i].time.close.min.y    = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.close.am_fm.x  = menu->win.main.x + (10 + 209 + 50);
+        menu->meal_td[i].time.close.am_fm.y  = menu->win.main.y + (i+1)*(33);
+
+        // date 
+        menu->meal_td[i].date.day.x        = menu->win.main.x + (10 + 316);
+        menu->meal_td[i].date.month.x      = menu->win.main.x + (10 + 316 + 30);
+        menu->meal_td[i].date.day.y        = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].date.month.y      = menu->win.main.y + (i+1)*(33);
+    }
+
+
+}
+void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show)
+{
+    ui_window_t text_pos;
+
+    if(show)
+    {
+        for (int i = 0; i < FEEDER_MEALn; i++)
+        {
+            // Open time
+            ui_display_string(&menu->meal_td[i].time.open.hour, "--:", &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].time.open.min , "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].time.open.am_fm, am_fm_str[TIME_FM], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+            // Close time 
+            ui_display_string(&menu->meal_td[i].time.close.hour, "--:", &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].time.close.min , "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].time.close.am_fm, am_fm_str[TIME_FM], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+            // Day Month
+            ui_display_string(&menu->meal_td[i].date.day, "--/", &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].date.month, "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        }
+    }
+    else
+    {
+        ui_clear_win(&menu->win.main);
+    }
+}
+
+void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_t *config)
+{
+    uint8_t str[5];
+    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
+    sFONT    *font = &Font16;
+    ui_window_t text_pos;
+
+    if (config->select == UI_ITEM_SELECT)
+    {
+        color = UI_SELECTION_COLOR;
+        font = &Font20;
+    }
+    
+    switch (config->set)
+    {
+        case FEEDER_CNF_OPEN_TIME_HOUR: {
+            sprintf(str, "%.2d", config->time.hour);
+            ui_display_string(&menu->meal_td[config->meal].time.open.hour, str, font, color);
+        } break;
+
+        case FEEDER_CNF_OPEN_TIME_MIN: {
+            sprintf(str, "%.2d", config->time.minute);
+            ui_display_string(&menu->meal_td[config->meal].time.open.min, str, font, color);
+        } break;
+
+        case FEEDER_CNF_OPEN_TIME_AM_FM: {
+            ui_display_string(&menu->meal_td[config->meal].time.open.am_fm,
+                              am_fm_str[config->time.am_fm], font, color);
+        } break;
+
+        case FEEDER_CNF_CLOSE_TIME_HOUR: {
+            sprintf(str, "%.2d", config->time.hour);
+            ui_display_string(&menu->meal_td[config->meal].time.close.hour, str, font, color);
+        } break;
+
+        case FEEDER_CNF_CLOSE_TIME_MIN: { 
+            sprintf(str, "%.2d", config->time.minute);
+            ui_display_string(&menu->meal_td[config->meal].time.close.min, str, font, color);
+        } break;
+
+        case FEEDER_CNF_CLOSE_TIME_AM_FM:
+        {
+            ui_display_string(&menu->meal_td[config->meal].time.close.am_fm,
+                              am_fm_str[config->time.am_fm], font, color);
+        } break;
+
+        case FEEDER_CNF_DATE_DAY: {
+            sprintf(str, "%.2d", config->date.day);
+            ui_display_string(&menu->meal_td[config->meal].date.day, str, font, color);
+        }
+        break;
+
+        case FEEDER_CNF_DATE_MONTH: {
+            sprintf(str, "%.2d", config->date.day);
+            ui_display_string(&menu->meal_td[config->meal].date.month, str, font, color);
+        }
+        break;
+
+        case FEEDER_CNF_DATE_DAILY: {
+
+            ui_show_win(&menu->win.daily, color, true);
+            ui_window_t win = {.x = menu->win.daily.x + 1, .y = menu->win.daily.y + 1, \
+                                .h = menu->win.daily.h - 2, .w = menu->win.daily.w - 2};
+
+            if(config->date.daily_st == FEEDER_DAILY_MEAL_ENABLE)
+            {
+                ui_fill_win(&win, LCD_COLOR_GREEN);
+            }
+            else
+            {
+                ui_fill_win(&win, LCD_DEFAULT_BACKCOLOR);
+            }
+
+         } break;
+
+        default:
+        printf("no valid option for feeder schedule config");
+        break;
+    }
+
+}
 
 
 
 //////////////////////////////////// Date Time Config Menu Related Functions ///////////////////////////////////////
-void ui_date_time_init(date_time_menu_t *menu);
-void ui_date_time_show(date_time_menu_t *menu);
-void ui_date_time_set_config(date_time_menu_t *menu, date_time_config_t *config);
+void ui_date_time_init(ui_date_time_menu_t *menu)
+{
+    menu->win.main.x = 17;
+    menu->win.main.y = 116;
+    menu->win.main.w = 442;
+    menu->win.main.h = 161;
 
+    menu->time.hour.x  = menu->win.main.x + 31;
+    menu->time.hour.y  = menu->win.main.y + 29;
+    menu->time.min.x   = menu->win.main.x + 191;
+    menu->time.min.y   = menu->win.main.y + 29;
+    menu->date.day.x   = menu->win.main.x + 347;
+    menu->date.day.y   = menu->win.main.y + 61;
+    menu->date.month.x = menu->win.main.x + 389;
+    menu->date.month.y = menu->win.main.y + 61;
+}
+
+void ui_date_time_show(ui_date_time_menu_t *menu, bool show)
+{
+    if(show)
+    {
+        ui_display_string(&menu->time.hour, "--:", &Font24, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->time.min, "--", &Font24, LCD_DEFAULT_TEXTCOLOR);
+
+        ui_display_string(&menu->date.day, "--/", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->date.month, "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+        ui_show_win(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
+    }
+    else
+    {
+        ui_clear_win(&menu->win.main);
+    }
+}
+
+void ui_date_time_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *config)
+{
+    uint8_t str[5];
+    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
+
+    if (config->select == UI_ITEM_SELECT)
+        color = UI_SELECTION_COLOR;
+
+    switch (config->set)
+    {
+    case DATE_TIME_CNF_HOUR: {
+            sprintf(str, "%.2d", config->time.hour);
+            ui_display_string(&menu->time.hour, str, &Font24, color);
+    } break;
+
+    case DATE_TIME_CNF_MIN: {
+            sprintf(str, "%.2d", config->time.min);
+            ui_display_string(&menu->time.min, str, &Font24, color);
+    } break;
+
+    case DATE_TIME_CNF_DAY: {
+            sprintf(str, "%.2d", config->date.day);
+            ui_display_string(&menu->date.day, str, &Font16, color);
+    } break;
+
+    case DATE_TIME_CNF_MONTH: {
+            sprintf(str, "%.2d", config->date.day);
+            ui_display_string(&menu->date.day, str, &Font16, color);
+    } break;
+
+    default:
+        break;
+    }
+}
 
 //////////////////////////////////// Date Time Config Menu Related Functions ///////////////////////////////////////
 /* Thermostat icon Functions */
-void ui_thermostat_icon_init(date_time_menu_t *menu);
-void ui_thermostat_icon_show(date_time_menu_t *menu);
-void ui_thermostat_icon_set_config(date_time_menu_t *menu, date_time_config_t *config);
+void ui_thermostat_icon_init(ui_date_time_menu_t *menu);
+void ui_thermostat_icon_show(ui_date_time_menu_t *menu);
+void ui_thermostat_icon_set_config(ui_date_time_menu_t *menu, date_time_config_t *config);
 
 //////////////////////////////////// Date Time Config Menu Related Functions ///////////////////////////////////////
 
 /* Thermostat Config Menu Functions */
-void ui_thermostat_menu_init(date_time_menu_t *menu);
-void ui_thermostat_menu_show(date_time_menu_t *menu);
-void ui_thermostat_menu_set_config(date_time_menu_t *menu, date_time_config_t *config);
+void ui_thermostat_menu_init(ui_date_time_menu_t *menu);
+void ui_thermostat_menu_show(ui_date_time_menu_t *menu);
+void ui_thermostat_menu_set_config(ui_date_time_menu_t *menu, date_time_config_t *config);
 
 //////////////////////////////////// Date Time Config Menu Related Functions ///////////////////////////////////////
 
@@ -267,280 +540,13 @@ void ui_pet_call_menu_set_config(pet_call_menu_t *menu, pet_call_menu_config_t *
 
 //////////////////////////////////////// END ///////////////////////////////////////////////////////////////////////
 
-
-void ui_feeder_menu_init(feeder_menu_t *menu)
-{
-    menu->win.main.x = 19;
-    menu->win.main.y = 98;
-    menu->win.main.w = 442;
-    menu->win.main.h = 216;
-
-    menu->win.daily_en.x = menu->win.main.x + 393;
-    menu->win.daily_en.y = menu->win.main.y + 39;
-    menu->win.daily_en.w = 36;
-    menu->win.daily_en.h = 18;
-
-    static const label_t feeder_header[4] =
-    {
-        {"OPEN_TIME",  102, 2},
-        {"CLOSE_TIME", 208, 2},
-        {"DATE",       325, 2},
-        {"DAILY",      380, 2}};
-
-    static const label_t feeder_meals[FEEDER_MEALn] =
-    {
-        /*Select Meal*/
-        {"Breakfast", 2, 33*1},
-        {"Snack 1"  , 2, 33*2},
-        {"Lunch"    , 2, 33*3},
-        {"Snack 2"  , 2, 33*4},
-        {"Dinner"   , 2, 33*5},
-        {"Snack 3"  , 2, 33*6}};
-
-    for (int i = 0; i < FEEDER_MEALn; i++)
-    {
-        menu->config[i].open_time.hour.x    = menu->win.main.x + (10 + 102);
-        menu->config[i].open_time.min.x     = menu->win.main.x + (10 + 102 + 30);
-        menu->config[i].open_time.am_fm.x   = menu->win.main.x + (10 + 102 + 50);
-
-        menu->config[i].close_time.hour.x   = menu->win.main.x + (10 + 209);
-        menu->config[i].close_time.min.x    = menu->win.main.x + (10 + 209 + 30);
-        menu->config[i].close_time.am_fm.x  = menu->win.main.x + (10 + 209 + 50);
-
-        menu->config[i].date.day.x        = menu->win.main.x +   (10 + 316);
-        menu->config[i].date.month.x      = menu->win.main.x +   (10 + 316 + 30);
-    }
-
-    for (int i = 0; i < FEEDER_MEALn; i++)
-    {
-        menu->config[i].open_time.hour.y  = menu->win.main.y + (i+1)*(33);
-        menu->config[i].open_time.min.y   = menu->win.main.y + (i+1)*(33);
-        menu->config[i].open_time.am_fm.y   = menu->win.main.y + (i+1)*(33);
-
-        menu->config[i].close_time.hour.y = menu->win.main.y + (i+1)*(33);
-        menu->config[i].close_time.min.y  = menu->win.main.y + (i+1)*(33);
-        menu->config[i].close_time.am_fm.y  = menu->win.main.y + (i+1)*(33);
-
-        menu->config[i].date.day.y        = menu->win.main.y + (i+1)*(33);
-        menu->config[i].date.month.y      = menu->win.main.y + (i+1)*(33);
-    }
-
-
-    for (int i = 0; i < FEEDER_MEALn; i++)
-    {
-        BSP_LCD_SetFont(&Font16);
-        BSP_LCD_DisplayStringAt(menu->config[i].open_time.hour.x,
-                                menu->config[i].open_time.hour.y, "--:", LEFT_MODE);
-        BSP_LCD_DisplayStringAt(menu->config[i].open_time.min.x,
-                                menu->config[i].open_time.min.y, "--", LEFT_MODE);
-        BSP_LCD_DisplayStringAt(menu->config[i].open_time.am_fm.x,
-                                menu->config[i].open_time.am_fm.y, set_am_fm[TIME_FM], LEFT_MODE);
-
-        BSP_LCD_DisplayStringAt(menu->config[i].close_time.hour.x,
-                                menu->config[i].close_time.hour.y, "--:", LEFT_MODE);
-        BSP_LCD_DisplayStringAt(menu->config[i].close_time.min.x,
-                                menu->config[i].close_time.min.y, "--", LEFT_MODE);
-        BSP_LCD_DisplayStringAt(menu->config[i].close_time.am_fm.x,
-                                menu->config[i].close_time.am_fm.y, set_am_fm[TIME_AM], LEFT_MODE);
-
-        BSP_LCD_DisplayStringAt(menu->config[i].date.day.x,
-                                menu->config[i].date.day.y, "--/", LEFT_MODE);
-        BSP_LCD_DisplayStringAt(menu->config[i].date.month.x,
-                                menu->config[i].date.month.y, "--", LEFT_MODE);
-    }
-
-    /*Drawer 1 Settings */
-    ui_show_win(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
-    ui_show_win(&menu->win.daily_en, LCD_DEFAULT_TEXTCOLOR, true);
-
-    BSP_LCD_SetFont(&FEEDER_HEADER_FONT);
-    for (int i = 0; i < 4; i++)
-    {
-        BSP_LCD_DisplayStringAt(feeder_header[i].x + menu->win.main.x,
-                                feeder_header[i].y + menu->win.main.y,
-                                feeder_header[i].name, LEFT_MODE);
-    }
-
-    for (int i = 0; i < FEEDER_MEALn; i++)
-    {
-        BSP_LCD_DisplayStringAt(feeder_meals[i].x + menu->win.main.x,
-                                feeder_meals[i].y + menu->win.main.y,
-                                feeder_meals[i].name, LEFT_MODE);
-    }
-
-    BSP_LCD_SetFont(&LCD_DEFAULT_FONT);
-}
-
-
-void ui_feeder_menu_set_config(feeder_menu_t *menu, feeder_config_t *fc)
-{
-    BSP_LCD_SetFont(&Font16);
-    uint8_t buff[5];
-    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
-
-    if (fc->select == UI_ITEM_SELECT)
-        color = UI_SELECTION_COLOR;
-    
-    BSP_LCD_SetTextColor(color);
-
-    switch (fc->set)
-    {
-        case FEEDER_CNF_OPEN_TIME_HOUR: {
-            sprintf(buff, "%.2d", fc->time.hour);
-            BSP_LCD_DisplayStringAt(menu->config[fc->meal].open_time.hour.x,
-                                    menu->config[fc->meal].open_time.hour.y, buff, LEFT_MODE);
-        } break;
-        case FEEDER_CNF_OPEN_TIME_MIN: { 
-            sprintf(buff, "%.2d", fc->time.minute);
-            BSP_LCD_DisplayStringAt(menu->config[fc->meal].open_time.min.x,
-                                    menu->config[fc->meal].open_time.min.y, buff, LEFT_MODE);
-        } break;
-        case FEEDER_CNF_OPEN_TIME_AM_FM: {
-            BSP_LCD_DisplayStringAt(menu->config[fc->meal].open_time.am_fm.x,
-                                    menu->config[fc->meal].open_time.am_fm.y, set_am_fm[fc->time.am_fm], LEFT_MODE);
-        } break;
-        case FEEDER_CNF_CLOSE_TIME_HOUR: {
-            sprintf(buff, "%.2d", fc->time.hour);
-            BSP_LCD_DisplayStringAt(menu->config[fc->meal].close_time.hour.x,
-                                    menu->config[fc->meal].close_time.hour.y, buff, LEFT_MODE);
-        } break;
-        case FEEDER_CNF_CLOSE_TIME_MIN: { 
-            sprintf(buff, "%.2d", fc->time.minute);
-            BSP_LCD_DisplayStringAt(menu->config[fc->meal].close_time.min.x,
-                                    menu->config[fc->meal].close_time.min.y, buff, LEFT_MODE);
-        } break;
-        case FEEDER_CNF_CLOSE_TIME_AM_FM: {
-            BSP_LCD_DisplayStringAt(menu->config[fc->meal].close_time.am_fm.x,
-                                    menu->config[fc->meal].close_time.am_fm.y, set_am_fm[fc->time.am_fm], LEFT_MODE);
-        } break;
-        case FEEDER_CNF_DATE_DAY: {
-            sprintf(buff, "%.2d", fc->date.day);
-            BSP_LCD_DisplayStringAt(menu->config[fc->meal].date.day.x,
-                                    menu->config[fc->meal].date.day.y, buff, LEFT_MODE);
-        }
-        break;
-        case FEEDER_CNF_DATE_MONTH: {
-            sprintf(buff, "%.2d", fc->date.month);
-            BSP_LCD_DisplayStringAt(menu->config[fc->meal].date.month.x,
-                                    menu->config[fc->meal].date.month.y, buff, LEFT_MODE);
-        }
-        break;
-        case FEEDER_CNF_DATE_DAILY: {
-
-            ui_show_win(&menu->win.daily_en, color, true);
-
-            if(fc->date.daily_en == DAILY_MEAL_ENABLE)
-            {
-                BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
-                BSP_LCD_FillRect(menu->win.daily_en.x + 1, menu->win.daily_en.y + 1,
-                                menu->win.daily_en.w - 2, menu->win.daily_en.h -2);
-            }
-            else
-            {
-                BSP_LCD_SetTextColor(LCD_DEFAULT_BACKCOLOR);
-                BSP_LCD_FillRect(menu->win.daily_en.x +1, menu->win.daily_en.y +1,
-                                menu->win.daily_en.w -2, menu->win.daily_en.h -2);
-            }
-
-         } break;
-    default:
-        printf("no valid option for feeder schedule config");
-        break;
-    }
-
-    BSP_LCD_SetTextColor(LCD_DEFAULT_TEXTCOLOR);
-    BSP_LCD_SetTextColor(&LCD_DEFAULT_FONT);
-}
-
-
-
 /////////////////////////////////// Date Hour Related Functions /////////////////////////////////////////////
 
-void ui_date_time_init(date_time_menu_t *menu)
-{
-    menu->win.main.x = 17;
-    menu->win.main.y = 116;
-    menu->win.main.w = 442;
-    menu->win.main.h = 161;
-
-    menu->time.hour.x = menu->win.main.x + 31;
-    menu->time.hour.y = menu->win.main.y + 29;
-    menu->time.min.x = menu->win.main.x + 191;
-    menu->time.min.y = menu->win.main.y + 29;
-
-    menu->date.day.x = menu->win.main.x + 347;
-    menu->date.day.y = menu->win.main.y + 61;
-    menu->date.month.x = menu->win.main.x + 389;
-    menu->date.month.y = menu->win.main.y + 61;
-
-    BSP_LCD_SetFont(&Font24);
-    BSP_LCD_DisplayStringAt(menu->time.hour.x, menu->time.hour.y, "--:", LEFT_MODE);
-    BSP_LCD_DisplayStringAt(menu->time.min.x, menu->time.min.y, "--", LEFT_MODE);
-
-    BSP_LCD_SetFont(&Font16);
-    BSP_LCD_DisplayStringAt(menu->date.day.x, menu->date.day.y, "--/", LEFT_MODE);
-    BSP_LCD_DisplayStringAt(menu->date.month.x, menu->date.month.y, "--", LEFT_MODE);
-
-    ui_show_win(&menu->win, LCD_DEFAULT_TEXTCOLOR, true);
-}
-
-void ui_date_time_set_config(date_time_menu_t *menu, date_time_config_t *conf)
-{
-    uint8_t buff[5];
-    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
-
-    if (conf->select == UI_ITEM_SELECT)
-        color = UI_SELECTION_COLOR;
-
-    BSP_LCD_SetTextColor(color);
-
-    switch (conf->item)
-    {
-    case DATE_TIME_CNF_HOUR: {
-            BSP_LCD_SetFont(&Font24);
-            sprintf(buff, "%.2d", conf->time.hour);
-            BSP_LCD_DisplayStringAt(menu->time.hour.x,menu->time.hour.y,buff, LEFT_MODE);
-    } break;
-
-    case DATE_TIME_CNF_MIN: {
-            BSP_LCD_SetFont(&Font24);
-            sprintf(buff, "%.2d", conf->time.min);
-            BSP_LCD_DisplayStringAt(menu->time.min.x,menu->time.min.y,buff, LEFT_MODE);
-    } break;
-    case DATE_TIME_CNF_DAY: {
-            BSP_LCD_SetFont(&Font16);
-            sprintf(buff, "%.2d", conf->date.day);
-            BSP_LCD_DisplayStringAt(menu->date.day.x,menu->date.day.y,buff, LEFT_MODE); 
-    } break;
-    case DATE_TIME_CNF_MONTH: {
-            BSP_LCD_SetFont(&Font16);
-            sprintf(buff, "%.2d", conf->date.month);
-            BSP_LCD_DisplayStringAt(menu->date.month.x,menu->date.month.y,buff, LEFT_MODE); 
-    } break;
-    default:
-        break;
-    }
-
-    BSP_LCD_SetFont(&LCD_DEFAULT_FONT);
-    BSP_LCD_SetTextColor(LCD_DEFAULT_TEXTCOLOR);
-}
 
 
 /////////////////////////////////// Drawers Related Functions /////////////////////////////////////////////
 
-static void ui_drawers_clean(ui_drawers_t *drawers)
-{
-    ui_show_win(&drawers->form.main_frame, LCD_DEFAULT_TEXTCOLOR, true);
 
-    for (uint8_t i = 0; i < DRAWERn; i++)
-    {
-        drawers->form.single_frame.x = drawers->form.main_frame.x + drawer_label[i].x;
-        drawers->form.single_frame.y = drawers->form.main_frame.y + drawer_label[i].y;
-        ui_show_win(&drawers->form.single_frame, LCD_DEFAULT_TEXTCOLOR, true);
-        BSP_LCD_SetFont(&DRAWER_NUMBER_FONT);
-        BSP_LCD_DisplayStringAt(drawers->form.single_frame.x + 15, drawers->form.single_frame.y + 4, drawer_label[i].name, LEFT_MODE);
-    }
-}
 
 /////////////////////////////////// Thermostat Related Functions /////////////////////////////////////////////
 void ui_thermostat_init(ui_thermostat_t *therm, bool show)

@@ -14,12 +14,18 @@
 
 #include "event_queue.h"
 #include "ui_fsm.h"
+#include "drawer_fsm.h"
+#include "power_fsm.h"
+#include "feeder_fsm.h"
+#include "temp_ctrl_fsm.h"
 
 typedef enum
 {
     UI_FSM,
     BTN_FSM,
     DRAWER_FSM,
+    FEEDER_FSM,
+    TEMP_CTRL_FSM,
 
 }fsm_list_t;
 

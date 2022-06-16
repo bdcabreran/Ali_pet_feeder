@@ -2618,7 +2618,7 @@ void ui_show_win(ui_window_t *win, uint16_t color, bool show)
 
 /////////////////////////////////// Date Hour Related Functions /////////////////////////////////////////////
 
-void ui_date_time_init(date_time_menu_t *menu)
+void ui_date_time_init(ui_date_time_menu_t *menu)
 {
  8001044:	b580      	push	{r7, lr}
  8001046:	b082      	sub	sp, #8

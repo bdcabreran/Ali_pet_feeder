@@ -26,10 +26,12 @@ typedef enum
 
 typedef enum
 {
+    DRAWER_ST_INVALID,
     DRAWER_ST_OPEN,
     DRAWER_ST_OPENING,
     DRAWER_ST_CLOSE,
     DRAWER_ST_CLOSING,
+    DRAWER_ST_LAST,
 }drawer_st_t;
 
 typedef struct
