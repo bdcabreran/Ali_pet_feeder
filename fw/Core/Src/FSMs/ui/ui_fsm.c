@@ -37,7 +37,7 @@ typedef enum
     ST_UI_MAIN_MENU,
     ST_UI_DATE_TIME_CONFIG,
     ST_UI_PETCALL_CONFIG,
-    ST_UI_FEEDER_SELECT,
+    ST_UI_DRAWER_SELECT,
     ST_UI_FEEDER_CONFIG,
     ST_UI_DRAWER_ST_REQUEST,
     ST_UI_LAST,
@@ -81,7 +81,7 @@ typedef struct
 
     struct
     {
-        ui_main_menu_sel_item_t item;
+        uint8_t item;
     }cursor;
 
 }ui_iface_t;
@@ -100,16 +100,27 @@ static void enter_seq_main_menu(ui_handle_t handle);
 static void entry_action_main_menu(ui_handle_t handle);
 static void main_menu_on_react(ui_handle_t handle);
 
-static void drawer_request_enter_seq(ui_handle_t handle);
+static void enter_seq_drawer_request(ui_handle_t handle);
 static void entry_action_drawer_request(ui_handle_t handle);
 static void drawer_request_on_react(ui_handle_t handle);
 
+static void enter_sequence_drawer_select(ui_handle_t handle);
+static void entry_action_drawer_select(ui_handle_t handle);
+static void drawer_select_on_react(ui_handle_t handle);
+
+static void enter_sequence_feeder_config(ui_handle_t handle);
+static void entry_action_feeder_config(ui_handle_t handle);
+static void feeder_config_on_react(ui_handle_t handle);
 
 //////////////////////// Static Miscellaneous functions ////////////////////////////////////////
 static void gui_update_battery(ui_handle_t handle);
 static void notify_manual_drawer_operation(ui_handle_t handle);
 static void ui_update_item_selection(ui_handle_t handle, ui_select_t select);
+
 static void main_menu_enter_pressed(ui_handle_t handle);
+static void drawer_select_enter_pressed(ui_handle_t handle);
+static void drawer_select_key_pressed(ui_handle_t handle);
+
 
 ////////////////////////////// Public function declaration //////////////////////////////////////
 
@@ -130,7 +141,8 @@ void ui_fsm_run(ui_handle_t handle)
         case ST_UI_MAIN_MENU:          main_menu_on_react(handle); break;
         case ST_UI_DATE_TIME_CONFIG:   break;
         case ST_UI_PETCALL_CONFIG:     break;
-        case ST_UI_FEEDER_CONFIG:      break;
+        case ST_UI_FEEDER_CONFIG:      feeder_config_on_react(handle); break;
+        case ST_UI_DRAWER_SELECT:      drawer_select_on_react(handle); break;
         case ST_UI_DRAWER_ST_REQUEST:  drawer_request_on_react(handle); break;
     default:
         break;
@@ -180,7 +192,7 @@ static void entry_action_main_menu(ui_handle_t handle)
     ui_battery_init(&ui_battery);
     ui_drawers_init(&ui_drawers);
     ui_thermostat_init(&ui_thermostat);
-   ui_petcall_init(&ui_petcall);
+    ui_petcall_init(&ui_petcall);
     ui_feeder_menu_init(&ui_feeder_menu);
     ui_date_time_init(&ui_date_time);
 
@@ -189,7 +201,7 @@ static void entry_action_main_menu(ui_handle_t handle)
     ui_drawers_show(&ui_drawers, true);
     ui_thermostat_show(&ui_thermostat, true);
     ui_petcall_show(&ui_petcall, true);
-    ui_feeder_menu_show(&ui_feeder_menu, true);
+    ui_date_time_show(&ui_date_time, true);
 
     /* Set cursor to first item */
     time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
@@ -226,10 +238,10 @@ static void main_menu_on_react(ui_handle_t handle)
     } break;
 
     case EVT_EXT_BTN_ENTER_PRESSED: { main_menu_enter_pressed(handle); } break;
-    case EVT_EXT_BTN_UP_AND_ENTER_PRESSED:   {drawer_cfg->drawer.no = DRAWER_NO_1; drawer_request_enter_seq(handle); } break;
-    case EVT_EXT_BTN_DOWN_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_2; drawer_request_enter_seq(handle); } break;
-    case EVT_EXT_BTN_LEFT_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_3; drawer_request_enter_seq(handle); } break;
-    case EVT_EXT_BTN_RIGHT_AND_ENTER_PRESSED:{drawer_cfg->drawer.no = DRAWER_NO_4; drawer_request_enter_seq(handle); } break;
+    case EVT_EXT_BTN_UP_AND_ENTER_PRESSED:   {drawer_cfg->drawer.no = DRAWER_NO_1; enter_seq_drawer_request(handle); } break;
+    case EVT_EXT_BTN_DOWN_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_2; enter_seq_drawer_request(handle); } break;
+    case EVT_EXT_BTN_LEFT_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_3; enter_seq_drawer_request(handle); } break;
+    case EVT_EXT_BTN_RIGHT_AND_ENTER_PRESSED:{drawer_cfg->drawer.no = DRAWER_NO_4; enter_seq_drawer_request(handle); } break;
 
     default:
         break;
@@ -254,7 +266,7 @@ static void main_menu_on_react(ui_handle_t handle)
 
 
 /////////////////////////////////// Drawer Request State  ///////////////////////////////////////////
-void drawer_request_enter_seq(ui_handle_t handle)
+void enter_seq_drawer_request(ui_handle_t handle)
 {
     ui_fsm_dbg("enter seq \t[ drawer request ]");
     fsm_set_next_state(handle, ST_UI_DRAWER_ST_REQUEST);
@@ -288,7 +300,85 @@ void drawer_request_on_react(ui_handle_t handle)
     }
 }
 
-/////////////////////////////////// Main Menu State  ///////////////////////////////////////////
+/////////////////////////////////// Feeder Select State  ///////////////////////////////////////////
+void enter_sequence_drawer_select(ui_handle_t handle)
+{
+    ui_fsm_dbg("\t enter seq [ feeder select ] \r\n");
+    fsm_set_next_state(handle, ST_UI_DRAWER_SELECT);
+    entry_action_drawer_select(handle);
+}
+static void entry_action_drawer_select(ui_handle_t handle)
+{
+    /*deselect main window */
+    ui_update_item_selection(handle, UI_ITEM_DESELECT);
+    handle->iface.cursor.item = DRAWER_NO_1;
+}
+static void drawer_select_on_react(ui_handle_t handle)
+{
+    uint8_t item = handle->iface.cursor.item;
+
+    switch (handle->event.btn)
+    {
+
+    case EVT_EXT_BTN_LEFT_PRESSED : 
+    case EVT_EXT_BTN_RIGHT_PRESSED: {
+        drawer_select_key_pressed(handle);
+        time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+    } break;
+
+    case EVT_EXT_BTN_UP_PRESSED:    break;
+    case EVT_EXT_BTN_DOWN_PRESSED:  break;
+    case EVT_EXT_BTN_ENTER_PRESSED: { drawer_select_enter_pressed(handle); } break;
+    
+    default:
+        break;
+    };
+
+    /* item cursor inactivity timer event */
+    if(time_event_is_raised(&handle->event.time.cursor_inact) == true)
+    {
+        /*clean last selection */
+        ui_drawers_config_t *config = &handle->iface.ui.drawers;
+        config->select.main = UI_ITEM_DESELECT;
+        ui_drawers_set_config(&ui_drawers, config);
+        time_event_stop(&handle->event.time.cursor_inact);
+
+        /*go to main menu */
+        enter_seq_main_menu(handle);
+    }
+}
+
+/////////////////////////////////// Feeder Config State  ///////////////////////////////////////////
+
+static void enter_sequence_feeder_config(ui_handle_t handle)
+{
+    ui_fsm_dbg("\t enter seq [ feeder config ] \r\n");
+    fsm_set_next_state(handle, ST_UI_FEEDER_CONFIG);
+    entry_action_feeder_config(handle);
+}
+
+static void entry_action_feeder_config(ui_handle_t handle)
+{
+
+}
+
+static void feeder_config_on_react(ui_handle_t handle)
+{
+    switch (handle->event.btn)
+    {
+
+    case EVT_EXT_BTN_LEFT_PRESSED : break;
+    case EVT_EXT_BTN_RIGHT_PRESSED: break;
+    case EVT_EXT_BTN_UP_PRESSED:    break;
+    case EVT_EXT_BTN_DOWN_PRESSED:  break;
+    case EVT_EXT_BTN_ENTER_PRESSED: break;
+    
+    default:
+        break;
+    };
+
+    enter_seq_main_menu(handle);
+}
 
 
 
@@ -335,12 +425,48 @@ static void gui_update_battery(ui_handle_t handle)
     ui_battery_set_config(&ui_battery, ui_config);
 }
 
+static void drawer_select_enter_pressed(ui_handle_t handle)
+{
+    switch (handle->iface.cursor.item)
+    {
+        if(handle->iface.ui.drawers.select.single = UI_ITEM_SELECT)
+        {
+            //enter_sequence_feeder_menu();
+        }
+    }
+}
+
+static void drawer_select_key_pressed(ui_handle_t handle)
+{
+    uint8_t item = handle->iface.cursor.item;
+    ui_drawers_config_t *config = &handle->iface.ui.drawers;
+
+    /*clean previous drawer selection */
+    config->drawer.no = handle->iface.cursor.item;
+    config->select.single = UI_ITEM_DESELECT;
+    ui_drawers_set_config(&ui_drawers, config);
+
+    /*set new drawer number */
+    if(handle->event.btn == EVT_EXT_BTN_LEFT_PRESSED)
+        handle->iface.cursor.item = (item-- % DRAWERn);
+    else if (handle->event.btn == EVT_EXT_BTN_RIGHT_PRESSED)
+        handle->iface.cursor.item = (item++ % DRAWERn);
+
+    /*update drawer selection  */
+    config->drawer.no = handle->iface.cursor.item;
+    config->select.single = UI_ITEM_SELECT;
+    ui_drawers_set_config(&ui_drawers, config);
+}
+
 static void main_menu_enter_pressed(ui_handle_t handle)
 {
     /* define enter sequence according item selected */
     switch (handle->iface.cursor.item)
     {
-    case UI_MAIN_MENU_ITEM_DRAWERS:    {  /*enter_sequence_drawer_selection() */} break;
+    case UI_MAIN_MENU_ITEM_DRAWERS:    {  
+        if(handle->iface.ui.drawers.select.main == UI_ITEM_SELECT)
+            enter_sequence_drawer_select(handle); 
+    } break;
     case UI_MAIN_MENU_ITEM_THERMOSTAT: {  /*enter_sequence_thermostat_menu() */ } break;
     case UI_MAIN_MENU_ITEM_PETCALL:    {  /*enter_sequence_petcall_menu() */    } break;
     case UI_MAIN_MENU_ITEM_BATTERY:    {  /*enter_sequence_battery_menu() */    } break;
@@ -356,8 +482,7 @@ static void ui_update_item_selection(ui_handle_t handle, ui_select_t select)
     {
     case UI_MAIN_MENU_ITEM_DRAWERS:
     {
-        ui_drawers_config_t *config;
-        config = &handle->iface.ui.drawers;
+        ui_drawers_config_t *config = &handle->iface.ui.drawers;
         config->select.main = select;
         ui_drawers_set_config(&ui_drawers, config);
     }
@@ -365,8 +490,7 @@ static void ui_update_item_selection(ui_handle_t handle, ui_select_t select)
 
     case UI_MAIN_MENU_ITEM_THERMOSTAT:
     {
-        ui_thermostat_config_t *config;
-        config = &handle->iface.ui.therm;
+        ui_thermostat_config_t *config = &handle->iface.ui.therm;
         config->select = select;
         ui_thermostat_set_config(&ui_thermostat, config);
     }
@@ -374,8 +498,7 @@ static void ui_update_item_selection(ui_handle_t handle, ui_select_t select)
 
     case UI_MAIN_MENU_ITEM_PETCALL:
     {
-        ui_petcall_config_t *config;
-        config = &handle->iface.ui.petcall;
+        ui_petcall_config_t *config = &handle->iface.ui.petcall;
         config->select = select;
         ui_petcall_set_config(&ui_petcall, config);
     }
@@ -383,8 +506,7 @@ static void ui_update_item_selection(ui_handle_t handle, ui_select_t select)
 
     case UI_MAIN_MENU_ITEM_BATTERY:
     {
-        ui_battery_config_t *config;
-        config = &handle->iface.ui.battery;
+        ui_battery_config_t *config = &handle->iface.ui.battery;
         config->select = select;
         ui_battery_set_config(&ui_battery, config);
     }
@@ -392,8 +514,7 @@ static void ui_update_item_selection(ui_handle_t handle, ui_select_t select)
 
     case UI_MAIN_MENU_ITEM_TIME_DATE:
     {
-        ui_date_time_config_t *config;
-        config = &handle->iface.ui.dt_menu;
+        ui_date_time_config_t *config = &handle->iface.ui.dt_menu;
         config->select = select;
         ui_date_time_set_config(&ui_date_time, config);
     }
