@@ -1,2 +1,0 @@
-../Core/Src/API/time_event/time_irq_update.c:22:6:HAL_SYSTICK_Callback	8	static
-../Core/Src/API/time_event/time_irq_update.c:32:6:time_events_poll_update	8	static
