@@ -14,8 +14,10 @@
 
 typedef enum
 {
-    TEMP_CELSIUS,
-    TEMP_FAHRENHEIT,
+    TEMP_UNITS_CELSIUS,
+    TEMP_UNITS_FAHRENHEIT,
+    TEMP_UNITSn,
 }temperature_unit_t;
+
 
 #endif

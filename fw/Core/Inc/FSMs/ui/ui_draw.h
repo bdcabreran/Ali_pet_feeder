@@ -22,6 +22,8 @@
 extern BITMAPSTRUCT battery_icon[];
 extern BITMAPSTRUCT batt_error_icon[];
 extern BITMAPSTRUCT batt_warning_icon[];
+extern BITMAPSTRUCT thermostat[];
+
 
 #define DRAWER_NUMBER_FONT Font20
 #define DRAWER_SELECTION_COLOR LCD_COLOR_BLUE
@@ -199,7 +201,6 @@ typedef struct
 }ui_date_time_config_t;
 
 //------------- UI Thermostat Icon ----------------//
-
 typedef struct
 {
     struct { ui_window_t main; } win;
@@ -216,8 +217,13 @@ typedef struct
 
 typedef struct
 {
-    uint8_t temperature;
-    temperature_unit_t units;
+    struct
+    {
+        uint8_t val;
+        temperature_unit_t unit;
+    }temp;
+
+    ui_select_t select;
 }ui_thermostat_config_t;
 
 
@@ -247,13 +253,13 @@ typedef struct
 }ui_thermostat_menu_config_t;
 
 
-extern ui_battery_t ui_battery;
+extern ui_battery_t    ui_battery;
+extern ui_drawers_t    ui_drawers;
 extern ui_thermostat_t ui_thermostat;
-extern ui_drawers_t ui_drawers;
-extern ui_date_time_menu_t ui_date_time;
+
+extern ui_date_time_menu_t    ui_date_time;
+extern ui_feeder_menu_t       ui_feeder_menu;
 extern ui_thermostat_config_t ui_therm_conf;
-extern ui_feeder_menu_t ui_feeder_menu;
-extern ui_date_time_menu_t ui_date_time_menu;
 
 
 /* Battery Icon related functions */
@@ -277,9 +283,9 @@ void ui_date_time_show(ui_date_time_menu_t *menu, bool show);
 void ui_date_time_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *config);
 
 /* Thermostat icon Functions */
-void ui_thermostat_icon_init(ui_date_time_menu_t *menu);
-void ui_thermostat_icon_show(ui_date_time_menu_t *menu);
-void ui_thermostat_icon_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *config);
+void ui_thermostat_init(ui_thermostat_t *therm);
+void ui_thermostat_show(ui_thermostat_t *therm, bool show);
+void ui_thermostat_set_config(ui_thermostat_t *therm, ui_thermostat_config_t *config);
 
 /* Thermostat Config Menu Functions */
 void ui_thermostat_menu_init(ui_date_time_menu_t *menu);

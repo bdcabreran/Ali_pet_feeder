@@ -22,12 +22,12 @@ typedef struct
 } pos_t;
 
 static const char *am_fm_str[TIMEn] = {"AM", "FM"}; 
-
+static const char *c_f_str[TEMP_UNITSn] = {"°C", "°F"}; 
 
 
 //////////////////////////////////// Static Common Functions  //////////////////////////////////////////////
 
-static void ui_show_win(ui_window_t *win, uint16_t color, bool show)
+static void ui_draw_window(ui_window_t *win, uint16_t color, bool show)
 {
     if (show == true)
     {
@@ -43,7 +43,7 @@ static void ui_show_win(ui_window_t *win, uint16_t color, bool show)
     }
 }
 
-static void ui_clear_win(ui_window_t *win)
+static void ui_clear_window(ui_window_t *win)
 {
     BSP_LCD_SetTextColor(LCD_DEFAULT_BACKCOLOR);
     BSP_LCD_FillRect(win->x, win->y, win->w, win->h);
@@ -55,7 +55,21 @@ static void ui_draw_icon(ui_icon_t *icon)
     BSP_LCD_DrawBitmap(icon->x, icon->y, (uint8_t*)icon->ptr);
 }
 
-static void ui_fill_win(ui_window_t *win, uint16_t color)
+static void ui_draw_circle(ui_window_t *win, uint8_t radio, uint16_t color)
+{
+    BSP_LCD_SetTextColor(color);
+    BSP_LCD_DrawCircle(win->x, win->y, radio);
+    BSP_LCD_SetTextColor(LCD_DEFAULT_TEXTCOLOR);
+}
+
+static void ui_fill_circle(ui_window_t *win, uint8_t radio, uint16_t color)
+{
+    BSP_LCD_SetTextColor(color);
+    BSP_LCD_FillCircle(win->x, win->y, radio);
+    BSP_LCD_SetTextColor(LCD_DEFAULT_TEXTCOLOR);
+}
+
+static void ui_fill_window(ui_window_t *win, uint16_t color)
 {
     BSP_LCD_SetTextColor(color);
     BSP_LCD_FillRect(win->x, win->y, win->w, win->h);
@@ -111,7 +125,7 @@ void ui_battery_icon_show(ui_battery_t *batt, bool show)
     else
     {
         /*Clear battery screen section */
-        ui_clear_win(&batt->win.main);
+        ui_clear_window(&batt->win.main);
     }
 }
 
@@ -127,28 +141,28 @@ static void ui_battery_draw_charge(ui_battery_t *batt, uint8_t batt_lvl)
     /*Critical battery level */
     if(width > 0 && width < 7)
     {
-        ui_fill_win(&batt->shape.charge, LCD_COLOR_RED);
+        ui_fill_window(&batt->shape.charge, LCD_COLOR_RED);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR);   
     }
 
     /*Low battery level */
     if(width >= 7  && width < 30)
     {
-        ui_fill_win(&batt->shape.charge, LCD_COLOR_YELLOW);
+        ui_fill_window(&batt->shape.charge, LCD_COLOR_YELLOW);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR); 
     }
 
     /*Medium battery level */
     if(width >= 30  && width < 70)
     {
-        ui_fill_win(&batt->shape.charge, LCD_COLOR_YELLOW);
+        ui_fill_window(&batt->shape.charge, LCD_COLOR_YELLOW);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR); 
     }
 
     /*High battery level */
     if(width >= 70  && width <= 100)
     {
-        ui_fill_win(&batt->shape.charge, LCD_COLOR_GREEN);
+        ui_fill_window(&batt->shape.charge, LCD_COLOR_GREEN);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR); 
     }
 
@@ -159,12 +173,12 @@ void ui_battery_icon_set_config(ui_battery_t *batt, ui_battery_config *config)
 {
     /*Paint select battery item property*/
     if (config->select == UI_ITEM_SELECT)
-        ui_show_win(&batt->win.main, UI_SELECTION_COLOR, true);
+        ui_draw_window(&batt->win.main, UI_SELECTION_COLOR, true);
     else
-        ui_show_win(&batt->win.main, LCD_DEFAULT_BACKCOLOR, false);
+        ui_draw_window(&batt->win.main, LCD_DEFAULT_BACKCOLOR, false);
     
     /*Clear charging info */
-    ui_clear_win(&batt->shape.charge); 
+    ui_clear_window(&batt->shape.charge); 
 
     switch (config->set)
     {
@@ -201,13 +215,13 @@ void ui_drawers_show(ui_drawers_t *drawers, bool show)
 
     if(show)
     {
-        ui_show_win(&drawers->shape.main, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_window(&drawers->shape.main, LCD_DEFAULT_TEXTCOLOR, true);
 
         for (uint8_t i = 0; i < DRAWERn; i++)
         {
             drawers->shape.single.x = drawers->shape.main.x + drawer_pos[i].x;
             drawers->shape.single.y = drawers->shape.main.y + drawer_pos[i].y;
-            ui_show_win(&drawers->shape.single, LCD_DEFAULT_TEXTCOLOR, true);
+            ui_draw_window(&drawers->shape.single, LCD_DEFAULT_TEXTCOLOR, true);
 
             ui_window_t text_pos;
             text_pos.x = drawers->shape.single.x + 15;
@@ -218,7 +232,7 @@ void ui_drawers_show(ui_drawers_t *drawers, bool show)
     }
     else
     {
-        ui_clear_win(&drawers->win.main);
+        ui_clear_window(&drawers->win.main);
     }
 }
 
@@ -231,11 +245,11 @@ void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawer_config *config)
     if (config->select.main == UI_ITEM_SELECT)
     {
         font = &Font24;
-        ui_show_win(&drawers->win.main, UI_SELECTION_COLOR, true);
+        ui_draw_window(&drawers->win.main, UI_SELECTION_COLOR, true);
     }
     else
     {
-        ui_show_win(&drawers->win.main, UI_SELECTION_COLOR, true);
+        ui_draw_window(&drawers->win.main, UI_SELECTION_COLOR, true);
     }
 
     /*Paint select battery item property*/
@@ -244,7 +258,7 @@ void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawer_config *config)
         static const pos_t drawer_pos[DRAWERn] = { {7, 7}, {66, 7}, {7, 41}, {66, 41} };
         drawers->shape.single.x = drawers->shape.main.x + drawer_pos[config->drawer.no].x;
         drawers->shape.single.y = drawers->shape.main.y + drawer_pos[config->drawer.no].y;
-        ui_show_win(&drawers->shape.single, UI_SELECTION_COLOR, true);
+        ui_draw_window(&drawers->shape.single, UI_SELECTION_COLOR, true);
 
         ui_window_t text_pos;
         text_pos.x = drawers->shape.single.x + 15;
@@ -349,7 +363,7 @@ void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show)
     }
     else
     {
-        ui_clear_win(&menu->win.main);
+        ui_clear_window(&menu->win.main);
     }
 }
 
@@ -413,17 +427,17 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_t *confi
 
         case FEEDER_CNF_DATE_DAILY: {
 
-            ui_show_win(&menu->win.daily, color, true);
+            ui_draw_window(&menu->win.daily, color, true);
             ui_window_t win = {.x = menu->win.daily.x + 1, .y = menu->win.daily.y + 1, \
                                 .h = menu->win.daily.h - 2, .w = menu->win.daily.w - 2};
 
             if(config->date.daily_st == FEEDER_DAILY_MEAL_ENABLE)
             {
-                ui_fill_win(&win, LCD_COLOR_GREEN);
+                ui_fill_window(&win, LCD_COLOR_GREEN);
             }
             else
             {
-                ui_fill_win(&win, LCD_DEFAULT_BACKCOLOR);
+                ui_fill_window(&win, LCD_DEFAULT_BACKCOLOR);
             }
 
          } break;
@@ -465,11 +479,11 @@ void ui_date_time_show(ui_date_time_menu_t *menu, bool show)
         ui_display_string(&menu->date.day, "--/", &Font16, LCD_DEFAULT_TEXTCOLOR);
         ui_display_string(&menu->date.month, "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
 
-        ui_show_win(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
     }
     else
     {
-        ui_clear_win(&menu->win.main);
+        ui_clear_window(&menu->win.main);
     }
 }
 
@@ -510,9 +524,63 @@ void ui_date_time_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *c
 
 //////////////////////////////////// Date Time Config Menu Related Functions ///////////////////////////////////////
 /* Thermostat icon Functions */
-void ui_thermostat_icon_init(ui_date_time_menu_t *menu);
-void ui_thermostat_icon_show(ui_date_time_menu_t *menu);
-void ui_thermostat_icon_set_config(ui_date_time_menu_t *menu, date_time_config_t *config);
+void ui_thermostat_init(ui_thermostat_t *menu)
+{
+    menu->win.main.x = 157
+    menu->win.main.y = 11;
+    menu->win.main.w = 104;
+    menu->win.main.h = 81;
+
+    menu->icon.therm.ptr = &thermostat;
+    menu->icon.therm.x = menu->win.main.x + 1;
+    menu->icon.therm.y = menu->win.main.y + 4;
+    
+    menu->shape.temp.x = menu->win.main.x + 13;
+    menu->shape.temp.y = menu->win.main.y + 11;
+    menu->shape.temp.h = 49;
+    menu->shape.temp.w = 4;
+
+    menu->shape.circle.x = menu->win.main.x + 7;
+    menu->shape.circle.y = menu->win.main.y + 52;
+
+    menu->text.temp.x = menu->win.main.x + 38; 
+    menu->text.temp.y = menu->win.main.y + 21;
+}
+
+void ui_thermostat_show(ui_thermostat_t *menu, bool show)
+{
+    if(show)
+    {
+        ui_draw_icon(&menu->icon);
+        ui_draw_window(&menu->shape.temp);
+        ui_draw_circle(&menu->shape.circle, 8, LCD_DEFAULT_TEXTCOLOR)
+        ui_display_string(&menu->text, "--C", &Font16, LCD_DEFAULT_TEXTCOLOR);
+    }
+    else 
+    {
+        ui_clear_window(&menu->win.main);
+    }
+
+}
+
+void ui_thermostat_set_config(ui_thermostat_t *menu, ui_thermostat_config_t *config)
+{
+    uint8_t str[7];
+    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
+
+    if (config->select == UI_ITEM_SELECT)
+        color = UI_SELECTION_COLOR;
+
+    /*!< TODO: make the hight change with the temperature*/
+    ui_draw_icon(&menu->icon);
+    ui_draw_window(&menu->shape.temp);
+    ui_fill_window(&menu->shape.temp);
+    ui_draw_circle(&menu->shape.circle, 8, LCD_DEFAULT_TEXTCOLOR);
+    ui_fill_circle(&menu->shape.circle, 7, LCD_DEFAULT_TEXTCOLOR);
+    sprintf(str, "%d%s", config->temp.val, c_f_str[config->temp.unit]) 
+    ui_display_string(&menu->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR);
+}
+
 
 //////////////////////////////////// Date Time Config Menu Related Functions ///////////////////////////////////////
 

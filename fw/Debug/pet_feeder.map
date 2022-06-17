@@ -457,37 +457,37 @@ Discarded input sections
  .comment       0x0000000000000000       0x51 ./Core/Icons/recording_icon.o
  .ARM.attributes
                 0x0000000000000000       0x2d ./Core/Icons/recording_icon.o
- .group         0x0000000000000000        0xc ./Core/Icons/thermostat_icon.o
- .group         0x0000000000000000        0xc ./Core/Icons/thermostat_icon.o
- .group         0x0000000000000000        0xc ./Core/Icons/thermostat_icon.o
- .group         0x0000000000000000        0xc ./Core/Icons/thermostat_icon.o
- .group         0x0000000000000000        0xc ./Core/Icons/thermostat_icon.o
- .group         0x0000000000000000        0xc ./Core/Icons/thermostat_icon.o
- .group         0x0000000000000000        0xc ./Core/Icons/thermostat_icon.o
- .group         0x0000000000000000        0xc ./Core/Icons/thermostat_icon.o
- .text          0x0000000000000000        0x0 ./Core/Icons/thermostat_icon.o
- .data          0x0000000000000000        0x0 ./Core/Icons/thermostat_icon.o
- .bss           0x0000000000000000        0x0 ./Core/Icons/thermostat_icon.o
- .rodata.thermostat_icon
-                0x0000000000000000     0x13a0 ./Core/Icons/thermostat_icon.o
- .debug_info    0x0000000000000000      0x204 ./Core/Icons/thermostat_icon.o
- .debug_abbrev  0x0000000000000000       0x87 ./Core/Icons/thermostat_icon.o
+ .group         0x0000000000000000        0xc ./Core/Icons/thermostat.o
+ .group         0x0000000000000000        0xc ./Core/Icons/thermostat.o
+ .group         0x0000000000000000        0xc ./Core/Icons/thermostat.o
+ .group         0x0000000000000000        0xc ./Core/Icons/thermostat.o
+ .group         0x0000000000000000        0xc ./Core/Icons/thermostat.o
+ .group         0x0000000000000000        0xc ./Core/Icons/thermostat.o
+ .group         0x0000000000000000        0xc ./Core/Icons/thermostat.o
+ .group         0x0000000000000000        0xc ./Core/Icons/thermostat.o
+ .text          0x0000000000000000        0x0 ./Core/Icons/thermostat.o
+ .data          0x0000000000000000        0x0 ./Core/Icons/thermostat.o
+ .bss           0x0000000000000000        0x0 ./Core/Icons/thermostat.o
+ .rodata.thermostat
+                0x0000000000000000     0x13a0 ./Core/Icons/thermostat.o
+ .debug_info    0x0000000000000000      0x204 ./Core/Icons/thermostat.o
+ .debug_abbrev  0x0000000000000000       0x87 ./Core/Icons/thermostat.o
  .debug_aranges
-                0x0000000000000000       0x18 ./Core/Icons/thermostat_icon.o
- .debug_macro   0x0000000000000000       0x88 ./Core/Icons/thermostat_icon.o
- .debug_macro   0x0000000000000000      0xa6c ./Core/Icons/thermostat_icon.o
- .debug_macro   0x0000000000000000       0x22 ./Core/Icons/thermostat_icon.o
- .debug_macro   0x0000000000000000       0x8e ./Core/Icons/thermostat_icon.o
- .debug_macro   0x0000000000000000       0x51 ./Core/Icons/thermostat_icon.o
- .debug_macro   0x0000000000000000      0x103 ./Core/Icons/thermostat_icon.o
- .debug_macro   0x0000000000000000       0x6a ./Core/Icons/thermostat_icon.o
- .debug_macro   0x0000000000000000      0x1df ./Core/Icons/thermostat_icon.o
- .debug_macro   0x0000000000000000       0x10 ./Core/Icons/thermostat_icon.o
- .debug_line    0x0000000000000000      0x3b2 ./Core/Icons/thermostat_icon.o
- .debug_str     0x0000000000000000     0x3d50 ./Core/Icons/thermostat_icon.o
- .comment       0x0000000000000000       0x51 ./Core/Icons/thermostat_icon.o
+                0x0000000000000000       0x18 ./Core/Icons/thermostat.o
+ .debug_macro   0x0000000000000000       0x88 ./Core/Icons/thermostat.o
+ .debug_macro   0x0000000000000000      0xa6c ./Core/Icons/thermostat.o
+ .debug_macro   0x0000000000000000       0x22 ./Core/Icons/thermostat.o
+ .debug_macro   0x0000000000000000       0x8e ./Core/Icons/thermostat.o
+ .debug_macro   0x0000000000000000       0x51 ./Core/Icons/thermostat.o
+ .debug_macro   0x0000000000000000      0x103 ./Core/Icons/thermostat.o
+ .debug_macro   0x0000000000000000       0x6a ./Core/Icons/thermostat.o
+ .debug_macro   0x0000000000000000      0x1df ./Core/Icons/thermostat.o
+ .debug_macro   0x0000000000000000       0x10 ./Core/Icons/thermostat.o
+ .debug_line    0x0000000000000000      0x3b2 ./Core/Icons/thermostat.o
+ .debug_str     0x0000000000000000     0x3d50 ./Core/Icons/thermostat.o
+ .comment       0x0000000000000000       0x51 ./Core/Icons/thermostat.o
  .ARM.attributes
-                0x0000000000000000       0x2d ./Core/Icons/thermostat_icon.o
+                0x0000000000000000       0x2d ./Core/Icons/thermostat.o
  .group         0x0000000000000000        0xc ./Core/Icons/trash_icon.o
  .group         0x0000000000000000        0xc ./Core/Icons/trash_icon.o
  .group         0x0000000000000000        0xc ./Core/Icons/trash_icon.o
@@ -5494,7 +5494,7 @@ LOAD ./Core/Icons/drawers_icon.o
 LOAD ./Core/Icons/enable_icon.o
 LOAD ./Core/Icons/play_icon.o
 LOAD ./Core/Icons/recording_icon.o
-LOAD ./Core/Icons/thermostat_icon.o
+LOAD ./Core/Icons/thermostat.o
 LOAD ./Core/Icons/trash_icon.o
 LOAD ./Core/Src/API/buttons/buttons.o
 LOAD ./Core/Src/API/event_queue/event_queue.o

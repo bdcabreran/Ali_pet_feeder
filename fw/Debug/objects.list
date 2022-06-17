@@ -12,7 +12,7 @@
 "./Core/Icons/enable_icon.o"
 "./Core/Icons/play_icon.o"
 "./Core/Icons/recording_icon.o"
-"./Core/Icons/thermostat_icon.o"
+"./Core/Icons/thermostat.o"
 "./Core/Icons/trash_icon.o"
 "./Core/Src/API/buttons/buttons.o"
 "./Core/Src/API/event_queue/event_queue.o"

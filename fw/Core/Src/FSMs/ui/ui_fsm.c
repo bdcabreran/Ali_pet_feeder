@@ -150,11 +150,8 @@ static void enter_seq_main_menu(ui_handle_t handle)
 static void entry_action_main_menu(ui_handle_t handle)
 {
     ui_battery_init(&ui_battery);
-    ui_battery_show(&ui_battery, true);
     ui_drawers_init(&ui_drawers);
-    ui_date_time_init(&ui_date_time_menu);
-    //ui_mic_menu_init(&ui_mic_menu)
-    //ui_thermostat_menu_init(&ui_therm_menu)
+    ui_thermostat_init(&ui_thermostat);
 
     time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
 }
