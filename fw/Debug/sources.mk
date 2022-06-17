@@ -30,6 +30,9 @@ Core/Src/API/ring_buffer \
 Core/Src/API/time_event \
 Core/Src/FSMs/drawer \
 Core/Src/FSMs/event_manager \
+Core/Src/FSMs/feeder \
+Core/Src/FSMs/power \
+Core/Src/FSMs/temperature \
 Core/Src/FSMs/ui \
 Core/Src \
 Core/Startup \

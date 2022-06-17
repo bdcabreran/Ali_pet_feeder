@@ -31,6 +31,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/FSMs/event_manager/event_manager_fsm.h \
  ../Core/Inc/API/event_queue/event_queue.h \
  ../Core/Inc/API/ring_buffer/ring_buffer.h ../Core/Inc/FSMs/ui/ui_fsm.h \
+ ../Core/Inc/FSMs/drawer/drawer_fsm.h ../Core/Inc/FSMs/power/power_fsm.h \
+ ../Core/Inc/FSMs/feeder/feeder_fsm.h \
+ ../Core/Inc/FSMs/temperature/temp_ctrl_fsm.h \
  ../Core/Inc/API/buttons/buttons.h \
  ../Core/Inc/API/time_event/time_event.h ../Core/Inc/target_version.h
 ../Core/Inc/main.h:
@@ -67,6 +70,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/API/event_queue/event_queue.h:
 ../Core/Inc/API/ring_buffer/ring_buffer.h:
 ../Core/Inc/FSMs/ui/ui_fsm.h:
+../Core/Inc/FSMs/drawer/drawer_fsm.h:
+../Core/Inc/FSMs/power/power_fsm.h:
+../Core/Inc/FSMs/feeder/feeder_fsm.h:
+../Core/Inc/FSMs/temperature/temp_ctrl_fsm.h:
 ../Core/Inc/API/buttons/buttons.h:
 ../Core/Inc/API/time_event/time_event.h:
 ../Core/Inc/target_version.h:

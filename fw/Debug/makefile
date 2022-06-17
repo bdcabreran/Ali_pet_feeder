@@ -13,6 +13,9 @@ RM := rm -rf
 -include Core/lcd/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/FSMs/ui/subdir.mk
+-include Core/Src/FSMs/temperature/subdir.mk
+-include Core/Src/FSMs/power/subdir.mk
+-include Core/Src/FSMs/feeder/subdir.mk
 -include Core/Src/FSMs/event_manager/subdir.mk
 -include Core/Src/FSMs/drawer/subdir.mk
 -include Core/Src/API/time_event/subdir.mk

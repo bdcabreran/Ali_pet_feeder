@@ -12,6 +12,11 @@
         "stdbool.h": "c",
         "event_manager_fsm.h": "c",
         "power_fsm.h": "c",
-        "feeder_fsm.h": "c"
-    }
+        "feeder_fsm.h": "c",
+        "drawer_fsm.h": "c",
+        "temp_ctrl_fsm.h": "c"
+    },
+    "cSpell.words": [
+        "petcall"
+    ]
 }

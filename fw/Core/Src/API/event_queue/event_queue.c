@@ -24,13 +24,13 @@
 static void event_print_info(event_t *evt)
 {
     evt_queue_dbg("event info : \r\n");
-    evt_queue_dbg("FSM SRC : [0x%X]\r\n", evt->fsm_src);
-    evt_queue_dbg("FSM DST : [0x%X]\r\n", evt->fsm_dst);
-    evt_queue_dbg("FSM EVT : [0x%X]\r\n", evt->evt);
-    evt_queue_dbg("FSM Payload Len : [%d]\r\n", evt->header.payload_len);
+    evt_queue_dbg("FSM SRC : [0x%X]\r\n", evt->fsm.src);
+    evt_queue_dbg("FSM DST : [0x%X]\r\n", evt->fsm.dst);
+    evt_queue_dbg("FSM EVT : [0x%X]\r\n", evt->name);
+    evt_queue_dbg("FSM Payload Len : [%d]\r\n", evt->data.len);
 
-    if(evt->header.payload_len)
-        print_buffer('X', (uint8_t*)evt->payload.buff, evt->header.payload_len);
+    if(evt->data.len)
+        print_buffer('X', (uint8_t*)evt->data.buff, evt->data.len);
 }
 
 void event_queue_init(event_queue_t *queue, uint8_t *buff, uint8_t buff_len)
@@ -52,9 +52,9 @@ uint8_t event_queue_write(event_queue_t *queue, event_t *evt)
     evt_queue_dbg("writing event \r\n");
     event_print_info(evt);
 
-    write_st = ring_buffer_write(queue->rb, (uint8_t *)&evt->header, EVENT_HEADER_SIZE);
-    if (evt->header.payload_len)
-        write_st = ring_buffer_write(queue->rb, (uint8_t *)evt->payload.buff, evt->header.payload_len);
+    write_st = ring_buffer_write(queue->rb, (uint8_t *)&evt, EVENT_HEADER_SIZE);
+    if (evt->data.len)
+        write_st = ring_buffer_write(queue->rb, (uint8_t *)evt->data.buff, evt->data.len);
 
     if (write_st == RING_BUFF_OK)
         queue->pending_cnt++;
@@ -71,9 +71,9 @@ uint8_t event_queue_read(event_queue_t *queue, event_t *evt)
     if (event_queue_get_pending(queue))
     {
         evt_queue_dbg("reading event \r\n");
-        read_st = ring_buffer_read(queue->rb, (uint8_t *)&evt->header, EVENT_HEADER_SIZE);
-        if (evt->header.payload_len)
-            read_st = ring_buffer_read(queue->rb, (uint8_t *)evt->payload.buff, evt->header.payload_len);
+        read_st = ring_buffer_read(queue->rb, (uint8_t *)&evt, EVENT_HEADER_SIZE);
+        if (evt->data.len)
+            read_st = ring_buffer_read(queue->rb, (uint8_t *)evt->data.buff, evt->data.len);
 
         if (read_st == RING_BUFF_OK)
         {
@@ -96,9 +96,9 @@ uint8_t event_queue_fetch(event_queue_t *queue, event_t *evt)
     if (event_queue_get_pending(queue))
     {
         evt_queue_dbg("fetching event \r\n");
-        read_st = ring_buffer_fetch(queue->rb, (uint8_t *)&evt->header, EVENT_HEADER_SIZE);
-        if (evt->header.payload_len)
-            read_st = ring_buffer_fetch(queue->rb, (uint8_t *)evt->payload.buff, evt->header.payload_len);
+        read_st = ring_buffer_fetch(queue->rb, (uint8_t *)&evt, EVENT_HEADER_SIZE);
+        if (evt->data.len)
+            read_st = ring_buffer_fetch(queue->rb, (uint8_t *)evt->data.buff, evt->data.len);
 
         if (read_st == RING_BUFF_OK)
             event_print_info(evt);

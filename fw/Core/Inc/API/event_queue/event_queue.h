@@ -4,27 +4,26 @@
 
 #include "ring_buffer.h"
 
-#define EVENT_MAX_PAYLOAD_SIZE (4*20) //80 bytes per packet
-#define EVENT_HEADER_SIZE      (sizeof(event_header_t))
-
-typedef struct 
-{
-    uint8_t name;
-    uint8_t fsm_src; 
-    uint8_t fsm_dst;
-    uint8_t payload_len;
-}event_header_t;
+#define EVENT_MAX_PAYLOAD_SIZE (4*10) // 40 bytes per packet
+#define EVENT_HEADER_SIZE      (4)    // four first bytes
 
 typedef struct
 {
+    uint8_t src; 
+    uint8_t dst;
+}event_fsm_t;
+
+typedef struct
+{
+    uint8_t len;
     uint8_t buff[EVENT_MAX_PAYLOAD_SIZE];
-}event_payload_t;
-
+}event_data_t;
 
 typedef struct
 {
-    event_header_t  header;
-    event_payload_t payload;
+    uint8_t      name;
+    event_fsm_t  fsm;
+    event_data_t data;
 }event_t;
 
 typedef struct 

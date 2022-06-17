@@ -62,7 +62,13 @@ typedef struct
 typedef struct
 {
     event_queue_t queue;
-    drawer_no_t drawer;
+
+    struct
+    {
+        ui_drawers_config_t drawers;
+        ui_battery_config_t battery;
+    }ui;
+
 }ui_iface_t;
 
 struct ui_fsm_t
@@ -82,6 +88,12 @@ static void main_menu_on_react(ui_handle_t handle);
 static void drawer_request_enter_seq(ui_handle_t handle);
 static void entry_action_drawer_request(ui_handle_t handle);
 static void drawer_request_on_react(ui_handle_t handle);
+
+
+//////////////////////// Static Miscellaneous functions ////////////////////////////////////////
+static void gui_update_battery(ui_handle_t handle);
+
+
 
 ////////////////////////////// Public function declaration //////////////////////////////////////
 
@@ -127,12 +139,12 @@ void ui_fsm_time_update(ui_handle_t handle)
 	}
 }
 
-void ui_fsm_set_ext_event(ui_handle_t handle, event_t *event)
+void ui_fsm_write_event(ui_handle_t handle, event_t *event)
 {
-    if(event->header.fsm_src == BTN_FSM)
+    if(event->fsm.src == BTN_FSM)
     {
         ui_fsm_dbg("btn event detected\r\n");
-        handle->event.btn = event->header.name;
+        handle->event.btn = event->name;
     }
 }
 
@@ -149,9 +161,11 @@ static void enter_seq_main_menu(ui_handle_t handle)
 
 static void entry_action_main_menu(ui_handle_t handle)
 {
+    /*Initialize UI elements */
     ui_battery_init(&ui_battery);
-    ui_drawers_init(&ui_drawers);
-    ui_thermostat_init(&ui_thermostat);
+    ui_battery_init(&ui_thermostat);
+    ui_battery_init(&ui_drawers);    
+    ui_feeder_menu_init(&ui_feeder_menu);
 
     time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
 }
@@ -162,25 +176,32 @@ static void main_menu_on_react(ui_handle_t handle)
     /*navigation key update item selection*/
     switch (handle->event.btn)
     {
-    switch (handle->event.btn)
-    {
-        case EVT_EXT_BTN_UP_PRESSED:               break;
-        case EVT_EXT_BTN_DOWN_PRESSED:             break;
-        case EVT_EXT_BTN_LEFT_PRESSED:             break;
-        case EVT_EXT_BTN_RIGHT_PRESSED:            break;
-        case EVT_EXT_BTN_ENTER_PRESSED:            break;
-        case EVT_EXT_BTN_UP_AND_ENTER_PRESSED:     { handle->iface.drawer = DRAWER_NO_1; drawer_request_enter_seq(handle);} break;
-        case EVT_EXT_BTN_DOWN_AND_ENTER_PRESSED:   { handle->iface.drawer = DRAWER_NO_2; drawer_request_enter_seq(handle);} break;
-        case EVT_EXT_BTN_LEFT_AND_ENTER_PRESSED:   { handle->iface.drawer = DRAWER_NO_3; drawer_request_enter_seq(handle);} break; 
-        case EVT_EXT_BTN_RIGHT_AND_ENTER_PRESSED:  { handle->iface.drawer = DRAWER_NO_4; drawer_request_enter_seq(handle);} break;
+        ui_drawers_config_t *drawer_cfg = &handle->iface.ui.drawers;
 
-        default: break;
+    case EVT_EXT_BTN_UP_PRESSED:
+        break;
+    case EVT_EXT_BTN_DOWN_PRESSED:
+        break;
+    case EVT_EXT_BTN_LEFT_PRESSED:
+        break;
+    case EVT_EXT_BTN_RIGHT_PRESSED:
+        break;
+    case EVT_EXT_BTN_ENTER_PRESSED:
+        break;
+
+    case EVT_EXT_BTN_UP_AND_ENTER_PRESSED:   {drawer_cfg->drawer.no = DRAWER_NO_1; drawer_request_enter_seq(handle); } break;
+    case EVT_EXT_BTN_DOWN_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_2; drawer_request_enter_seq(handle); } break;
+    case EVT_EXT_BTN_LEFT_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_3; drawer_request_enter_seq(handle); } break;
+    case EVT_EXT_BTN_RIGHT_AND_ENTER_PRESSED:{drawer_cfg->drawer.no = DRAWER_NO_4; drawer_request_enter_seq(handle); } break;
+
+    default:
+        break;
     };
-    }
 
     if(time_event_is_raised(&handle->event.time.update_gui)== true)
     {
-        /*Update GUI*/
+        gui_update_battery(handle);
+        enter_seq_main_menu(handle);
     }
 }
 
@@ -194,31 +215,47 @@ void drawer_request_enter_seq(ui_handle_t handle)
     entry_action_drawer_request(handle);
 }
 
-void entry_action_drawer_request(ui_handle_t handle)
+static void notify_manual_drawer_operation(ui_handle_t handle)
 {
-    drawer_ctrl_info *info = drawer_fsm_get_info(handle->iface.drawer);
+    ui_drawers_config_t *drawer_cfg = &handle->iface.ui.drawers;
+    drawer_ctrl_info *info = drawer_fsm_get_info(drawer_cfg->drawer.no);
     event_t event;
 
-    event.header.name = EVT_EXT_DRW_INVALID;
-    event.header.fsm_src = UI_FSM;
-    event.header.fsm_dst = DRAWER_FSM;
-    event.header.payload_len = sizeof(drawer_ev_ext_data_t);
-    ((drawer_ev_ext_data_t*)event.payload.buff)->no = handle->iface.drawer;
+    event.name = EVT_EXT_DRW_INVALID;
+    event.fsm.src = UI_FSM;
+    event.fsm.dst = DRAWER_FSM;
+    event.data.len = sizeof(drawer_ev_ext_data_t);
+    ((drawer_ev_ext_data_t*)event.data.buff)->no = drawer_cfg->drawer.no;
 
     if (info->status.curr == DRAWER_ST_CLOSE || info->status.curr == DRAWER_ST_CLOSING)
     {
         ui_fsm_dbg("manual opening to drawer no [%d]\r\n", handle->iface.drawer + 1);
-        event.header.name = EVT_EXT_DRW_OPEN;
+        event.name = EVT_EXT_DRW_OPEN;
     }
 
     else if (info->status.curr == DRAWER_ST_OPEN || info->status.curr == DRAWER_ST_OPENING)
     {
         ui_fsm_dbg("manual closing to drawer no [%d]\r\n", handle->iface.drawer + 1);
-        event.header.name = EVT_EXT_DRW_CLOSE;
+        event.name = EVT_EXT_DRW_CLOSE;
     }
 
-    if(event.header.name != EVT_EXT_DRW_INVALID)
+    if(event.name != EVT_EXT_DRW_INVALID)
         event_manager_write(event_manager_fsm_get(), &event);
+}
+
+
+void entry_action_drawer_request(ui_handle_t handle)
+{
+    /* Notify Drawer FSM */
+    notify_manual_drawer_operation(handle);
+
+    /* Update UI Elements */
+    ui_drawers_config_t *ui_config = &handle->iface.ui.drawers;
+    drawer_ctrl_info *info = drawer_fsm_get_info(ui_config->drawer.no);
+    ui_config->drawer.st = info->status.curr;
+    ui_config->select.single = UI_ITEM_SELECT;
+
+    ui_drawers_set_config(&ui_drawers, &ui_config);
 }
 
 void drawer_request_on_react(ui_handle_t handle)
@@ -231,8 +268,12 @@ void drawer_request_on_react(ui_handle_t handle)
 
 /////////////////////////////////// Drawing Functions  ///////////////////////////////////////////
 
-
-
-
-
-
+static void gui_update_battery(ui_handle_t handle)
+{
+    ui_battery_config_t *ui_config = &handle->iface.ui.battery;
+    static uint8_t batt_dummy_val = 0;
+    ui_config->select = UI_ITEM_DESELECT;
+    ui_config->set    = BATT_ST_CHARGING;
+    ui_config->charge = (batt_dummy_val % 100);
+    ui_battery_set_config(&ui_battery, &ui_config);
+}

@@ -18,13 +18,6 @@
 #include "stdbool.h"
 #include "event_manager_fsm.h"
 
-
-extern BITMAPSTRUCT battery_icon[];
-extern BITMAPSTRUCT batt_error_icon[];
-extern BITMAPSTRUCT batt_warning_icon[];
-extern BITMAPSTRUCT thermostat[];
-
-
 #define DRAWER_NUMBER_FONT Font20
 #define DRAWER_SELECTION_COLOR LCD_COLOR_BLUE
 
@@ -85,7 +78,7 @@ typedef struct
     battery_st_t set;
     uint8_t      charge;
     ui_select_t  select;
-}ui_battery_config;
+}ui_battery_config_t;
 
 //------------- UI Drawers Configuration ----------------//
 typedef struct
@@ -117,7 +110,7 @@ typedef struct
      ui_select_t single;
     }select;
 
-}ui_drawer_config;
+}ui_drawers_config_t;
 
 //------------- UI Feeder Menu Configuration ----------------//
 typedef struct
@@ -227,50 +220,103 @@ typedef struct
 }ui_thermostat_config_t;
 
 
-//------------- UI Thermostat Icon ----------------//
+//------------- UI Thermostat Config Menu ----------------//
+
 typedef struct
 {
     struct 
     {
         ui_window_t main;
         ui_window_t set_temp;
-        ui_window_t enable_f_c;
+        ui_window_t set_unit;
         ui_window_t enable_temp;
     }win;
 
     struct
     {
-        ui_icon_t temp_units;
         ui_icon_t therm;
     }icon;
 
     struct
     {
-        ui_window_t set_temp;
+        ui_window_t ctrl_temp;
     }text;
+
+}ui_thermostat_menu_t;
+
+typedef struct
+{
+    thermostat_config_list_t set;
+    struct
+    {
+        uint8_t val;
+        temperature_unit_t unit;
+    }temp;
 
     ui_select_t select;
 }ui_thermostat_menu_config_t;
+
+//------------- PetCall icon ----------------//
+
+typedef struct
+{
+    struct
+    {
+        ui_window_t main;
+    }win;
+
+    struct
+    {
+        ui_icon_t mic;
+    }icon;
+    
+}ui_petcall_t;
+
+typedef struct
+{
+    uint8_t enable;
+    ui_select_t select;
+}ui_petcall_config_t;
+
+//------------- PetCall icon ----------------//
+
+typedef struct
+{
+    struct
+    {
+        ui_window_t main;
+    }win;
+
+}ui_petcall_menu_t;
+
+typedef struct
+{
+    ui_select_t select;
+}ui_petcall_menu_config_t;
+
+//-------------------------------------------//
 
 
 extern ui_battery_t    ui_battery;
 extern ui_drawers_t    ui_drawers;
 extern ui_thermostat_t ui_thermostat;
+extern ui_petcall_t    ui_petcall;
 
 extern ui_date_time_menu_t    ui_date_time;
 extern ui_feeder_menu_t       ui_feeder_menu;
 extern ui_thermostat_config_t ui_therm_conf;
+extern ui_petcall_config_t    ui_petcall_conf;
 
 
 /* Battery Icon related functions */
-void ui_battery_icon_init(ui_battery_t *batt);
-void ui_battery_icon_show(ui_battery_t *batt, bool show);
-void ui_battery_icon_set_config(ui_battery_t *batt, ui_battery_config *config);
+void ui_battery_init(ui_battery_t *batt);
+void ui_battery_show(ui_battery_t *batt, bool show);
+void ui_battery_set_config(ui_battery_t *batt, ui_battery_config_t *config);
 
 /* Drawers related functions */
 void ui_drawers_init(ui_drawers_t *drawers);
 void ui_drawers_show(ui_drawers_t *drawers, bool show);
-void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawer_config *config);
+void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawers_config_t *config);
 
 /* Feeder Config Menu functions */
 void ui_feeder_menu_init(ui_feeder_menu_t *menu);
@@ -288,22 +334,19 @@ void ui_thermostat_show(ui_thermostat_t *therm, bool show);
 void ui_thermostat_set_config(ui_thermostat_t *therm, ui_thermostat_config_t *config);
 
 /* Thermostat Config Menu Functions */
-void ui_thermostat_menu_init(ui_date_time_menu_t *menu);
-void ui_thermostat_menu_show(ui_date_time_menu_t *menu);
-void ui_thermostat_menu_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *config);
+void ui_thermostat_menu_init(ui_thermostat_menu_t *menu);
+void ui_thermostat_menu_show(ui_thermostat_menu_t *menu, bool show);
+void ui_thermostat_menu_set_config(ui_thermostat_menu_t *menu, ui_thermostat_menu_config_t *config);
 
 /* Pet Call Icon Function */
-void ui_pet_call_icon_init(pet_call_icon_menu_t *menu);
-void ui_pet_call_icon_show(pet_call_icon_menu_t *menu);
-void ui_pet_call_icon_set_config(pet_call_icon_menu_t *menu, pet_call_icon_config_t *config);
+void ui_pet_call_init(ui_petcall_t *menu);
+void ui_pet_call_show(ui_petcall_t *menu, bool show);
+void ui_pet_call_set_config(ui_petcall_t *menu, ui_petcall_config_t *config);
 
 /* Pet Call Config Menu Function */
-void ui_pet_call_menu_init(pet_call_menu_t *menu);
-void ui_pet_call_menu_show(pet_call_menu_t *menu);
-void ui_pet_call_menu_set_config(pet_call_menu_t *menu, pet_call_menu_config_t *config);
-
-
-
+void ui_pet_call_menu_init(ui_petcall_menu_t *menu);
+void ui_pet_call_menu_show(ui_petcall_menu_t *menu, bool show);
+void ui_pet_call_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_t *config);
 
 
 #endif

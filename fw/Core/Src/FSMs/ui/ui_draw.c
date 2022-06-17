@@ -1,12 +1,22 @@
 #include "ui_draw.h"
 
-ui_battery_t ui_battery;
-ui_thermostat_t ui_thermostat;
-ui_drawers_t ui_drawers;
-ui_date_time_t ui_date_time;
+/* Icons */
+extern BITMAPSTRUCT battery_icon[];
+extern BITMAPSTRUCT batt_error_icon[];
+extern BITMAPSTRUCT batt_warning_icon[];
+extern BITMAPSTRUCT thermostat[];
+extern BITMAPSTRUCT enable_icon[];
+extern BITMAPSTRUCT recording_icon[];
+
+/* UI elements */
+ui_battery_t           ui_battery;
+ui_drawers_t           ui_drawers;
+ui_thermostat_t        ui_thermostat;
+ui_petcall_t           ui_petcall;
+ui_date_time_menu_t    ui_date_time;
+ui_feeder_menu_t       ui_feeder_menu;
 ui_thermostat_config_t ui_therm_conf;
-ui_feeder_menu_t ui_feeder_menu;
-ui_date_time_menu_t ui_date_time_menu;
+ui_petcall_config_t    ui_petcall_conf;
 
 typedef struct
 {
@@ -86,7 +96,7 @@ static void ui_display_string(ui_window_t *win, uint8_t *text, sFONT *font, uint
 }
 
 //////////////////////////////////// Battery Icon Related Functions   //////////////////////////////////////////////
-void ui_battery_icon_init(ui_battery_t *batt)
+void ui_battery_init(ui_battery_t *batt)
 {
     /* Main window position - all other components will move according to this coordinate */
     batt->win.main.x = 366;
@@ -115,7 +125,7 @@ void ui_battery_icon_init(ui_battery_t *batt)
     batt->text.y = batt->shape.charge.y + 10;
 }
 
-void ui_battery_icon_show(ui_battery_t *batt, bool show)
+void ui_battery_show(ui_battery_t *batt, bool show)
 {
     if(show)
     {
@@ -169,7 +179,7 @@ static void ui_battery_draw_charge(ui_battery_t *batt, uint8_t batt_lvl)
     batt->shape.charge.w = temp_w;
 }
 
-void ui_battery_icon_set_config(ui_battery_t *batt, ui_battery_config *config)
+void ui_battery_set_config(ui_battery_t *batt, ui_battery_config_t *config)
 {
     /*Paint select battery item property*/
     if (config->select == UI_ITEM_SELECT)
@@ -236,7 +246,7 @@ void ui_drawers_show(ui_drawers_t *drawers, bool show)
     }
 }
 
-void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawer_config *config)
+void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawers_config_t *config)
 {   
     ui_drawers_show(drawers, true);
     sFONT    *font = &Font20;
@@ -526,7 +536,7 @@ void ui_date_time_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *c
 /* Thermostat icon Functions */
 void ui_thermostat_init(ui_thermostat_t *menu)
 {
-    menu->win.main.x = 157
+    menu->win.main.x = 157;
     menu->win.main.y = 11;
     menu->win.main.w = 104;
     menu->win.main.h = 81;
@@ -552,8 +562,8 @@ void ui_thermostat_show(ui_thermostat_t *menu, bool show)
     if(show)
     {
         ui_draw_icon(&menu->icon);
-        ui_draw_window(&menu->shape.temp);
-        ui_draw_circle(&menu->shape.circle, 8, LCD_DEFAULT_TEXTCOLOR)
+        ui_draw_window(&menu->shape.temp, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_circle(&menu->shape.circle, 8, LCD_DEFAULT_TEXTCOLOR);
         ui_display_string(&menu->text, "--C", &Font16, LCD_DEFAULT_TEXTCOLOR);
     }
     else 
@@ -573,11 +583,11 @@ void ui_thermostat_set_config(ui_thermostat_t *menu, ui_thermostat_config_t *con
 
     /*!< TODO: make the hight change with the temperature*/
     ui_draw_icon(&menu->icon);
-    ui_draw_window(&menu->shape.temp);
-    ui_fill_window(&menu->shape.temp);
+    ui_draw_window(&menu->shape.temp, color, true);
+    ui_fill_window(&menu->shape.temp, LCD_COLOR_BLUE);
     ui_draw_circle(&menu->shape.circle, 8, LCD_DEFAULT_TEXTCOLOR);
     ui_fill_circle(&menu->shape.circle, 7, LCD_DEFAULT_TEXTCOLOR);
-    sprintf(str, "%d%s", config->temp.val, c_f_str[config->temp.unit]) 
+    sprintf(str, "%d%s", config->temp.val, c_f_str[config->temp.unit]);
     ui_display_string(&menu->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR);
 }
 
@@ -585,63 +595,225 @@ void ui_thermostat_set_config(ui_thermostat_t *menu, ui_thermostat_config_t *con
 //////////////////////////////////// Date Time Config Menu Related Functions ///////////////////////////////////////
 
 /* Thermostat Config Menu Functions */
-void ui_thermostat_menu_init(ui_date_time_menu_t *menu);
-void ui_thermostat_menu_show(ui_date_time_menu_t *menu);
-void ui_thermostat_menu_set_config(ui_date_time_menu_t *menu, date_time_config_t *config);
+void ui_thermostat_menu_init(ui_thermostat_menu_t *menu)
+{
+    menu->win.main.x = 17;
+    menu->win.main.y = 116;
+    menu->win.main.h = 161;
+    menu->win.main.w = 442;
+
+    menu->win.set_temp.x = menu->win.main.x + 190; 
+    menu->win.set_temp.y = menu->win.main.y + 4;
+    menu->win.set_temp.h = 40; 
+    menu->win.set_temp.w = 74;
+
+    menu->win.set_unit.x = menu->win.main.x + 190;
+    menu->win.set_unit.y = menu->win.main.y + 55;
+    menu->win.set_unit.w = 40;
+    menu->win.set_unit.h = 74;
+
+    menu->win.enable_temp.x = menu->win.main.x + 190;
+    menu->win.enable_temp.y = menu->win.main.y + 104;
+    menu->win.enable_temp.w = 40;
+    menu->win.enable_temp.h = 74;
+
+    menu->icon.therm.ptr = &enable_icon;
+
+    /* Adjust text window */
+    menu->text.ctrl_temp.x = menu->win.set_temp.x + 5;      
+    menu->text.ctrl_temp.y = menu->win.set_temp.y + 5;
+}
+
+void ui_thermostat_menu_show(ui_thermostat_menu_t *menu, bool show)
+{
+    char *str_titles[3] = {"Set Temperature :", "Set Units :", "Thermostat : "};
+    char *str_options[2] = {"Fahrenheit/Celsius", "On/Off"};
+
+    if(show)
+    {
+        // display static text 
+        ui_window_t set_temp = {.x = menu->win.main.x + 33, .y =  menu->win.main.y + 14};
+        ui_display_string(&set_temp, str_titles[0], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+        ui_window_t set_units = {.x = menu->win.main.x + 33, .y =  menu->win.main.y + 60};
+        ui_display_string(&set_units, str_titles[1], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+        ui_window_t therm_en = {.x = menu->win.main.x + 33, .y =  menu->win.main.y + 109};
+        ui_display_string(&therm_en, str_titles[2], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+        ui_window_t f_c_option = {.x = menu->win.main.x + 289, .y =  menu->win.main.y + 60};
+        ui_display_string(&f_c_option, str_options[0], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+        ui_window_t therm_en_option = {.x = menu->win.main.x + 289, .y =  menu->win.main.y + 113};
+        ui_display_string(&therm_en_option, str_options[1], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+        // display static icons
+
+        /*adjust offset */
+        menu->icon.therm.x = menu->win.set_unit.x; 
+        menu->icon.therm.y = menu->win.set_unit.y; 
+        ui_draw_icon(&menu->icon.therm);
+        menu->icon.therm.x = menu->win.enable_temp.x; 
+        menu->icon.therm.y = menu->win.enable_temp.y; 
+        ui_draw_icon(&menu->icon.therm);
+        
+        // display default text val 
+        ui_display_string(&menu->text, "--°C", &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+    }
+    else
+    {
+        ui_clear_window(&menu->win.main);
+    }
+}
+
+void ui_thermostat_menu_set_config(ui_thermostat_menu_t *menu, ui_thermostat_menu_config_t *config)
+{
+    uint8_t str[5];
+    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
+    sFONT *font = &LCD_DEFAULT_FONT;
+
+    if (config->select == UI_ITEM_SELECT)
+    {
+        color = UI_SELECTION_COLOR;
+        font = &Font20;
+    }
+
+    switch (config->set)
+    {
+    case THERM_SET_TEMPERATURE: {
+        if (config->select == UI_ITEM_SELECT)
+            ui_draw_window(&menu->text, color, true);
+        sprintf(str, "%d%s", config->temp.val, c_f_str[config->temp.unit]);
+        ui_display_string(&menu->text, str, font, color);
+     } break;
+
+    case THERM_SET_UNIT: { 
+        if (config->select == UI_ITEM_SELECT)
+            ui_draw_window(&menu->win.set_unit, color, true);
+
+        sprintf(str, "%d%s", config->temp.val, c_f_str[config->temp.unit]);
+        ui_display_string(&menu->text, str, font, color);
+
+        /*adjust offset */
+        ui_window_t win_c = {.x = menu->win.set_unit.x, .y = menu->win.set_unit.y};
+        ui_window_t win_f = {.x = menu->win.set_unit.x, .y = menu->win.set_unit.y};
+        
+        /*clean previous state */
+        ui_draw_circle(&win_c,  9, LCD_DEFAULT_BACKCOLOR);
+        ui_draw_circle(&win_f, 9, LCD_DEFAULT_BACKCOLOR);
+
+        if(config->temp.unit == TEMP_UNITS_CELSIUS)
+            ui_draw_circle(&win_c,  9, color);
+
+        else if(config->temp.unit == TEMP_UNITS_FAHRENHEIT)
+            ui_draw_circle(&win_f,  9, color);
+
+    } break;
+
+    case THERM_ENABLE_CTRL: {
+        if (config->select == UI_ITEM_SELECT)
+            ui_draw_window(&menu->win.set_unit, color, true);
+
+        /*adjust offset */
+        ui_window_t therm_en = {.x = menu->win.set_unit.x, .y = menu->win.set_unit.y};
+        ui_window_t therm_dis = {.x = menu->win.set_unit.x, .y = menu->win.set_unit.y};
+        
+        /*clean previous state */
+        ui_draw_circle(&therm_en,  9, LCD_DEFAULT_BACKCOLOR);
+        ui_draw_circle(&therm_dis, 9, LCD_DEFAULT_BACKCOLOR);
+
+        if (config->temp.unit == TEMP_CTRL_ENABLE)
+            ui_draw_circle(&therm_en, 9, color);
+
+        else if (config->temp.unit == TEMP_CTRL_DISABLE)
+            ui_draw_circle(&therm_dis, 9, color);
+     } break;
+
+    default:
+        break;
+    }
+}
+
 
 //////////////////////////////////// Date Time Config Menu Related Functions ///////////////////////////////////////
 
-/* Pet Call Icon Function */
-void ui_pet_call_icon_init(pet_call_icon_menu_t *menu);
-void ui_pet_call_icon_show(pet_call_icon_menu_t *menu);
-void ui_pet_call_icon_set_config(pet_call_icon_menu_t *menu, pet_call_icon_config_t *config);
+void ui_pet_call_init(ui_petcall_t *menu)
+{
+    menu->win.main.x = 165;
+    menu->win.main.y = 12;
+    menu->win.main.w = 64;
+    menu->win.main.h = 81;
+    menu->icon.mic.ptr = &recording_icon;
+    menu->icon.mic.x = menu->win.main.x + 1;
+    menu->icon.mic.y = menu->win.main.y + 9; 
+
+}
+
+void ui_pet_call_show(ui_petcall_t *menu, bool show)
+{
+    if(show)
+    {
+        ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_icon(&menu->icon.mic);
+    }
+    else
+    {
+        ui_clear_windows(&menu->win.main);
+    }
+
+}
+
+void ui_pet_call_set_config(ui_petcall_t *menu, ui_petcall_config_t *config)
+{
+    uint8_t str[5];
+    uint16_t win_color = LCD_DEFAULT_BACKCOLOR;
+
+    if (config->select == UI_ITEM_SELECT)
+    {
+        win_color = UI_SELECTION_COLOR;
+    }
+    ui_draw_window(&menu->win.main, win_color, true);
+}
+
 
 //////////////////////////////////// Date Time Config Menu Related Functions ///////////////////////////////////////
 
 /* Pet Call Config Menu Function */
-void ui_pet_call_menu_init(pet_call_menu_t *menu);
-void ui_pet_call_menu_show(pet_call_menu_t *menu);
-void ui_pet_call_menu_set_config(pet_call_menu_t *menu, pet_call_menu_config_t *config);
+void ui_pet_call_menu_init(ui_petcall_menu_t *menu)
+{
+    menu->win.main.x = 17;
+    menu->win.main.y = 116; 
+    menu->win.main.w = 442;
+    menu->win.main.h = 161;
+}
+
+void ui_pet_call_menu_show(ui_petcall_menu_t *menu, bool show)
+{
+    if(show)
+    {
+        ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
+    }
+    else
+    {
+        ui_clear_windows(&menu->win.main);
+    }
+
+}
+
+void ui_pet_call_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_t *config)
+{
+    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
+
+    if (config->select == UI_ITEM_SELECT)
+    {
+        color = UI_SELECTION_COLOR;
+    }
+
+    ui_draw_window(&menu->win.main, color, true);
+}
 
 
 
 
 //////////////////////////////////////// END ///////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////// Date Hour Related Functions /////////////////////////////////////////////
-
-
-
-/////////////////////////////////// Drawers Related Functions /////////////////////////////////////////////
-
-
-
-/////////////////////////////////// Thermostat Related Functions /////////////////////////////////////////////
-void ui_thermostat_init(ui_thermostat_t *therm, bool show)
-{
-    if(show)
-    {
-
-    }
-    else 
-    {
-
-    }
-}
-
-void ui_thermostat_set_temp(ui_thermostat_t *therm, uint8_t temp_units, int temp,bool show)
-{
-    if(show)
-    {
-
-
-    }
-    else
-    {
-
-    }
-}
-
-
-
-/////////////////////////////////// Battery Related Functions /////////////////////////////////////////////
