@@ -25,7 +25,7 @@
 #endif
 
 
-#define UPDATE_GUI_MS       (1000)
+#define UPDATE_GUI_MS       (500)
 
 /**
  * @brief State Machine States
@@ -111,7 +111,7 @@ void ui_fsm_run(ui_handle_t handle)
 {
     switch (handle->state)
     {
-        case ST_UI_MAIN_MENU:  main_menu_on_react(handle); break;
+        case ST_UI_MAIN_MENU:          main_menu_on_react(handle); break;
         case ST_UI_DATE_TIME_CONFIG: break;
         case ST_UI_PET_CALL_CONFIG: break;
         case ST_UI_FEEDER_CONFIG: break;
@@ -131,7 +131,7 @@ static void fsm_set_next_state(ui_handle_t handle, ui_state_t next_st)
 
 void ui_fsm_time_update(ui_handle_t handle)
 {
-	time_event_t *time_event = (time_event_t *)&handle->event;
+	time_event_t *time_event = (time_event_t *)&handle->event.time;
 	for (int tev_idx = 0; tev_idx < sizeof(handle->event.time) / sizeof(time_event_t); tev_idx++)
 	{
 		time_event_update(time_event);
@@ -163,9 +163,14 @@ static void entry_action_main_menu(ui_handle_t handle)
 {
     /*Initialize UI elements */
     ui_battery_init(&ui_battery);
-    ui_battery_init(&ui_thermostat);
-    ui_battery_init(&ui_drawers);    
-    ui_feeder_menu_init(&ui_feeder_menu);
+    ui_drawers_init(&ui_drawers);
+
+//    ui_battery_init(&ui_thermostat);
+//    ui_feeder_menu_init(&ui_feeder_menu);
+
+    /*Show main menu elements */
+    ui_battery_show(&ui_battery, true);
+    ui_drawers_show(&ui_drawers, true);
 
     time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
 }
@@ -174,9 +179,10 @@ static void entry_action_main_menu(ui_handle_t handle)
 static void main_menu_on_react(ui_handle_t handle)
 {
     /*navigation key update item selection*/
+	ui_drawers_config_t *drawer_cfg = &handle->iface.ui.drawers;
+
     switch (handle->event.btn)
     {
-        ui_drawers_config_t *drawer_cfg = &handle->iface.ui.drawers;
 
     case EVT_EXT_BTN_UP_PRESSED:
         break;
@@ -198,10 +204,10 @@ static void main_menu_on_react(ui_handle_t handle)
         break;
     };
 
-    if(time_event_is_raised(&handle->event.time.update_gui)== true)
+    if(time_event_is_raised(&handle->event.time.update_gui) == true)
     {
+        time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
         gui_update_battery(handle);
-        enter_seq_main_menu(handle);
     }
 }
 
@@ -240,7 +246,9 @@ static void notify_manual_drawer_operation(ui_handle_t handle)
     }
 
     if(event.name != EVT_EXT_DRW_INVALID)
-        event_manager_write(event_manager_fsm_get(), &event);
+    {
+        // event_manager_write(event_manager_fsm_get(), &event);
+    }
 }
 
 
@@ -255,7 +263,7 @@ void entry_action_drawer_request(ui_handle_t handle)
     ui_config->drawer.st = info->status.curr;
     ui_config->select.single = UI_ITEM_SELECT;
 
-    ui_drawers_set_config(&ui_drawers, &ui_config);
+    ui_drawers_set_config(&ui_drawers, ui_config);
 }
 
 void drawer_request_on_react(ui_handle_t handle)
@@ -270,10 +278,11 @@ void drawer_request_on_react(ui_handle_t handle)
 
 static void gui_update_battery(ui_handle_t handle)
 {
+    ui_fsm_dbg("update battery status \r\n");
     ui_battery_config_t *ui_config = &handle->iface.ui.battery;
     static uint8_t batt_dummy_val = 0;
     ui_config->select = UI_ITEM_DESELECT;
     ui_config->set    = BATT_ST_CHARGING;
-    ui_config->charge = (batt_dummy_val % 100);
-    ui_battery_set_config(&ui_battery, &ui_config);
+    ui_config->charge = (batt_dummy_val++ % 100);
+    ui_battery_set_config(&ui_battery, ui_config);
 }

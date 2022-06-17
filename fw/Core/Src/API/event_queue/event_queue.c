@@ -53,6 +53,7 @@ uint8_t event_queue_write(event_queue_t *queue, event_t *evt)
     event_print_info(evt);
 
     write_st = ring_buffer_write(queue->rb, (uint8_t *)&evt, EVENT_HEADER_SIZE);
+
     if (evt->data.len)
         write_st = ring_buffer_write(queue->rb, (uint8_t *)evt->data.buff, evt->data.len);
 

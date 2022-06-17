@@ -149,28 +149,21 @@ static void ui_battery_draw_charge(ui_battery_t *batt, uint8_t batt_lvl)
     batt->shape.charge.w = (int)width;
         
     /*Critical battery level */
-    if(width > 0 && width < 7)
+    if(batt_lvl > 0 && batt_lvl < 17)
     {
         ui_fill_window(&batt->shape.charge, LCD_COLOR_RED);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR);   
     }
 
-    /*Low battery level */
-    if(width >= 7  && width < 30)
-    {
-        ui_fill_window(&batt->shape.charge, LCD_COLOR_YELLOW);
-        ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR); 
-    }
-
     /*Medium battery level */
-    if(width >= 30  && width < 70)
+    if(batt_lvl >= 17  && batt_lvl < 70)
     {
         ui_fill_window(&batt->shape.charge, LCD_COLOR_YELLOW);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR); 
     }
 
     /*High battery level */
-    if(width >= 70  && width <= 100)
+    if(batt_lvl >= 70  && batt_lvl <= 100)
     {
         ui_fill_window(&batt->shape.charge, LCD_COLOR_GREEN);
         ui_display_string(&batt->text, str, &Font16, LCD_DEFAULT_TEXTCOLOR); 
@@ -236,7 +229,7 @@ void ui_drawers_show(ui_drawers_t *drawers, bool show)
             ui_window_t text_pos;
             text_pos.x = drawers->shape.single.x + 15;
             text_pos.y = drawers->shape.single.y + 4;
-            sprintf(str_buff,"%d", DRAWERn + 1);
+            sprintf(str_buff,"%d", i + 1);
             ui_display_string(&text_pos, str_buff, &Font16, LCD_DEFAULT_TEXTCOLOR);
         }
     }
