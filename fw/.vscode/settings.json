@@ -17,6 +17,7 @@
         "temp_ctrl_fsm.h": "c"
     },
     "cSpell.words": [
+        "inact",
         "petcall"
     ]
 }

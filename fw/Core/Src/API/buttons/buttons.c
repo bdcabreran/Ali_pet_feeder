@@ -181,17 +181,17 @@ void btn_debounce_run(navigation_btn_t *btn)
 
     /*Notify events*/
     event_t event;
-    event.name = EVT_EXT_BTN_INVALID;
-    event.fsm.src = BTN_FSM;
-    event.fsm.dst = UI_FSM;
-    event.data.len = 0;
+    event.info.name = EVT_EXT_BTN_INVALID;
+    event.info.fsm.src = BTN_FSM;
+    event.info.fsm.dst = UI_FSM;
+    event.info.data_len = 0;
 
-    event.name = btn_key_enter_combination(btn);
-    if(event.name != EVT_EXT_BTN_INVALID)
+    event.info.name = btn_key_enter_combination(btn);
+    if(event.info.name != EVT_EXT_BTN_INVALID)
         event_manager_write(event_manager_fsm_get(), &event);
 
-    event.name = btn_enter_key_combination(btn);
-    if(event.name != EVT_EXT_BTN_INVALID)
+    event.info.name = btn_enter_key_combination(btn);
+    if(event.info.name != EVT_EXT_BTN_INVALID)
         event_manager_write(event_manager_fsm_get(), &event);
 
     btn_ptr = &btn->up;

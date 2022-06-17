@@ -9,6 +9,8 @@
 
 typedef struct
 {
+    uint8_t name;
+    
     struct
     {
         uint8_t src; 

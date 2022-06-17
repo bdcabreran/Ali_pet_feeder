@@ -60,6 +60,29 @@ typedef struct
     ui_window_t day;
 }ui_date_t;
 
+
+typedef enum
+{
+    UI_MAIN_MENU_ITEM_DRAWERS,
+    UI_MAIN_MENU_ITEM_THERMOSTAT,
+    UI_MAIN_MENU_ITEM_PETCALL,
+    UI_MAIN_MENU_ITEM_BATTERY,
+    UI_MAIN_MENU_ITEM_TIME_DATE,
+    UI_MAIN_MENU_ITEMn
+}ui_main_menu_sel_item_t;
+
+typedef enum
+{
+    UI_DT_ITEM_INVALID,
+    UI_DT_ITEM_HOUR,
+    UI_DT_ITEM_MIN,
+    UI_DT_ITEM_DAY,
+    UI_DT_ITEM_MONTH,
+    UI_DT_ITEM_LAST
+}ui_date_time_menu_sel_item_t;
+
+
+
 //------------- UI Battery Configuration ----------------//
 typedef struct
 {
@@ -339,14 +362,14 @@ void ui_thermostat_menu_show(ui_thermostat_menu_t *menu, bool show);
 void ui_thermostat_menu_set_config(ui_thermostat_menu_t *menu, ui_thermostat_menu_config_t *config);
 
 /* Pet Call Icon Function */
-void ui_pet_call_init(ui_petcall_t *menu);
-void ui_pet_call_show(ui_petcall_t *menu, bool show);
-void ui_pet_call_set_config(ui_petcall_t *menu, ui_petcall_config_t *config);
+void ui_petcall_init(ui_petcall_t *menu);
+void ui_petcall_show(ui_petcall_t *menu, bool show);
+void ui_petcall_set_config(ui_petcall_t *menu, ui_petcall_config_t *config);
 
 /* Pet Call Config Menu Function */
-void ui_pet_call_menu_init(ui_petcall_menu_t *menu);
-void ui_pet_call_menu_show(ui_petcall_menu_t *menu, bool show);
-void ui_pet_call_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_t *config);
+void ui_petcall_menu_init(ui_petcall_menu_t *menu);
+void ui_petcall_menu_show(ui_petcall_menu_t *menu, bool show);
+void ui_petcall_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_t *config);
 
 
 #endif

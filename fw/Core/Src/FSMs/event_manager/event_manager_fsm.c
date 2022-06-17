@@ -157,10 +157,10 @@ static void entry_action_notify_event(event_manager_handle_t handle)
     /*Notify event to dest FSM*/
     event_manager_dbg("\t notify evt = [0x%X], from [0x%X] to [0x%X]\r\n",
                  handle->iface.event.name,
-                 handle->iface.event.fsm.src,
-                 handle->iface.event.fsm.dst);
+                 handle->iface.event.info.fsm.,
+                 handle->iface.event.info.fsm.dst);
 
-    switch (handle->iface.event.fsm.dst)
+    switch (handle->iface.event.info.fsm.dst)
     {
         case UI_FSM:
         {
