@@ -5,6 +5,7 @@
 #include "time_event.h"
 
 #define DEBOUNCE_TIME_MS (50)
+#define DEBOUNCE_TIME_DOWN_KEY_MS (200)
 
 /**
  * @brief Internal Events 
@@ -24,7 +25,6 @@ typedef enum
     EVT_EXT_BTN_LEFT_AND_ENTER_PRESSED,
     EVT_EXT_BTN_RIGHT_AND_ENTER_PRESSED,
 
-    EVT_EXT_NOTIFICATION_DONE,
     EVT_EXT_BTN_LAST
 }btn_ev_ext_t;
 

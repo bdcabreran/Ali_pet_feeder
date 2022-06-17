@@ -13,6 +13,7 @@
 #include "time_event.h"
 #include "stm32f1xx_hal.h"
 #include "buttons.h"
+#include "event_manager_fsm.h"
 
 /**
  * @brief Systick Callback Function 
@@ -35,6 +36,7 @@ void time_events_poll_update(void)
         /*Update Time Events of the state machines */
         //---------------------------------------------------//
         btn_debounce_run(&navigation_btn);
+        ui_fsm_time_update(ui_fsm_get());
 
         //---------------------------------------------------//
         time_event_set_pending_update(false); 
