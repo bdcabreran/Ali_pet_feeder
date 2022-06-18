@@ -156,17 +156,25 @@ static void entry_action_notify_event(event_manager_handle_t handle)
 {
     /*Notify event to dest FSM*/
     event_manager_dbg("\t notify evt = [0x%X], from [0x%X] to [0x%X]\r\n",
-                 handle->iface.event.header.event,
-                 handle->iface.event.header.fsm_src,
-                 handle->iface.event.header.fsm_dst);
+                 handle->iface.event.name,
+                 handle->iface.event.info.fsm.,
+                 handle->iface.event.info.fsm.dst);
 
-    switch (handle->iface.event.header.fsm_dst)
+    switch (handle->iface.event.info.fsm.dst)
     {
         case UI_FSM:
         {
-            ui_fsm_set_ext_event(ui_fsm_get(), &handle->iface.event);
-        }
+            ui_fsm_write_event(ui_fsm_get(), &handle->iface.event);
+        }break; 
     
+        case DRAWER_FSM:
+        {
+            drawer_fsm_set_ext_evt(&handle->iface.event);
+        }break; 
+
+
+
+
     default:
         break;
     }

@@ -20,7 +20,7 @@
 # define   WIDTH   35
 # define   HEIGHT  71
 
-const BITMAPSTRUCT thermostat_icon __attribute__((aligned)) =
+const BITMAPSTRUCT thermostat __attribute__((aligned)) =
     {
         {
          0x4d42u,

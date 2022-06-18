@@ -1,7 +1,0 @@
-../Core/Src/API/event_queue/event_queue.c:24:13:event_print_info	16	static
-../Core/Src/API/event_queue/event_queue.c:36:6:event_queue_init	24	static
-../Core/Src/API/event_queue/event_queue.c:43:9:event_queue_get_pending	16	static
-../Core/Src/API/event_queue/event_queue.c:49:9:event_queue_write	24	static
-../Core/Src/API/event_queue/event_queue.c:67:9:event_queue_read	24	static
-../Core/Src/API/event_queue/event_queue.c:92:9:event_queue_fetch	24	static
-../Core/Src/API/event_queue/event_queue.c:114:6:event_queue_reset	16	static
