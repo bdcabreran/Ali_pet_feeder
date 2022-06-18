@@ -52,7 +52,7 @@ uint8_t event_queue_write(event_queue_t *queue, event_t *evt)
     evt_queue_dbg("writing event \r\n");
     event_print_info(evt);
 
-    write_st = ring_buffer_write(queue->rb, (uint8_t *)&evt, EVENT_HEADER_SIZE);
+    write_st = ring_buffer_write(queue->rb, (uint8_t *)&evt->info, EVENT_INFO_SIZE);
 
     if (evt->info.data_len)
         write_st = ring_buffer_write(queue->rb, (uint8_t *)evt->data.buff, evt->info.data_len);
@@ -72,7 +72,7 @@ uint8_t event_queue_read(event_queue_t *queue, event_t *evt)
     if (event_queue_get_pending(queue))
     {
         evt_queue_dbg("reading event \r\n");
-        read_st = ring_buffer_read(queue->rb, (uint8_t *)&evt, EVENT_HEADER_SIZE);
+        read_st = ring_buffer_read(queue->rb, (uint8_t *)&evt->info, EVENT_INFO_SIZE);
         if (evt->info.data_len)
             read_st = ring_buffer_read(queue->rb, (uint8_t *)evt->data.buff, evt->info.data_len);
 
@@ -97,7 +97,7 @@ uint8_t event_queue_fetch(event_queue_t *queue, event_t *evt)
     if (event_queue_get_pending(queue))
     {
         evt_queue_dbg("fetching event \r\n");
-        read_st = ring_buffer_fetch(queue->rb, (uint8_t *)&evt, EVENT_HEADER_SIZE);
+        read_st = ring_buffer_fetch(queue->rb, (uint8_t *)&evt, EVENT_INFO_SIZE);
         if (evt->info.data_len)
             read_st = ring_buffer_fetch(queue->rb, (uint8_t *)evt->data.buff, evt->info.data_len);
 

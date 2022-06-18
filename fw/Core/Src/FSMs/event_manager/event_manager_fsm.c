@@ -194,7 +194,14 @@ static void notify_event_on_react(event_manager_handle_t handle)
 
 uint8_t event_manager_write(event_manager_handle_t handle, event_t *event)
 {
-    return event_queue_write(&handle->iface.queue, event);
+	if(IS_VALID_FSM_SRC_DST(event->info.fsm.dst) && IS_VALID_FSM_SRC_DST(event->info.fsm.src))
+	{
+		event_queue_write(&handle->iface.queue, event);
+	}
+	else
+	{
+        printf_dbg_error("invalid fsm src [0x%X], dst [0x%X]\r\n",event->info.fsm.src, event->info.fsm.dst);
+	}
 }
 
 uint8_t event_manager_fetch(event_manager_handle_t handle, event_t *event)

@@ -35,6 +35,7 @@ typedef enum
     FEEDER_CNF_DATE_DAY,
     FEEDER_CNF_DATE_MONTH,
     FEEDER_CNF_DATE_DAILY,
+    FEEDER_CNFn,
 }feeder_meal_config_t;
 
 

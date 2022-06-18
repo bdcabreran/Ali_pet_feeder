@@ -21,13 +21,17 @@
 
 typedef enum
 {
+    UI_FSM_INVALID,
     UI_FSM,
     BTN_FSM,
     DRAWER_FSM,
     FEEDER_FSM,
     TEMP_CTRL_FSM,
+    UI_FSM_LAST,
 
 }fsm_list_t;
+
+#define IS_VALID_FSM_SRC_DST(fsm) (fsm > UI_FSM_INVALID && fsm < UI_FSM_LAST)
 
 
 typedef struct event_manager_fsm_t* event_manager_handle_t;

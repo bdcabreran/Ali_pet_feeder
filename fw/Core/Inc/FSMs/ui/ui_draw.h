@@ -27,8 +27,10 @@
 
 typedef enum
 {
+    UI_ITEM_SELECT_INVALID,
     UI_ITEM_SELECT,
     UI_ITEM_DESELECT,
+    UI_ITEM_SELECT_LAST,
 }ui_select_t;
 
 typedef struct
@@ -177,7 +179,11 @@ typedef struct
             feeder_daily_st_t daily_st;
         } date;
     };
-    ui_select_t select;
+    struct
+    {
+        ui_select_t main;
+        ui_select_t single;
+    }select;
 
 }ui_feeder_config_t;
 
@@ -212,7 +218,11 @@ typedef struct
             uint8_t month;
         }date;
     };
-    ui_select_t select;
+
+    struct{
+        ui_select_t main;
+        ui_select_t single;
+    }select;
 
 }ui_date_time_config_t;
 

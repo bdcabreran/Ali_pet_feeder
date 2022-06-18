@@ -32,7 +32,7 @@ typedef struct
 } pos_t;
 
 static const char *am_fm_str[TIMEn] = {"AM", "FM"}; 
-static const char *c_f_str[TEMP_UNITSn] = {"°C", "°F"}; 
+static const char *c_f_str[TEMP_UNITSn] = {"C", "F"}; 
 
 
 //////////////////////////////////// Static Common Functions  //////////////////////////////////////////////
@@ -299,26 +299,8 @@ void ui_feeder_menu_init(ui_feeder_menu_t *menu)
     menu->win.daily.w = 36;
     menu->win.daily.h = 18;
 
-    static const label_t header[4] = { {"OPEN_TIME",102, 2}, {"CLOSE_TIME",208, 2}, {"DATE",325, 2}, {"DAILY",380, 2}};
-
-    static char *meals[FEEDER_MEALn] = {"Breakfast", "Snack 1", "Lunch","Snack 2","Dinner", "Snack 3"};
-
-    for (int i = 0; i < FEEDER_MEALn; i++)
-    {       
-        ui_window_t text_pos;
-        text_pos.x = header->x;
-        text_pos.y = header->y;
-        ui_display_string(&text_pos, header->name, &Font16, LCD_DEFAULT_TEXTCOLOR);
-    }
-
     for (int i = 0; i < FEEDER_MEALn; i++)
     {
-        // meal selection 
-        ui_window_t text_pos;
-        text_pos.x = 2;
-        text_pos.y = 33*(i + 1);
-        ui_display_string(&text_pos, meals[i], &Font16, LCD_DEFAULT_TEXTCOLOR);
-
         // open hour 
         menu->meal_td[i].time.open.hour.x    = menu->win.main.x + (10 + 102);
         menu->meal_td[i].time.open.hour.y    = menu->win.main.y + (i+1)*(33);
@@ -346,11 +328,30 @@ void ui_feeder_menu_init(ui_feeder_menu_t *menu)
 }
 void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show)
 {
-
     if(show)
     {
+        ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_window(&menu->win.daily, LCD_DEFAULT_TEXTCOLOR, true);
+
+        static label_t header[4] = { {"OPEN_TIME",102, 2}, {"CLOSE_TIME",208, 2}, {"DATE",325, 2}, {"DAILY",380, 2}};
+        static char *meals[FEEDER_MEALn] = {"Breakfast", "Snack 1", "Lunch","Snack 2","Dinner", "Snack 3"};
+
+        for (int i = 0; i < 4; i++)
+        {       
+            ui_window_t text_pos;
+            text_pos.x = menu->win.main.x + header[i].x;
+            text_pos.y = menu->win.main.y + header[i].y;
+            ui_display_string(&text_pos, header[i].name, &Font16, LCD_DEFAULT_TEXTCOLOR);
+        }
+
         for (int i = 0; i < FEEDER_MEALn; i++)
         {
+            // meal selection 
+            ui_window_t text_pos;
+            text_pos.x = menu->win.main.x + 2;
+            text_pos.y = menu->win.main.y + 33*(i + 1);
+            ui_display_string(&text_pos, meals[i], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
             // Open time
             ui_display_string(&menu->meal_td[i].time.open.hour, "--:", &Font16, LCD_DEFAULT_TEXTCOLOR);
             ui_display_string(&menu->meal_td[i].time.open.min , "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
@@ -378,10 +379,10 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_t *confi
     uint16_t color = LCD_DEFAULT_TEXTCOLOR;
     sFONT    *font = &Font16;
 
-    if (config->select == UI_ITEM_SELECT)
+    if (config->select.single == UI_ITEM_SELECT)
     {
         color = UI_SELECTION_COLOR;
-        font = &Font20;
+        font = &Font16;
     }
     
     switch (config->set)
@@ -477,11 +478,11 @@ void ui_date_time_show(ui_date_time_menu_t *menu, bool show)
 {
     if(show)
     {
-        ui_display_string(&menu->time.hour, "--:", &Font24, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->time.min, "--", &Font24, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->time.hour, "12:", &Font24, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->time.min, "00", &Font24, LCD_DEFAULT_TEXTCOLOR);
 
-        ui_display_string(&menu->date.day, "--/", &Font16, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->date.month, "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->date.day, "01/", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->date.month, "12", &Font16, LCD_DEFAULT_TEXTCOLOR);
 
         ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
     }
@@ -494,31 +495,37 @@ void ui_date_time_show(ui_date_time_menu_t *menu, bool show)
 void ui_date_time_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *config)
 {
     char str[5];
-    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
+    uint16_t single_color_sel = LCD_DEFAULT_TEXTCOLOR;
+    uint16_t main_color_sel = LCD_DEFAULT_TEXTCOLOR;
 
-    if (config->select == UI_ITEM_SELECT)
-        color = UI_SELECTION_COLOR;
+    if (config->select.single == UI_ITEM_SELECT)
+        single_color_sel = UI_SELECTION_COLOR;
+
+    if (config->select.main == UI_ITEM_SELECT)
+        main_color_sel = UI_SELECTION_COLOR;
+
+    ui_draw_window(&menu->win.main, main_color_sel, true);
 
     switch (config->set)
     {
     case DATE_TIME_CNF_HOUR: {
             sprintf(str, "%.2d", config->time.hour);
-            ui_display_string(&menu->time.hour, str, &Font24, color);
+            ui_display_string(&menu->time.hour, str, &Font24, single_color_sel);
     } break;
 
     case DATE_TIME_CNF_MIN: {
             sprintf(str, "%.2d", config->time.min);
-            ui_display_string(&menu->time.min, str, &Font24, color);
+            ui_display_string(&menu->time.min, str, &Font24, single_color_sel);
     } break;
 
     case DATE_TIME_CNF_DAY: {
             sprintf(str, "%.2d", config->date.day);
-            ui_display_string(&menu->date.day, str, &Font16, color);
+            ui_display_string(&menu->date.day, str, &Font16, single_color_sel);
     } break;
 
     case DATE_TIME_CNF_MONTH: {
             sprintf(str, "%.2d", config->date.day);
-            ui_display_string(&menu->date.day, str, &Font16, color);
+            ui_display_string(&menu->date.day, str, &Font16, single_color_sel);
     } break;
 
     default:
@@ -530,25 +537,25 @@ void ui_date_time_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *c
 /* Thermostat icon Functions */
 void ui_thermostat_init(ui_thermostat_t *menu)
 {
-    menu->win.main.x = 157;
+    menu->win.main.x = 165;
     menu->win.main.y = 11;
-    menu->win.main.w = 104;
+    menu->win.main.w = 90;
     menu->win.main.h = 81;
 
     menu->icon.therm.ptr = thermostat;
     menu->icon.therm.x = menu->win.main.x + 1;
     menu->icon.therm.y = menu->win.main.y + 4;
     
-    menu->shape.temp.x = menu->win.main.x + 13;
+    menu->shape.temp.x = menu->win.main.x + 19;
     menu->shape.temp.y = menu->win.main.y + 11;
     menu->shape.temp.h = 49;
-    menu->shape.temp.w = 4;
+    menu->shape.temp.w = 6;
 
-    menu->shape.circle.x = menu->win.main.x + 7;
-    menu->shape.circle.y = menu->win.main.y + 52;
+    menu->shape.circle.x = menu->win.main.x + 21;
+    menu->shape.circle.y = menu->win.main.y + 60;
 
-    menu->text.temp.x = menu->win.main.x + 38; 
-    menu->text.temp.y = menu->win.main.y + 21;
+    menu->text.temp.x = menu->win.main.x + 36; 
+    menu->text.temp.y = menu->win.main.y + 25;
 }
 
 void ui_thermostat_show(ui_thermostat_t *menu, bool show)
@@ -556,9 +563,12 @@ void ui_thermostat_show(ui_thermostat_t *menu, bool show)
     if(show)
     {
         ui_draw_icon(&menu->icon.therm);
+        ui_window_t win = {.x = menu->shape.temp.x + 1, .y = menu->shape.temp.y + 1, .w = menu->shape.temp.w - 2, .h = menu->shape.temp.h - 2};
         ui_draw_window(&menu->shape.temp, LCD_DEFAULT_TEXTCOLOR, true);
         ui_draw_circle(&menu->shape.circle, 8, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->text.temp, "--C", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_fill_circle(&menu->shape.circle, 7, LCD_DEFAULT_BACKCOLOR);
+        ui_fill_window(&win, LCD_DEFAULT_BACKCOLOR);
+        ui_display_string(&menu->text.temp, "--C", &Font20, LCD_DEFAULT_TEXTCOLOR);
     }
     else 
     {
@@ -567,22 +577,55 @@ void ui_thermostat_show(ui_thermostat_t *menu, bool show)
 
 }
 
+static void ui_thermostat_draw_temp(ui_thermostat_t *therm, uint8_t temp_lvl, temperature_unit_t units)
+{
+    float hight = therm->shape.temp.h * (temp_lvl / 99.0);
+    char str[5] = {0};
+    uint16_t color = LCD_COLOR_BLUE;
+    sprintf(str, ".%.2d%s", temp_lvl, c_f_str[units]);
+
+    uint8_t temp_h = therm->shape.temp.h;
+    therm->shape.temp.h = (int)hight;
+
+    if(units == TEMP_UNITS_CELSIUS)
+    {
+        /*Low temp value level */
+        if(temp_lvl > 0 && temp_lvl < 17)
+            color = LCD_COLOR_BLUE;
+
+        /*Medium temp level */
+        if(temp_lvl >= 17  && temp_lvl < 70)
+            color = LCD_COLOR_YELLOW;
+
+        /*High temp level */
+        if(temp_lvl >= 70  && temp_lvl <= 100)
+            color = LCD_COLOR_RED;
+    }
+
+    /*!>TODO : add fahrenheit option*/
+    ui_window_t win = {.x = therm->shape.temp.x + 1, .y = therm->shape.temp.y + 1, .w = therm->shape.temp.w - 2, .h = therm->shape.temp.h - 2};
+    ui_fill_circle(&therm->shape.circle, 7, LCD_DEFAULT_BACKCOLOR);
+    ui_fill_window(&win, LCD_DEFAULT_BACKCOLOR);
+    ui_fill_circle(&therm->shape.circle, 7, color);
+    ui_fill_window(&win, color);
+    sprintf(str, "%d%s", temp_lvl, c_f_str[units]);
+    ui_display_string(&therm->text.temp, str, &Font20, LCD_DEFAULT_TEXTCOLOR);
+
+    therm->shape.temp.h = temp_h;
+}
+
+
 void ui_thermostat_set_config(ui_thermostat_t *menu, ui_thermostat_config_t *config)
 {
     char str[7];
-    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
+    uint16_t color = LCD_DEFAULT_BACKCOLOR;
 
     if (config->select == UI_ITEM_SELECT)
+    {
         color = UI_SELECTION_COLOR;
-
-    /*!< TODO: make the hight change with the temperature*/
-    ui_draw_icon(&menu->icon.therm);
-    ui_draw_window(&menu->shape.temp, color, true);
-    ui_fill_window(&menu->shape.temp, LCD_COLOR_BLUE);
-    ui_draw_circle(&menu->shape.circle, 8, LCD_DEFAULT_TEXTCOLOR);
-    ui_fill_circle(&menu->shape.circle, 7, LCD_DEFAULT_TEXTCOLOR);
-    sprintf(str, "%d%s", config->temp.val, c_f_str[config->temp.unit]);
-    ui_display_string(&menu->text.temp, str, &Font16, LCD_DEFAULT_TEXTCOLOR);
+    }
+    ui_draw_window(&menu->win.main, color, true);
+    ui_thermostat_draw_temp(menu, config->temp.val, config->temp.unit);
 }
 
 
@@ -652,7 +695,7 @@ void ui_thermostat_menu_show(ui_thermostat_menu_t *menu, bool show)
         ui_draw_icon(&menu->icon.therm);
         
         // display default text val 
-        ui_display_string(&menu->text.ctrl_temp, "--°C", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->text.ctrl_temp, "--C", &Font16, LCD_DEFAULT_TEXTCOLOR);
 
     }
     else
@@ -734,8 +777,8 @@ void ui_thermostat_menu_set_config(ui_thermostat_menu_t *menu, ui_thermostat_men
 
 void ui_petcall_init(ui_petcall_t *menu)
 {
-    menu->win.main.x = 165;
-    menu->win.main.y = 12;
+    menu->win.main.x = 265;
+    menu->win.main.y = 11;
     menu->win.main.w = 64;
     menu->win.main.h = 81;
 
@@ -751,14 +794,15 @@ void ui_petcall_show(ui_petcall_t *menu, bool show)
 {
     if(show)
     {
-        ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
-        ui_draw_icon(&menu->icon.mic);
+        // ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_window_t text = {.x = menu->win.main.x + 15 , .y = menu->win.main.y + 20};
+        ui_display_string(&text, "MIC", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        // ui_draw_icon(&menu->icon.mic);
     }
     else
     {
         ui_clear_window(&menu->win.main);
     }
-
 }
 
 void ui_petcall_set_config(ui_petcall_t *menu, ui_petcall_config_t *config)
