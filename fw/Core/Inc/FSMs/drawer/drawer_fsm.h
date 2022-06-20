@@ -43,7 +43,7 @@ typedef struct
         drawer_st_t next;
     }status;
 
-}drawer_ctrl_info;
+}drawer_ctrl_info_t;
 
 /**
  * @brief Internal Events 
@@ -56,13 +56,15 @@ typedef enum
     EVT_EXT_DRW_LAST
 }drawer_ev_ext_name_t;
 
+#define IS_DRAWER_EV_EXT(evt) (evt > EVT_EXT_DRW_INVALID && evt  < EVT_EXT_DRW_LAST)
+
 typedef struct
 {
     drawer_no_t no;
 }drawer_ev_ext_data_t;
 
 
-drawer_ctrl_info *drawer_fsm_get_info(drawer_no_t no);
+drawer_ctrl_info_t *drawer_fsm_get_info(drawer_no_t no);
 
 
 void drawer_fsm_set_ext_evt(event_t *event);

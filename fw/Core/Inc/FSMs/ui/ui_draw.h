@@ -327,6 +327,18 @@ typedef struct
     ui_select_t select;
 }ui_petcall_menu_config_t;
 
+
+//------------- Notification  ----------------//
+typedef struct
+{
+    struct 
+    {
+        ui_window_t main;
+        ui_window_t text;
+    }win;
+}ui_notification_msg_t;
+
+
 //-------------------------------------------//
 
 
@@ -339,6 +351,7 @@ extern ui_date_time_menu_t    ui_date_time;
 extern ui_feeder_menu_t       ui_feeder_menu;
 extern ui_thermostat_config_t ui_therm_conf;
 extern ui_petcall_config_t    ui_petcall_conf;
+extern ui_notification_msg_t  ui_notification;
 
 
 /* Battery Icon related functions */
@@ -380,6 +393,11 @@ void ui_petcall_set_config(ui_petcall_t *menu, ui_petcall_config_t *config);
 void ui_petcall_menu_init(ui_petcall_menu_t *menu);
 void ui_petcall_menu_show(ui_petcall_menu_t *menu, bool show);
 void ui_petcall_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_t *config);
+
+/* Notification messages */
+void ui_notification_msg_init(ui_notification_msg_t *menu);
+void ui_notification_msg_show(ui_notification_msg_t *menu, bool show);
+void ui_notification_msg_set(ui_notification_msg_t *menu, char *msg);
 
 
 #endif

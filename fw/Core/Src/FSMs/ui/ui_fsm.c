@@ -141,7 +141,16 @@ void ui_fsm_init(ui_handle_t handle)
     ui_petcall_init(&ui_petcall);
     ui_feeder_menu_init(&ui_feeder_menu);
     ui_date_time_init(&ui_date_time);
+    ui_notification_msg_init(&ui_notification);
 
+    /*display fixed elements in the Screen */
+    ui_battery_show(&ui_battery, true);
+    ui_drawers_show(&ui_drawers, true);
+    ui_thermostat_show(&ui_thermostat, true);
+    ui_petcall_show(&ui_petcall, true);
+
+    // thermostat demo
+    ui_update_thermostat(handle);
 
 	enter_seq_main_menu(handle);
 }
@@ -200,15 +209,8 @@ static void enter_seq_main_menu(ui_handle_t handle)
 
 static void entry_action_main_menu(ui_handle_t handle)
 {
-    /*Show main menu elements */
-    ui_battery_show(&ui_battery, true);
-    ui_drawers_show(&ui_drawers, true);
-    ui_thermostat_show(&ui_thermostat, true);
-    ui_petcall_show(&ui_petcall, true);
+    // show date time 
     ui_date_time_show(&ui_date_time, true);
-
-    // thermostat demo 
-    ui_update_thermostat(handle);
 
     /* Set cursor to first item */
     time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
@@ -292,17 +294,21 @@ void enter_seq_drawer_request(ui_handle_t handle)
 
 void entry_action_drawer_request(ui_handle_t handle)
 {
+    /* Show message in the screen */
+    ui_date_time_show(&ui_date_time, false);
+    ui_notification_msg_show(&ui_notification, true);
+
     /* Notify Drawer FSM */
     notify_manual_drawer_operation(handle);
-
+    
     /* Update UI Elements */
     ui_drawers_config_t *ui_config = &handle->iface.ui.drawers;
-    drawer_ctrl_info *info = drawer_fsm_get_info(ui_config->drawer.no);
+    drawer_ctrl_info_t *info = drawer_fsm_get_info(ui_config->drawer.no);
     ui_config->drawer.st = info->status.curr;
     ui_config->select.single = UI_ITEM_SELECT;
     ui_drawers_set_config(&ui_drawers, ui_config);
 
-    time_event_start(&handle->event.time.dummy, 1000);
+    time_event_start(&handle->event.time.dummy, 3000);
 }
 
 void drawer_request_on_react(ui_handle_t handle)
@@ -310,6 +316,7 @@ void drawer_request_on_react(ui_handle_t handle)
     // no required actions 
     if(time_event_is_raised(&handle->event.time.dummy) == true)
     {
+        ui_notification_msg_show(&ui_notification, false);
         ui_drawers_config_t *ui_config = &handle->iface.ui.drawers;;
         ui_config->select.single = UI_ITEM_DESELECT;
         ui_drawers_set_config(&ui_drawers, ui_config);
@@ -411,41 +418,93 @@ static void exit_action_feeder_config(ui_handle_t handle)
 
 static void feeder_config_on_react(ui_handle_t handle)
 {
+	drawer_no_t drawer_no = handle->iface.ui.drawers.drawer.no;
+
     switch (handle->event.btn)
     {
 
-    case EVT_EXT_BTN_LEFT_PRESSED : 
+    case EVT_EXT_BTN_LEFT_PRESSED:
     {
-        ui_feeder_config_t *config = &handle->iface.ui.feeder_menu;
-        config->select.single = UI_ITEM_DESELECT;
-        ui_feeder_menu_set_config(&ui_feeder_menu, config);
 
-        handle->iface.cursor.item++;
-        handle->iface.cursor.item %= FEEDER_CNFn; 
-        config->set = handle->iface.cursor.item;
-        config->select.single = UI_ITEM_SELECT;
-        ui_feeder_menu_set_config(&ui_feeder_menu, config);
-
-        time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS );
-    }
-    break;
-    case EVT_EXT_BTN_RIGHT_PRESSED:
-    {
-        ui_feeder_config_t *config = &handle->iface.ui.feeder_menu;
+        ui_feeder_config_t *config = &handle->iface.ui.feeder_menu[drawer_no];
         config->select.single = UI_ITEM_DESELECT;
         ui_feeder_menu_set_config(&ui_feeder_menu, config);
 
         handle->iface.cursor.item--;
-        handle->iface.cursor.item %= FEEDER_CNFn; 
+        handle->iface.cursor.item %= FEEDER_CNFn;
         config->set = handle->iface.cursor.item;
         config->select.single = UI_ITEM_SELECT;
         ui_feeder_menu_set_config(&ui_feeder_menu, config);
 
-        time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS );
+        time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+    }
+    break;
 
-    } break;
-    case EVT_EXT_BTN_UP_PRESSED:    break;
-    case EVT_EXT_BTN_DOWN_PRESSED:  break;
+    case EVT_EXT_BTN_RIGHT_PRESSED:
+    {
+
+        ui_feeder_config_t *config = &handle->iface.ui.feeder_menu[drawer_no];
+        config->select.single = UI_ITEM_DESELECT;
+        ui_feeder_menu_set_config(&ui_feeder_menu, config);
+
+        handle->iface.cursor.item++;
+        handle->iface.cursor.item %= FEEDER_CNFn;
+        config->set = handle->iface.cursor.item;
+        config->select.single = UI_ITEM_SELECT;
+        ui_feeder_menu_set_config(&ui_feeder_menu, config);
+
+        time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+    }
+    break;
+
+    case EVT_EXT_BTN_UP_PRESSED:
+    {
+        /*increase item value */
+        uint8_t drawer_no = handle->iface.ui.drawers.drawer.no;
+        ui_feeder_config_t *config = handle->iface.ui.feeder_menu[drawer_no];
+
+        switch (handle->iface.cursor.item)
+        {
+           case FEEDER_CNF_OPEN_TIME_HOUR: {
+           config->time.hour
+         
+           } break;
+           case FEEDER_CNF_OPEN_TIME_MIN: { 
+            
+           } break;
+           case FEEDER_CNF_OPEN_TIME_AM_FM: { 
+            
+           } break;
+           case FEEDER_CNF_CLOSE_TIME_HOUR: { 
+            
+           } break;
+           case FEEDER_CNF_CLOSE_TIME_MIN: { 
+            
+           } break;
+           case FEEDER_CNF_CLOSE_TIME_AM_FM: { 
+            
+           } break;
+           case FEEDER_CNF_DATE_DAY: { 
+            
+           } break;
+           case FEEDER_CNF_DATE_MONTH: { 
+            
+           } break;
+           case FEEDER_CNF_DATE_DAILY: { 
+            
+           } break;
+        default:
+            break;
+        }
+
+    }   
+    break;
+
+    case EVT_EXT_BTN_DOWN_PRESSED:  
+    {
+
+    }
+    break;
     case EVT_EXT_BTN_ENTER_PRESSED: break;
     
     default:
@@ -476,8 +535,9 @@ static void feeder_config_on_react(ui_handle_t handle)
 
 static void notify_manual_drawer_operation(ui_handle_t handle)
 {
+    char str[30];
     ui_drawers_config_t *drawer_cfg = &handle->iface.ui.drawers;
-    drawer_ctrl_info *info = drawer_fsm_get_info(drawer_cfg->drawer.no);
+    drawer_ctrl_info_t *info = drawer_fsm_get_info(drawer_cfg->drawer.no);
     event_t event;
 
     event.info.name = EVT_EXT_DRW_INVALID;
@@ -488,13 +548,15 @@ static void notify_manual_drawer_operation(ui_handle_t handle)
 
     if (info->status.curr == DRAWER_ST_CLOSE || info->status.curr == DRAWER_ST_CLOSING)
     {
-        ui_fsm_dbg("manual opening to drawer no [%d]\r\n", drawer_cfg->drawer.no + 1);
+        sprintf(str, "Opening Drawer no %d", drawer_cfg->drawer.no + 1);
+        ui_fsm_dbg("%s\r\n", str);
         event.info.name = EVT_EXT_DRW_OPEN;
     }
 
     else if (info->status.curr == DRAWER_ST_OPEN || info->status.curr == DRAWER_ST_OPENING)
     {
-        ui_fsm_dbg("manual closing to drawer no [%d]\r\n", drawer_cfg->drawer.no + 1);
+        sprintf(str, "Closing Drawer no %d", drawer_cfg->drawer.no + 1);
+        ui_fsm_dbg("%s\r\n", str);
         event.info.name = EVT_EXT_DRW_CLOSE;
     }
 
@@ -502,6 +564,8 @@ static void notify_manual_drawer_operation(ui_handle_t handle)
     {
         event_manager_write(event_manager_fsm_get(), &event);
     }
+
+    ui_notification_msg_set(&ui_notification, str);
 }
 
 static void ui_update_battery(ui_handle_t handle)
@@ -560,12 +624,12 @@ static void drawer_select_key_pressed(ui_handle_t handle)
     /*set new drawer number */
     if(handle->event.btn == EVT_EXT_BTN_LEFT_PRESSED)
     {
-        handle->iface.cursor.item++;
+        handle->iface.cursor.item--;
         handle->iface.cursor.item %= DRAWERn;
     }
     else if (handle->event.btn == EVT_EXT_BTN_RIGHT_PRESSED)
     {
-        handle->iface.cursor.item--;
+        handle->iface.cursor.item++;
         handle->iface.cursor.item %= DRAWERn;
     }
 

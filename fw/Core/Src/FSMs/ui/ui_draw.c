@@ -17,6 +17,7 @@ ui_date_time_menu_t    ui_date_time;
 ui_feeder_menu_t       ui_feeder_menu;
 ui_thermostat_config_t ui_therm_conf;
 ui_petcall_config_t    ui_petcall_conf;
+ui_notification_msg_t  ui_notification;
 
 typedef struct
 {
@@ -617,7 +618,6 @@ static void ui_thermostat_draw_temp(ui_thermostat_t *therm, uint8_t temp_lvl, te
 
 void ui_thermostat_set_config(ui_thermostat_t *menu, ui_thermostat_config_t *config)
 {
-    char str[7];
     uint16_t color = LCD_DEFAULT_BACKCOLOR;
 
     if (config->select == UI_ITEM_SELECT)
@@ -857,3 +857,30 @@ void ui_petcall_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_
 
 
 //////////////////////////////////////// END ///////////////////////////////////////////////////////////////////////
+void ui_notification_msg_init(ui_notification_msg_t *menu)
+{
+    menu->win.main.x = 17;
+    menu->win.main.y = 116;
+    menu->win.main.w = 442;
+    menu->win.main.h = 161;
+
+    menu->win.text.x = menu->win.main.x + 30;
+    menu->win.text.y = menu->win.main.y + 60;
+}
+
+void ui_notification_msg_show(ui_notification_msg_t *menu, bool show)
+{
+    if(show)
+    {
+        ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR ,true);
+    }
+    else
+    {
+        ui_clear_window(&menu->win.main);
+    }
+}
+
+void ui_notification_msg_set(ui_notification_msg_t *menu, char *msg)
+{
+    ui_display_string(&menu->win.text, msg, &Font24, LCD_DEFAULT_TEXTCOLOR);
+}
