@@ -108,6 +108,19 @@ extern LCD_DrvTypeDef  *lcd_drv;
 /* Max size of bitmap will based on a font24 (17x24) */
 static uint8_t bitmap[MAX_HEIGHT_FONT * MAX_WIDTH_FONT * 2 + OFFSET_BITMAP] = {0};
 
+const uint8_t digit_segment[11]={
+     0b00111111, //0
+     0b00000110, //1
+     0b01011011, //2
+     0b01001111, //3
+     0b01100110, //4
+     0b01101101, //5
+     0b01111101, //6
+     0b00000111, //7
+     0b01111111, //8
+     0b01100111 //9 
+  };
+
 /* @defgroup STM32_ADAFRUIT_LCD_Private_FunctionPrototypes */ 
 static void DrawChar(uint16_t Xpos, uint16_t Ypos, const uint8_t *c);
 static void SetDisplayWindow(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height);
@@ -1056,3 +1069,77 @@ void BSP_LCD_Scroll(int16_t Scroll, uint16_t TopFix, uint16_t BottonFix)
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+/**
+ * @brief 
+ * 
+ * @param Xpos 
+ * @param Ypos 
+ * @param Text stream of text containing numbers "0"-"9" or ":"
+ * @param Mode 
+ */
+void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text)
+{
+    uint8_t digit_count = 1;
+    while(*Text != NULL){
+      if (*Text == ":")
+        BSP_LCD_Colon(Xpos,Ypos);
+      else
+        BSP_LCD_draw_digit(Xpos ,  Ypos, (*Text)-'0');
+      Xpos = Xpos + (LCD_SEGMENT_DIGIT_SPACING_OFFSET*digit_count);
+      digit_count++;
+      Text++;
+    }
+
+}
+
+/**
+ * @brief draws a single 7 segment digit
+ * 
+ * @param xpos 
+ * @param ypos 
+ * @param digit int number 0-9
+ */
+void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit) {
+
+    uint16_t x[6] = {0};
+    uint16_t y[6] = {0};
+
+    x[0] = xpos;
+    x[1] = x[0] - (LCD_SEGMENT_WIDTH + LCD_SEGMENT_GAP);
+    x[2] = x[1];
+    x[3] = x[0];
+    x[4] = x[0];
+    x[5] = x[0] + LCD_SEGMENT_WIDTH +LCD_SEGMENT_GAP; 
+    x[6] = x[5];
+
+    y[0] = ypos;
+    y[1] = y[0] + (LCD_SEGMENT_WIDTH/2);
+    y[2] = y[0] + (LCD_SEGMENT_WIDTH/2) + LCD_SEGMENT_HEIGHT + LCD_SEGMENT_GAP;
+    y[3] = y[0] + LCD_SEGMENT_HEIGHT;
+    y[4] = y[0]+ (LCD_SEGMENT_HEIGHT*2) + LCD_SEGMENT_GAP;
+    y[5] = y[2]; 
+    y[6] = y[1];
+
+  segment_params_t segments[7]={
+    {x[0],y[0], LCD_SEGMENT_HEIGHT, LCD_SEGMENT_WIDTH  }, // 0 horizontal
+    {x[6],y[6], LCD_SEGMENT_WIDTH , LCD_SEGMENT_HEIGHT }, // 1 vertical
+    {x[5],y[5], LCD_SEGMENT_WIDTH , LCD_SEGMENT_HEIGHT }, // 2 vertical
+    {x[4],y[4], LCD_SEGMENT_HEIGHT, LCD_SEGMENT_WIDTH  }, // 3 horizontal
+    {x[2],y[2], LCD_SEGMENT_WIDTH , LCD_SEGMENT_HEIGHT }, // 4 vertical
+    {x[1],y[1], LCD_SEGMENT_WIDTH , LCD_SEGMENT_HEIGHT }, // 5 vertical
+    {x[3],y[3], LCD_SEGMENT_HEIGHT, LCD_SEGMENT_WIDTH  }, // 6 horizontal
+  };
+ 
+
+  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+
+  for(uint8_t segment= 0; segment < 7; segment++){
+      if(digit_segment[digit] &(0x1<<segment))
+         BSP_LCD_DrawRect(segments[segment].x,segments[segment].y, segments[segment].width, segments[segment].height ); // horizontal
+  }
+}
+
+void BSP_LCD_Colon(uint16_t xpos,uint16_t ypos){
+    BSP_LCD_DrawRect(xpos, ypos,  LCD_COLON_WIDTH,LCD_COLON_WIDTH ); 
+}

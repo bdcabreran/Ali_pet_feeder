@@ -79,7 +79,15 @@
 #define LCD_COLOR_MAGENTA       RC(0xF81F)
 #define LCD_COLOR_YELLOW        RC(0xFFE0)
 #define LCD_COLOR_WHITE         RC(0xFFFF)
-  
+
+
+#define LCD_SEGMENT_WIDTH   12
+#define LCD_SEGMENT_HEIGHT  50
+#define LCD_SEGMENT_GAP    LCD_SEGMENT_WIDTH /3
+#define LCD_SEGMENT_DIGIT_SPACING 20
+#define LCD_SEGMENT_DIGIT_SPACING_OFFSET  (LCD_SEGMENT_HEIGHT + (2*LCD_SEGMENT_WIDTH) + (LCD_SEGMENT_GAP*2) + LCD_SEGMENT_DIGIT_SPACING )
+
+#define LCD_COLON_WIDTH  12
 //-----------------------------------------------------------------------------
 /* Interface section (no modify) */   
 
@@ -112,6 +120,13 @@ typedef enum
   LEFT_MODE               = 0x03     /*!< Left mode   */
 }Line_ModeTypdef;
  
+typedef struct segment_params{
+    uint16_t x;
+    uint16_t y;
+    uint16_t width;
+    uint16_t height;
+}segment_params_t;
+
 #define __IO    volatile  
 
 /** 
@@ -176,6 +191,11 @@ void     BSP_LCD_DrawRGB16Image(uint16_t Xpos, uint16_t Ypos, uint16_t Xsize, ui
 void     BSP_LCD_ReadRGB16Image(uint16_t Xpos, uint16_t Ypos, uint16_t Xsize, uint16_t Ysize, uint16_t *pData);
 void     BSP_LCD_Scroll(int16_t Scroll, uint16_t TopFix, uint16_t BottonFix);
  
+
+void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text);
+void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit);
+void BSP_LCD_Colon(uint16_t xpos,uint16_t ypos);
+
 #ifdef __cplusplus
 }
 #endif
