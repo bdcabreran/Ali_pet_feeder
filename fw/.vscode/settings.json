@@ -14,7 +14,8 @@
         "power_fsm.h": "c",
         "feeder_fsm.h": "c",
         "drawer_fsm.h": "c",
-        "temp_ctrl_fsm.h": "c"
+        "temp_ctrl_fsm.h": "c",
+        "algorithm": "c"
     },
     "cSpell.words": [
         "inact",

@@ -69,7 +69,7 @@ typedef enum
     UI_MAIN_MENU_ITEM_THERMOSTAT,
     UI_MAIN_MENU_ITEM_PETCALL,
     UI_MAIN_MENU_ITEM_BATTERY,
-    UI_MAIN_MENU_ITEM_TIME_DATE,
+    UI_MAIN_MENU_ITEM_DATE_TIME,
     UI_MAIN_MENU_ITEMn
 }ui_main_menu_sel_item_t;
 
@@ -163,22 +163,32 @@ typedef struct
 {
     feeder_meal_t meal;
     feeder_meal_config_t set;
-    union
+
+    struct
     {
         struct
         {
             uint8_t hour;
             uint8_t minute;
             time_am_fm_t am_fm;
-        } time;
+        } open;
 
         struct
         {
-            uint8_t day;
-            uint8_t month;
-            feeder_daily_st_t daily_st;
-        } date;
-    };
+            uint8_t hour;
+            uint8_t minute;
+            time_am_fm_t am_fm;
+        } close;
+
+    } time;
+
+    struct
+    {
+        uint8_t day;
+        uint8_t month;
+        feeder_daily_st_t daily_st;
+    } date;
+
     struct
     {
         ui_select_t main;

@@ -41,8 +41,9 @@ typedef enum
 
 typedef enum
 {
+    FEEDER_DAILY_MEAL_DISABLE,
     FEEDER_DAILY_MEAL_ENABLE,
-    FEEDER_DAILY_MEAL_DISABLE
+    FEEDER_DAILYn,
 }feeder_daily_st_t;
 
 typedef enum

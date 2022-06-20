@@ -4,6 +4,7 @@
 #include "time_event.h"
 #include "ui_draw.h"
 #include "drawer_fsm.h"
+#include "string.h"
 
 /**@brief Enable/Disable debug messages */
 #define UI_FSM_DEBUG 1
@@ -27,6 +28,7 @@
 
 #define UPDATE_GUI_MS           (1000)
 #define CURSOR_INACTIVITY_MS    (7000)
+#define NOTIFICATION_MSG_MS     (2000)
 
 /**
  * @brief State Machine States
@@ -35,11 +37,13 @@ typedef enum
 {
     ST_UI_INVALID = 0,
     ST_UI_MAIN_MENU,
-    ST_UI_DATE_TIME_CONFIG,
-    ST_UI_PETCALL_CONFIG,
     ST_UI_DRAWER_SELECT,
     ST_UI_FEEDER_CONFIG,
     ST_UI_DRAWER_ST_REQUEST,
+    ST_UI_DATE_TIME_CONFIG,
+    ST_UI_PETCALL_CONFIG,
+    ST_UI_THERM_CONFIG,
+    ST_UI_BATT_CONFIG,
     ST_UI_LAST,
 }ui_state_t;
 
@@ -104,26 +108,53 @@ static void enter_seq_drawer_request(ui_handle_t handle);
 static void entry_action_drawer_request(ui_handle_t handle);
 static void drawer_request_on_react(ui_handle_t handle);
 
-static void enter_sequence_drawer_select(ui_handle_t handle);
+static void enter_seq_drawer_select(ui_handle_t handle);
 static void entry_action_drawer_select(ui_handle_t handle);
 static void drawer_select_on_react(ui_handle_t handle);
 
-static void enter_sequence_feeder_config(ui_handle_t handle);
+static void enter_seq_feeder_config(ui_handle_t handle);
 static void entry_action_feeder_config(ui_handle_t handle);
 static void exit_action_feeder_config(ui_handle_t handle);
 static void feeder_config_on_react(ui_handle_t handle);
 
+static void enter_seq_therm_config(ui_handle_t handle);
+static void entry_action_therm_config(ui_handle_t handle);
+static void therm_config_on_react(ui_handle_t handle);
+
+static void enter_seq_petcall_config(ui_handle_t handle);
+static void entry_action_petcall_config(ui_handle_t handle);
+static void petcall_config_on_react(ui_handle_t handle);
+
+static void enter_seq_battery_config(ui_handle_t handle);
+static void entry_action_battery_config(ui_handle_t handle);
+static void battery_config_on_react(ui_handle_t handle);
+
+static void enter_seq_date_time_config(ui_handle_t handle);
+static void entry_action_date_time_config(ui_handle_t handle);
+static void date_time_config_on_react(ui_handle_t handle);
+
+
 //////////////////////// Static Miscellaneous functions ////////////////////////////////////////
 static void ui_update_battery(ui_handle_t handle);
-static void ui_update_date_time(ui_handle_t handle);
+// static void ui_update_date_time(ui_handle_t handle);
 static void ui_update_thermostat(ui_handle_t handle);
 static void notify_manual_drawer_operation(ui_handle_t handle);
 static void ui_update_item_selection(ui_handle_t handle, ui_select_t select);
 
 static void main_menu_enter_pressed(ui_handle_t handle);
+static void feeder_config_enter_pressed(ui_handle_t handle);
 static void drawer_select_enter_pressed(ui_handle_t handle);
 static void drawer_select_key_pressed(ui_handle_t handle);
 
+
+static void time_config_increase_hour( uint8_t *hour);
+static void time_config_decrease_hour(uint8_t *hour);
+static void time_config_increase_min(uint8_t *min);
+static void time_config_decrease_min(uint8_t *min);
+static void date_config_increase_day(uint8_t *day);
+static void date_config_decrease_day(uint8_t *day);
+static void date_config_increase_month(uint8_t *month);
+static void date_config_decrease_month(uint8_t *month);
 
 ////////////////////////////// Public function declaration //////////////////////////////////////
 
@@ -159,12 +190,15 @@ void ui_fsm_run(ui_handle_t handle)
 {
     switch (handle->state)
     {
-        case ST_UI_MAIN_MENU:          main_menu_on_react(handle); break;
-        case ST_UI_DATE_TIME_CONFIG:   break;
-        case ST_UI_PETCALL_CONFIG:     break;
-        case ST_UI_FEEDER_CONFIG:      feeder_config_on_react(handle); break;
-        case ST_UI_DRAWER_SELECT:      drawer_select_on_react(handle); break;
-        case ST_UI_DRAWER_ST_REQUEST:  drawer_request_on_react(handle); break;
+        case ST_UI_MAIN_MENU:          main_menu_on_react(handle);         break;
+        case ST_UI_DATE_TIME_CONFIG:   date_time_config_on_react(handle);  break;
+        case ST_UI_PETCALL_CONFIG:     petcall_config_on_react(handle);    break;
+        case ST_UI_FEEDER_CONFIG:      feeder_config_on_react(handle);     break;
+        case ST_UI_DRAWER_SELECT:      drawer_select_on_react(handle);     break;
+        case ST_UI_DRAWER_ST_REQUEST:  drawer_request_on_react(handle);    break;
+        case ST_UI_THERM_CONFIG:       therm_config_on_react(handle);      break;
+        case ST_UI_BATT_CONFIG:        battery_config_on_react(handle);    break;
+
     default:
         break;
     }
@@ -211,6 +245,7 @@ static void entry_action_main_menu(ui_handle_t handle)
 {
     // show date time 
     ui_date_time_show(&ui_date_time, true);
+    ui_update_battery(&ui_battery);
 
     /* Set cursor to first item */
     time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
@@ -237,7 +272,7 @@ static void main_menu_on_react(ui_handle_t handle)
         if(handle->iface.cursor.item > 0)
         	handle->iface.cursor.item -= 1;
 		else
-			handle->iface.cursor.item = UI_MAIN_MENU_ITEM_TIME_DATE;
+			handle->iface.cursor.item = UI_MAIN_MENU_ITEM_DATE_TIME;
 
         ui_update_item_selection(handle, UI_ITEM_SELECT);
         time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
@@ -270,7 +305,7 @@ static void main_menu_on_react(ui_handle_t handle)
     {
         time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
         ui_update_battery(handle);
-        ui_update_date_time(handle);
+        // ui_update_date_time(handle);
     }
 
     /* item cursor timer event */
@@ -278,7 +313,7 @@ static void main_menu_on_react(ui_handle_t handle)
     {
         ui_update_item_selection(handle, UI_ITEM_DESELECT);
         time_event_stop(&handle->event.time.cursor_inact);
-        handle->iface.cursor.item = UI_MAIN_MENU_ITEM_TIME_DATE;
+        handle->iface.cursor.item = UI_MAIN_MENU_ITEM_DATE_TIME;
     }
     
 }
@@ -325,7 +360,7 @@ void drawer_request_on_react(ui_handle_t handle)
 }
 
 /////////////////////////////////// Feeder Select State  ///////////////////////////////////////////
-void enter_sequence_drawer_select(ui_handle_t handle)
+void enter_seq_drawer_select(ui_handle_t handle)
 {
     ui_fsm_dbg("\t enter seq [ drawer select ] \r\n");
     fsm_set_next_state(handle, ST_UI_DRAWER_SELECT);
@@ -386,7 +421,7 @@ static void drawer_select_on_react(ui_handle_t handle)
 
 /////////////////////////////////// Feeder Config State  ///////////////////////////////////////////
 
-static void enter_sequence_feeder_config(ui_handle_t handle)
+static void enter_seq_feeder_config(ui_handle_t handle)
 {
     ui_fsm_dbg("\t enter seq [ feeder config ] \r\n");
     fsm_set_next_state(handle, ST_UI_FEEDER_CONFIG);
@@ -399,8 +434,22 @@ static void entry_action_feeder_config(ui_handle_t handle)
     ui_feeder_menu_show(&ui_feeder_menu, true);
 
     ui_feeder_config_t *config = &handle->iface.ui.feeder_menu[handle->iface.ui.drawers.drawer.no];
+
+    /*load previous configuration */
+
+    for (int i = FEEDER_CNF_OPEN_TIME_HOUR; i < FEEDER_CNFn; i++)
+    {
+        for (size_t j = FEEDER_MEAL_BREAKFAST; j < FEEDER_MEALn; j++)
+        {
+            config->set = i;
+            config->meal = j;
+            config->select.single = UI_ITEM_DESELECT;
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);        
+        }
+    }
     
     handle->iface.cursor.item = FEEDER_CNF_OPEN_TIME_HOUR;
+    config->meal = FEEDER_MEAL_BREAKFAST;
     config->set = handle->iface.cursor.item;
     config->select.single = UI_ITEM_SELECT;
     config->date.daily_st = FEEDER_DAILY_MEAL_DISABLE;
@@ -430,11 +479,26 @@ static void feeder_config_on_react(ui_handle_t handle)
         config->select.single = UI_ITEM_DESELECT;
         ui_feeder_menu_set_config(&ui_feeder_menu, config);
 
-        handle->iface.cursor.item--;
-        handle->iface.cursor.item %= FEEDER_CNFn;
+        // handle->iface.cursor.item--;
+        // handle->iface.cursor.item %= FEEDER_CNFn;
+
+        if (handle->iface.cursor.item > FEEDER_CNF_OPEN_TIME_HOUR)
+            handle->iface.cursor.item--;
+        else
+            handle->iface.cursor.item =  FEEDER_CNF_DATE_DAILY;
+
         config->set = handle->iface.cursor.item;
         config->select.single = UI_ITEM_SELECT;
         ui_feeder_menu_set_config(&ui_feeder_menu, config);
+
+        if (handle->iface.cursor.item == FEEDER_CNF_DATE_DAILY)
+        {
+            if (config->meal > FEEDER_MEAL_BREAKFAST)
+                config->meal--;
+            else
+                config->meal = FEEDER_MEAL_SNACK_3;
+        };
+
 
         time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
     }
@@ -453,6 +517,12 @@ static void feeder_config_on_react(ui_handle_t handle)
         config->select.single = UI_ITEM_SELECT;
         ui_feeder_menu_set_config(&ui_feeder_menu, config);
 
+        if (handle->iface.cursor.item == FEEDER_CNF_DATE_DAILY)
+        {
+            config->meal++;
+            config->meal %= FEEDER_MEALn;
+        };
+
         time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
     }
     break;
@@ -461,51 +531,157 @@ static void feeder_config_on_react(ui_handle_t handle)
     {
         /*increase item value */
         uint8_t drawer_no = handle->iface.ui.drawers.drawer.no;
-        ui_feeder_config_t *config = handle->iface.ui.feeder_menu[drawer_no];
+       ui_feeder_config_t *config = &handle->iface.ui.feeder_menu[drawer_no];
 
         switch (handle->iface.cursor.item)
         {
-           case FEEDER_CNF_OPEN_TIME_HOUR: {
-           config->time.hour
-         
-           } break;
-           case FEEDER_CNF_OPEN_TIME_MIN: { 
-            
-           } break;
-           case FEEDER_CNF_OPEN_TIME_AM_FM: { 
-            
-           } break;
-           case FEEDER_CNF_CLOSE_TIME_HOUR: { 
-            
-           } break;
-           case FEEDER_CNF_CLOSE_TIME_MIN: { 
-            
-           } break;
-           case FEEDER_CNF_CLOSE_TIME_AM_FM: { 
-            
-           } break;
-           case FEEDER_CNF_DATE_DAY: { 
-            
-           } break;
-           case FEEDER_CNF_DATE_MONTH: { 
-            
-           } break;
-           case FEEDER_CNF_DATE_DAILY: { 
-            
+        case FEEDER_CNF_OPEN_TIME_HOUR:
+        {
+            time_config_increase_hour(&config->time.open.hour);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_OPEN_TIME_MIN:
+        {
+            time_config_increase_min(&config->time.open.minute);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_OPEN_TIME_AM_FM:
+        {
+            config->time.open.am_fm = !config->time.open.am_fm;
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_CLOSE_TIME_HOUR:
+        {
+            time_config_increase_hour(&config->time.close.hour);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_CLOSE_TIME_MIN:
+        {
+            time_config_increase_min(&config->time.close.minute);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_CLOSE_TIME_AM_FM:
+        {
+            config->time.close.am_fm = !config->time.close.am_fm;
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_DATE_DAY:
+        {
+            date_config_increase_day(&config->date.day);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_DATE_MONTH:
+        {
+            date_config_increase_month(&config->date.month);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_DATE_DAILY:
+        { 
+            config->date.daily_st = !config->date.daily_st;
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
            } break;
         default:
             break;
         }
+
+        time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
 
     }   
     break;
 
     case EVT_EXT_BTN_DOWN_PRESSED:  
     {
+        /*increase item value */
+        uint8_t drawer_no = handle->iface.ui.drawers.drawer.no;
+       ui_feeder_config_t *config = &handle->iface.ui.feeder_menu[drawer_no];
 
+        switch (handle->iface.cursor.item)
+        {
+        case FEEDER_CNF_OPEN_TIME_HOUR:
+        {
+            time_config_decrease_hour(&config->time.open.hour);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_OPEN_TIME_MIN:
+        {
+            time_config_decrease_min(&config->time.open.minute);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_OPEN_TIME_AM_FM:
+        {
+            config->time.open.am_fm = !config->time.open.am_fm;
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_CLOSE_TIME_HOUR:
+        {
+            time_config_decrease_hour(&config->time.close.hour);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_CLOSE_TIME_MIN:
+        {
+            time_config_decrease_min(&config->time.open.minute);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_CLOSE_TIME_AM_FM:
+        {
+            config->time.open.am_fm = !config->time.open.am_fm;
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_DATE_DAY:
+        {
+            date_config_decrease_day(&config->date.day);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_DATE_MONTH:
+        {
+            date_config_decrease_month(&config->date.month);
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+        }
+        break;
+
+        case FEEDER_CNF_DATE_DAILY:
+        { 
+            config->date.daily_st = !config->date.daily_st;
+            ui_feeder_menu_set_config(&ui_feeder_menu, config);
+           } break;
+        default:
+            break;
+        }
+
+        time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
     }
     break;
-    case EVT_EXT_BTN_ENTER_PRESSED: break;
+    case EVT_EXT_BTN_ENTER_PRESSED: { feeder_config_enter_pressed(handle); } break;
     
     default:
         break;
@@ -527,6 +703,116 @@ static void feeder_config_on_react(ui_handle_t handle)
         enter_seq_main_menu(handle);
     }
     
+}
+
+
+/////////////////////////////////// Thermostat Config State  ///////////////////////////////////////////
+static void enter_seq_therm_config(ui_handle_t handle)
+{
+    ui_fsm_dbg("\t enter seq [ therm config ] \r\n");
+    fsm_set_next_state(handle, ST_UI_THERM_CONFIG);
+    entry_action_therm_config(handle);
+}
+
+static void entry_action_therm_config(ui_handle_t handle)
+{
+    ui_feeder_menu_show(&ui_feeder_menu, false);
+    ui_notification_msg_show(&ui_notification, true);
+    ui_notification_msg_set(&ui_notification, "Thermostat Menu.");
+    time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+}
+
+static void therm_config_on_react(ui_handle_t handle)
+{
+    /* item cursor inactivity timer event */
+    if(time_event_is_raised(&handle->event.time.cursor_inact) == true)
+    {
+        exit_action_feeder_config(handle);
+        enter_seq_main_menu(handle);
+    }
+}
+
+
+/////////////////////////////////// Petcall Config State  ///////////////////////////////////////////
+static void enter_seq_petcall_config(ui_handle_t handle)
+{
+    ui_fsm_dbg("\t enter seq [ petcall config ] \r\n");
+    fsm_set_next_state(handle, ST_UI_PETCALL_CONFIG);
+    entry_action_petcall_config(handle);
+}
+
+static void entry_action_petcall_config(ui_handle_t handle)
+{
+    ui_feeder_menu_show(&ui_feeder_menu, false);
+    ui_notification_msg_show(&ui_notification, true);
+    ui_notification_msg_set(&ui_notification, "Petcall Menu.");
+    time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+}
+
+static void petcall_config_on_react(ui_handle_t handle)
+{
+    /* item cursor inactivity timer event */
+    if(time_event_is_raised(&handle->event.time.cursor_inact) == true)
+    {
+        exit_action_feeder_config(handle);
+        enter_seq_main_menu(handle);
+    }
+}
+
+
+/////////////////////////////////// Battery Config State  ///////////////////////////////////////////
+static void enter_seq_battery_config(ui_handle_t handle)
+{
+    ui_fsm_dbg("\t enter seq [ battery config ] \r\n");
+    fsm_set_next_state(handle, ST_UI_BATT_CONFIG);
+    entry_action_battery_config(handle);
+}
+
+static void entry_action_battery_config(ui_handle_t handle)
+{
+    ui_feeder_menu_show(&ui_feeder_menu, false);
+    ui_notification_msg_show(&ui_notification, true);
+    ui_notification_msg_set(&ui_notification, "Battery Menu.");
+    time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+
+}
+
+static void battery_config_on_react(ui_handle_t handle)
+{
+    /* item cursor inactivity timer event */
+    if(time_event_is_raised(&handle->event.time.cursor_inact) == true)
+    {
+        exit_action_feeder_config(handle);
+        enter_seq_main_menu(handle);
+    }
+}
+
+
+
+/////////////////////////////////// Date Time Config State  ///////////////////////////////////////////
+static void enter_seq_date_time_config(ui_handle_t handle)
+{
+    ui_fsm_dbg("\t enter seq [ date time config ] \r\n");
+    fsm_set_next_state(handle, ST_UI_DATE_TIME_CONFIG);
+    entry_action_date_time_config(handle);
+}
+
+static void entry_action_date_time_config(ui_handle_t handle)
+{
+    ui_feeder_menu_show(&ui_feeder_menu, false);
+    ui_notification_msg_show(&ui_notification, true);
+    ui_notification_msg_set(&ui_notification, "Date Time Menu.");
+    time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+}
+
+static void date_time_config_on_react(ui_handle_t handle)
+{
+    /* item cursor inactivity timer event */
+    if(time_event_is_raised(&handle->event.time.cursor_inact) == true)
+    {
+        exit_action_feeder_config(handle);
+        enter_seq_main_menu(handle);
+    }
 }
 
 
@@ -580,21 +866,19 @@ static void ui_update_battery(ui_handle_t handle)
 
 static void ui_update_date_time(ui_handle_t handle)
 {
-    ui_date_time_config_t *config = &handle->iface.ui.dt_menu;
-    config->date.day = 18;
-    config->date.month = 06;
-    config->time.hour = 6;
-    config->time.min++;
-    config->time.min %= 59;
-    config->set = DATE_TIME_CNF_MIN; 
-    ui_date_time_set_config(&ui_date_time, config);
+    handle->iface.ui.dt_menu.set = DATE_TIME_CNF_HOUR;
+    handle->iface.ui.dt_menu.date.day = 18;
+    handle->iface.ui.dt_menu.date.month = 06;
+    handle->iface.ui.dt_menu.time.min = 30;
+    time_config_increase_min(&handle->iface.ui.dt_menu.time.hour);
+    ui_date_time_set_config(&ui_date_time, &handle->iface.ui.dt_menu);
 }
 
 static void ui_update_thermostat(ui_handle_t handle)
 {
     // ui_fsm_dbg("update thermostat status \r\n");
     ui_thermostat_config_t *ui_config = &handle->iface.ui.therm;
-    static uint8_t dummy_temp_val = 0;
+//    static uint8_t dummy_temp_val = 0;
     ui_config->select = UI_ITEM_DESELECT;
     ui_config->temp.unit = TEMP_UNITS_CELSIUS;
     ui_config->temp.val =  99; //(dummy_temp_val++ % 99);
@@ -606,14 +890,13 @@ static void drawer_select_enter_pressed(ui_handle_t handle)
     ui_fsm_dbg("drawer enter pressed\r\n");
     if(handle->iface.ui.drawers.select.single == UI_ITEM_SELECT)
     {
-        enter_sequence_feeder_config(handle);
+        enter_seq_feeder_config(handle);
     }
 }
 
 static void drawer_select_key_pressed(ui_handle_t handle)
 {
     ui_fsm_dbg("drawer key pressed \r\n");
-    uint8_t item = handle->iface.cursor.item;
     ui_drawers_config_t *config = &handle->iface.ui.drawers;
 
     /*clean previous drawer selection */
@@ -644,18 +927,57 @@ static void main_menu_enter_pressed(ui_handle_t handle)
     /* define enter sequence according item selected */
     switch (handle->iface.cursor.item)
     {
-    case UI_MAIN_MENU_ITEM_DRAWERS:    {  
-        if(handle->iface.ui.drawers.select.main == UI_ITEM_SELECT)
-            enter_sequence_drawer_select(handle); 
-    } break;
-    case UI_MAIN_MENU_ITEM_THERMOSTAT: {  /*enter_sequence_thermostat_menu() */ } break;
-    case UI_MAIN_MENU_ITEM_PETCALL:    {  /*enter_sequence_petcall_menu() */    } break;
-    case UI_MAIN_MENU_ITEM_BATTERY:    {  /*enter_sequence_battery_menu() */    } break;
-    case UI_MAIN_MENU_ITEM_TIME_DATE:  {  /*enter_sequence_time_date_menu() */  } break;
+    case UI_MAIN_MENU_ITEM_DRAWERS:
+    {
+        if (handle->iface.ui.drawers.select.main == UI_ITEM_SELECT)
+            enter_seq_drawer_select(handle);
+    }
+    break;
+
+    case UI_MAIN_MENU_ITEM_THERMOSTAT:
+    {
+        if (handle->iface.ui.therm.select == UI_ITEM_SELECT)
+            enter_seq_therm_config(handle);
+    }
+    break;
+
+    case UI_MAIN_MENU_ITEM_PETCALL:
+    {
+        if (handle->iface.ui.petcall.select == UI_ITEM_SELECT)
+            enter_seq_petcall_config(handle);
+    }
+    break;
+
+    case UI_MAIN_MENU_ITEM_BATTERY:
+    {
+        if (handle->iface.ui.battery.select == UI_ITEM_SELECT)
+            enter_seq_battery_config(handle);
+    }
+    break;
+
+    case UI_MAIN_MENU_ITEM_DATE_TIME:
+    {
+        if (handle->iface.ui.dt_menu.select.main == UI_ITEM_SELECT)
+            enter_seq_date_time_config(handle);
+    }
+    break;
+
     default:
         break;
     }
 }
+
+static void feeder_config_enter_pressed(ui_handle_t handle)
+{
+    /* Notify Saving Data */
+    ui_feeder_menu_show(&ui_feeder_menu, false);
+    ui_notification_msg_show(&ui_notification, true);
+    ui_notification_msg_set(&ui_notification, "Saving Feeder Config.");
+
+    /* config timer to go main menu */    
+    time_event_start(&handle->event.time.cursor_inact, 2000);
+}
+
 
 static void ui_update_item_selection(ui_handle_t handle, ui_select_t select)
 {
@@ -693,7 +1015,7 @@ static void ui_update_item_selection(ui_handle_t handle, ui_select_t select)
     }
     break;
 
-    case UI_MAIN_MENU_ITEM_TIME_DATE:
+    case UI_MAIN_MENU_ITEM_DATE_TIME:
     {
         ui_date_time_config_t *config = &handle->iface.ui.dt_menu;
         config->select.main = select;
@@ -704,4 +1026,67 @@ static void ui_update_item_selection(ui_handle_t handle, ui_select_t select)
     default:
         break;
     }
+}
+
+static void time_config_increase_hour( uint8_t *hour)
+{
+    if( (*hour) < 12 )
+        (*hour)++;
+    else
+        (*hour) = 1;
+}
+
+static void time_config_decrease_hour(uint8_t *hour)
+{
+    if ((*hour) > 1)
+        (*hour)--;
+    else
+        (*hour) = 12;
+}
+
+static void time_config_increase_min(uint8_t *min)
+{
+    if( (*min) < 59 )
+        (*min)++;
+    else
+        (*min) = 0;
+}
+
+static void time_config_decrease_min(uint8_t *min)
+{
+    if ((*min) > 0)
+        (*min)--;
+    else
+        (*min) = 59;
+}
+
+static void date_config_increase_day(uint8_t *day)
+{
+    if ((*day) < 30)
+        (*day)++;
+    else
+        (*day) = 1;
+}
+
+static void date_config_decrease_day(uint8_t *day)
+{
+    if ((*day) > 1)
+        (*day)--;
+    else
+        (*day) = 30;
+}
+
+static void date_config_decrease_month(uint8_t *moth)
+{
+    if ((*moth) < 12)
+        (*moth)++;
+    else
+        (*moth) = 1;
+}
+static void date_config_increase_month(uint8_t *moth)
+{
+    if ((*moth) > 1)
+        (*moth)--;
+    else
+        (*moth) = 12;
 }

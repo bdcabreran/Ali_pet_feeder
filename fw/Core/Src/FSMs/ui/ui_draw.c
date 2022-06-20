@@ -356,12 +356,12 @@ void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show)
             // Open time
             ui_display_string(&menu->meal_td[i].time.open.hour, "--:", &Font16, LCD_DEFAULT_TEXTCOLOR);
             ui_display_string(&menu->meal_td[i].time.open.min , "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
-            ui_display_string(&menu->meal_td[i].time.open.am_fm, (char*)am_fm_str[TIME_FM], &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].time.open.am_fm, (char*)am_fm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
 
             // Close time 
             ui_display_string(&menu->meal_td[i].time.close.hour, "--:", &Font16, LCD_DEFAULT_TEXTCOLOR);
             ui_display_string(&menu->meal_td[i].time.close.min , "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
-            ui_display_string(&menu->meal_td[i].time.close.am_fm, (char*)am_fm_str[TIME_FM], &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].time.close.am_fm, (char*)am_fm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
 
             // Day Month
             ui_display_string(&menu->meal_td[i].date.day, "--/", &Font16, LCD_DEFAULT_TEXTCOLOR);
@@ -389,34 +389,34 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_t *confi
     switch (config->set)
     {
         case FEEDER_CNF_OPEN_TIME_HOUR: {
-            sprintf(str, "%.2d", config->time.hour);
+            sprintf(str, "%.2d", config->time.open.hour);
             ui_display_string(&menu->meal_td[config->meal].time.open.hour, str, font, color);
         } break;
 
         case FEEDER_CNF_OPEN_TIME_MIN: {
-            sprintf(str, "%.2d", config->time.minute);
+            sprintf(str, "%.2d", config->time.open.minute);
             ui_display_string(&menu->meal_td[config->meal].time.open.min, str, font, color);
         } break;
 
         case FEEDER_CNF_OPEN_TIME_AM_FM: {
             ui_display_string(&menu->meal_td[config->meal].time.open.am_fm,
-                              (char*)am_fm_str[config->time.am_fm], font, color);
+                              (char*)am_fm_str[config->time.open.am_fm], font, color);
         } break;
 
         case FEEDER_CNF_CLOSE_TIME_HOUR: {
-            sprintf(str, "%.2d", config->time.hour);
+            sprintf(str, "%.2d", config->time.close.hour);
             ui_display_string(&menu->meal_td[config->meal].time.close.hour, str, font, color);
         } break;
 
         case FEEDER_CNF_CLOSE_TIME_MIN: { 
-            sprintf(str, "%.2d", config->time.minute);
+            sprintf(str, "%.2d", config->time.close.minute);
             ui_display_string(&menu->meal_td[config->meal].time.close.min, str, font, color);
         } break;
 
         case FEEDER_CNF_CLOSE_TIME_AM_FM:
         {
             ui_display_string(&menu->meal_td[config->meal].time.close.am_fm,
-                              (char*)am_fm_str[config->time.am_fm], font, color);
+                              (char*)am_fm_str[config->time.close.am_fm], font, color);
         } break;
 
         case FEEDER_CNF_DATE_DAY: {
@@ -426,7 +426,7 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_t *confi
         break;
 
         case FEEDER_CNF_DATE_MONTH: {
-            sprintf(str, "%.2d", config->date.day);
+            sprintf(str, "%.2d", config->date.month);
             ui_display_string(&menu->meal_td[config->meal].date.month, str, font, color);
         }
         break;
@@ -525,8 +525,8 @@ void ui_date_time_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *c
     } break;
 
     case DATE_TIME_CNF_MONTH: {
-            sprintf(str, "%.2d", config->date.day);
-            ui_display_string(&menu->date.day, str, &Font16, single_color_sel);
+            sprintf(str, "%.2d", config->date.month);
+            ui_display_string(&menu->date.month, str, &Font16, single_color_sel);
     } break;
 
     default:
