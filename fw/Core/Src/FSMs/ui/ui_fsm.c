@@ -549,7 +549,6 @@ static void drawer_select_enter_pressed(ui_handle_t handle)
 static void drawer_select_key_pressed(ui_handle_t handle)
 {
     ui_fsm_dbg("drawer key pressed \r\n");
-    uint8_t item = handle->iface.cursor.item;
     ui_drawers_config_t *config = &handle->iface.ui.drawers;
 
     /*clean previous drawer selection */

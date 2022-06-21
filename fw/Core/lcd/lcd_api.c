@@ -1081,16 +1081,20 @@ void BSP_LCD_Scroll(int16_t Scroll, uint16_t TopFix, uint16_t BottonFix)
 void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text)
 {
     uint8_t digit_count = 1;
+    uint16_t x = Xpos;
     while(*Text != NULL){
-      if (*Text == ":")
-        BSP_LCD_Colon(Xpos,Ypos);
-      else
-        BSP_LCD_draw_digit(Xpos ,  Ypos, (*Text)-'0');
-      Xpos = Xpos + (LCD_SEGMENT_DIGIT_SPACING_OFFSET*digit_count);
-      digit_count++;
+      if (*Text == ':') {
+        BSP_LCD_Colon(x,Ypos+20);
+        x+=30;
+        Xpos+=30; //next offset should include a small gap from the colon
+        
+      }else{
+        BSP_LCD_DrawDigits(x ,  Ypos, (*Text)-'0');
+        x = Xpos + (LCD_SEGMENT_DIGIT_SPACING_OFFSET*digit_count);
+        digit_count++;
+      }
       Text++;
     }
-
 }
 
 /**
@@ -1102,15 +1106,18 @@ void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text)
  */
 void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit) {
 
-    uint16_t x[6] = {0};
-    uint16_t y[6] = {0};
+  volatile uint16_t x[6] = {0};
+  volatile uint16_t y[6] = {0};
+    
+
+  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 
     x[0] = xpos;
     x[1] = x[0] - (LCD_SEGMENT_WIDTH + LCD_SEGMENT_GAP);
     x[2] = x[1];
     x[3] = x[0];
     x[4] = x[0];
-    x[5] = x[0] + LCD_SEGMENT_WIDTH +LCD_SEGMENT_GAP; 
+    x[5] = x[0] + LCD_SEGMENT_HEIGHT +LCD_SEGMENT_GAP; 
     x[6] = x[5];
 
     y[0] = ypos;
@@ -1121,25 +1128,40 @@ void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit) {
     y[5] = y[2]; 
     y[6] = y[1];
 
-  segment_params_t segments[7]={
-    {x[0],y[0], LCD_SEGMENT_HEIGHT, LCD_SEGMENT_WIDTH  }, // 0 horizontal
-    {x[6],y[6], LCD_SEGMENT_WIDTH , LCD_SEGMENT_HEIGHT }, // 1 vertical
-    {x[5],y[5], LCD_SEGMENT_WIDTH , LCD_SEGMENT_HEIGHT }, // 2 vertical
-    {x[4],y[4], LCD_SEGMENT_HEIGHT, LCD_SEGMENT_WIDTH  }, // 3 horizontal
-    {x[2],y[2], LCD_SEGMENT_WIDTH , LCD_SEGMENT_HEIGHT }, // 4 vertical
-    {x[1],y[1], LCD_SEGMENT_WIDTH , LCD_SEGMENT_HEIGHT }, // 5 vertical
-    {x[3],y[3], LCD_SEGMENT_HEIGHT, LCD_SEGMENT_WIDTH  }, // 6 horizontal
-  };
+   
  
+    uint16_t xrect;
+    uint16_t yrect;
+    uint16_t width;
+    uint16_t height;
 
-  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-
+ 
   for(uint8_t segment= 0; segment < 7; segment++){
-      if(digit_segment[digit] &(0x1<<segment))
-         BSP_LCD_DrawRect(segments[segment].x,segments[segment].y, segments[segment].width, segments[segment].height ); // horizontal
-  }
+    
+       switch(segment){
+          case 0: xrect= xpos; yrect=y[0]; width=LCD_SEGMENT_HEIGHT ; height= LCD_SEGMENT_WIDTH; break;
+          case 1: xrect= x[6]; yrect=y[6]; width=LCD_SEGMENT_WIDTH ; height= LCD_SEGMENT_HEIGHT;break;
+          case 2: xrect= x[5]; yrect=y[5]; width=LCD_SEGMENT_WIDTH ; height= LCD_SEGMENT_HEIGHT;break;
+          case 3: xrect= x[4]; yrect=y[4]; width=LCD_SEGMENT_HEIGHT ; height= LCD_SEGMENT_WIDTH;break;
+          case 4: xrect= x[2]; yrect=y[2]; width=LCD_SEGMENT_WIDTH ; height= LCD_SEGMENT_HEIGHT;break;
+          case 5: xrect= x[1]; yrect=y[1]; width=LCD_SEGMENT_WIDTH ; height= LCD_SEGMENT_HEIGHT;break;
+          case 6: xrect= x[3]; yrect=y[3]; width=LCD_SEGMENT_HEIGHT ; height= LCD_SEGMENT_WIDTH;break;
+          default:;
+        }
+    
+      if(digit_segment[digit] &(0x1<<segment)){
+        BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+         BSP_LCD_FillRect(xrect,yrect, width, height ); 
+      }
+      else{
+           BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+           BSP_LCD_FillRect(xrect,yrect, width, height );
+      }
+    }
 }
 
 void BSP_LCD_Colon(uint16_t xpos,uint16_t ypos){
-    BSP_LCD_DrawRect(xpos, ypos,  LCD_COLON_WIDTH,LCD_COLON_WIDTH ); 
+    BSP_LCD_SetTextColor(LCD_COLOR_RED);
+    BSP_LCD_FillRect(xpos, ypos,  LCD_COLON_WIDTH,LCD_COLON_WIDTH );
+    BSP_LCD_FillRect(xpos, ypos+20,  LCD_COLON_WIDTH,LCD_COLON_WIDTH ); 
 }
