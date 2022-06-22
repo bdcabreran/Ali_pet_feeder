@@ -1,21 +1,61 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
   ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
   */
-
+/* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "init_periph.h"
-#include "event_manager_fsm.h"
-#include "buttons.h"
-#include "target_version.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
 
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+
+
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+
+/* USER CODE BEGIN PFP */
+
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
@@ -23,30 +63,49 @@
   */
 int main(void)
 {
+  /* USER CODE BEGIN 1 */
   init_peripherals();
+  /* USER CODE END 1 */
 
-  /*Init navigation button control */
-  btn_debounce_init(&navigation_btn);
+  /* MCU Configuration--------------------------------------------------------*/
 
-  /*Init Event Manager*/
-  event_manager_handle_t evm_fsm = event_manager_fsm_get();
-  event_manager_fsm_init(evm_fsm);
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
-  /*Init UI */
-  ui_handle_t ui_fsm = ui_fsm_get();
-  ui_fsm_init(ui_fsm);
+  /* USER CODE BEGIN Init */
 
-  printf("Pet Feeder V%s\r\n", FW_VERSION);
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+
+  /* USER CODE BEGIN 2 */
+
+  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // Init channel 1 PWM
+  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2); // Init channel 2 PWM
+  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3); // Init channel 3 PWM
+  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4); // Init channel 4 PWM
+  
+  //TIM2->CCR1 = 30000; // Tiemr channel 1 output value
+  //TIM2->CCR2 = 30000; // Tiemr channel 2 output value
+  //TIM2->CCR3 = 30000; // Tiemr channel 3 output value
+  //TIM2->CCR4 = 30000; // Tiemr channel 4 output value
+  /* USER CODE END 2 */
 
   /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
   while (1)
   {
-    ui_fsm_run(ui_fsm);
-    event_manager_fsm_run(evm_fsm);
-    time_events_poll_update();
-  }
-}
+    /* USER CODE END WHILE */
 
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
+}
 
 
 /**
@@ -61,18 +120,3 @@ void Error_Handler(void)
   {
   }
 }
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-}
-#endif /* USE_FULL_ASSERT */
