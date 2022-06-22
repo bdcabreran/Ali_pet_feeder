@@ -83,6 +83,14 @@ typedef enum
     UI_DT_ITEM_LAST
 }ui_date_time_menu_sel_item_t;
 
+typedef enum
+{
+    THERM_INVALID,
+    THERM_SET_TEMPERATURE,
+    THERM_SET_UNIT,
+    THERM_ENABLE_DISABLE,
+    THERM_LAST,
+}ui_thermostat_config_list_t;
 
 
 //------------- UI Battery Configuration ----------------//
@@ -289,7 +297,7 @@ typedef struct
 
 typedef struct
 {
-    thermostat_config_list_t set;
+    ui_thermostat_config_list_t set;
     struct
     {
         uint8_t val;

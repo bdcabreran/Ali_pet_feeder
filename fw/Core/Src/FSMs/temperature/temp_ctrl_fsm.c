@@ -57,7 +57,8 @@ typedef struct
 
 typedef struct
 {
-    temp_ctrl_ev_int_name_t internal;  
+    temp_ctrl_ev_int_name_t internal; 
+    temp_ctrl_ev_ext_name_t external; 
     temp_ctrl_time_event_t  time;  
 }temp_ctrl_event_t;
 
@@ -82,17 +83,20 @@ static void sensing_temp_on_react(temp_ctrl_handle_t handle);
 static void enter_seq_control_temp(temp_ctrl_handle_t handle);
 static void entry_action_control_temp(temp_ctrl_handle_t handle);
 static void control_temp_on_react(temp_ctrl_handle_t handle);
+static void fsm_set_next_state(temp_ctrl_handle_t handle, temp_ctrl_state_t next_state);
+
 
 static bool is_temperature_out_of_range(temp_ctrl_handle_t handle)
 {
-    if (handle->iface.therm_info.unit == TEMP_UNITS_CELSIUS)
+    thermostat_info_t *info = &handle->iface.therm_info;
+    if (info->control.unit == TEMP_UNITS_CELSIUS)
     {
-        if(IS_TEMP_CELSIUS_OUT_OF_RANGE(handle->iface.therm_info.value.control, handle->iface.therm_info.value.sensed))
+        if(IS_TEMP_CELSIUS_OUT_OF_RANGE(info->control.temp, info->sensed.temp))
             return true;
     }
     else
     {
-        if(IS_TEMP_FAHRENHEIT_OUT_OF_RANGE(handle->iface.therm_info.value.control, handle->iface.therm_info.value.sensed))
+        if(IS_TEMP_FAHRENHEIT_OUT_OF_RANGE(info->control.temp, info->sensed.temp))
             return true;
     }
     return false;
@@ -100,7 +104,7 @@ static bool is_temperature_out_of_range(temp_ctrl_handle_t handle)
 
 static void measure_temperature(temp_ctrl_handle_t handle)
 {
-    if (handle->iface.therm_info.unit == TEMP_UNITS_CELSIUS)
+    if (handle->iface.therm_info.control.unit == TEMP_UNITS_CELSIUS)
     {
         /*!< TODO : */
         //handle->iface.therm_info.value.sensed = sensor_read_temperature_in_celsius();
@@ -133,8 +137,17 @@ static void sensing_temp_on_react(temp_ctrl_handle_t handle)
 
         if(is_temperature_out_of_range(handle) == true)
         {
-            enter_seq_control_temp(handle);
-            time_event_stop(&handle->event.time.sampling_period);
+            if(handle->iface.therm_info.control.status == TEMP_CTRL_ENABLE)
+            {
+                enter_seq_control_temp(handle);
+                time_event_stop(&handle->event.time.sampling_period);
+            }
+            else
+            {
+                enter_seq_sensing_temp(handle);
+                time_event_stop(&handle->event.time.sampling_period);
+                temp_ctrl_dbg("Temp out of range, but control is disabled\r\n");
+            }
         }
         else
         {
@@ -155,20 +168,20 @@ static void entry_action_control_temp(temp_ctrl_handle_t handle)
 {
     thermostat_info_t *info = &handle->iface.therm_info;
 
-    if (info->unit == TEMP_UNITS_CELSIUS)
+    if (info->control.unit == TEMP_UNITS_CELSIUS)
     {
-        if (IS_TEMP_CELSIUS_TOO_COLD(info->value.control, info->value.sensed))
+        if (IS_TEMP_CELSIUS_TOO_COLD(info->control.temp, info->sensed.temp))
             handle->event.internal.name = EVT_INT_TEMP_TOO_COLD;
 
-        else if (IS_TEMP_CELSIUS_TOO_HOT(info->value.control, info->value.sensed))
+        else if (IS_TEMP_CELSIUS_TOO_HOT(info->control.temp, info->sensed.temp))
             handle->event.internal.name = EVT_INT_TEMP_TOO_HOT;
     }
     else
     {
-        if (IS_TEMP_FAHRENHEIT_TOO_COLD(info->value.control, info->value.sensed))
+        if (IS_TEMP_FAHRENHEIT_TOO_COLD(info->control.temp, info->sensed.temp))
             handle->event.internal.name = EVT_INT_TEMP_TOO_COLD;
 
-        else if (IS_TEMP_FAHRENHEIT_TOO_HOT(info->value.control, info->value.sensed))
+        else if (IS_TEMP_FAHRENHEIT_TOO_HOT(info->control.temp, info->sensed.temp))
             handle->event.internal.name = EVT_INT_TEMP_TOO_HOT;
     }
 
@@ -243,14 +256,15 @@ void temp_ctrl_fsm_run(temp_ctrl_handle_t handle)
 
 void temp_ctrl_fsm_init(temp_ctrl_handle_t handle)
 {
-    handle->iface.therm_info.unit = TEMP_UNITS_CELSIUS;
-    handle->iface.therm_info.value.control = TEMP_CTRL_DEFAULT_CELSIUS_VALUE;
+    handle->iface.therm_info.control.unit = TEMP_UNITS_CELSIUS;
+    handle->iface.therm_info.control.temp = TEMP_CTRL_DEFAULT_CELSIUS_VALUE;
+    handle->iface.therm_info.control.status = TEMP_CTRL_ENABLE;
     
     enter_seq_sensing_temp(handle);
 }
 
 
-void temp_ctrl_time_update(temp_ctrl_handle_t handle)
+void temp_ctrl_fsm_time_update(temp_ctrl_handle_t handle)
 {
 	time_event_t *time_event = (time_event_t *)&handle->event.time;
 	for (int tev_idx = 0; tev_idx < sizeof(handle->event.time) / sizeof(time_event_t); tev_idx++)
@@ -258,6 +272,21 @@ void temp_ctrl_time_update(temp_ctrl_handle_t handle)
 		time_event_update(time_event);
 		time_event++;
 	}
+}
+
+
+void temp_ctrl_fsm_write_event(temp_ctrl_handle_t handle, event_t *event)
+{
+    temp_ctrl_ev_ext_data_t *data = (temp_ctrl_ev_ext_data_t*)&event->data;
+    thermostat_info_t *info = &handle->iface.therm_info;
+
+    if(event->info.name == EVT_EXT_SET_TEMP_CONFIG)
+    {
+        handle->event.external.name = event->info.name;
+        info->control.temp = data->config.control.temp;
+        info->control.status = data->config.control.status;
+        info->control.unit = data->config.control.unit;
+    }
 }
 
 

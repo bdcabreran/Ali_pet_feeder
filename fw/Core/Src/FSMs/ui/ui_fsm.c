@@ -245,7 +245,7 @@ static void entry_action_main_menu(ui_handle_t handle)
 {
     // show date time 
     ui_date_time_show(&ui_date_time, true);
-    ui_update_battery(&ui_battery);
+    ui_update_battery(handle);
 
     /* Set cursor to first item */
     time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
@@ -889,8 +889,8 @@ static void ui_update_thermostat(ui_handle_t handle)
     thermostat_info_t *info = temp_ctrl_get_info();
     ui_thermostat_config_t *ui_config = &handle->iface.ui.therm;
     ui_config->select = UI_ITEM_DESELECT;
-    ui_config->temp.unit = info->unit;
-    ui_config->temp.val =  info->value.sensed;
+    ui_config->temp.unit = info->control.unit;
+    ui_config->temp.val =  info->sensed.temp;
     ui_thermostat_set_config(&ui_thermostat, ui_config);
 }
 

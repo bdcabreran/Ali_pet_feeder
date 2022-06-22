@@ -16,7 +16,8 @@
         "drawer_fsm.h": "c",
         "temp_ctrl_fsm.h": "c",
         "algorithm": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "type_traits": "c"
     },
     "cSpell.words": [
         "inact",

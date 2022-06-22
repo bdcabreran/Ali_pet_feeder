@@ -43,23 +43,40 @@ typedef enum
     TEMP_UNITSn,
 }temperature_unit_t;
 
+/**
+ * @brief Internal Events 
+ */
 typedef enum
 {
-    THERM_SET_TEMPERATURE,
-    THERM_SET_UNIT,
-    THERM_ENABLE_CTRL,
-}thermostat_config_list_t;
+    EVT_EXT_TEMP_CTRL_INVALID = 0,
+    EVT_EXT_SET_TEMP_CONFIG,
+    EVT_EXT_TEMP_CTRL_LAST,
+}temp_ctrl_ev_ext_t;
 
+typedef struct 
+{
+    temp_ctrl_ev_ext_t name;
+}temp_ctrl_ev_ext_name_t;
 
 typedef struct
 {
     struct
     {
-        uint8_t sensed;
-        uint8_t control;
-    }value;
-    temperature_unit_t unit;
+        uint8_t temp;
+        temperature_ctrl_st_t status;
+        temperature_unit_t unit;
+    }control;
+
+    struct
+    {
+        uint8_t temp;
+    }sensed;
 }thermostat_info_t;
+
+typedef struct
+{
+    thermostat_info_t config;
+}temp_ctrl_ev_ext_data_t;
 
 typedef struct temp_ctrl_fsm_t* temp_ctrl_handle_t;
 
@@ -68,7 +85,9 @@ temp_ctrl_handle_t temp_ctrl_fsm_get(void);
 thermostat_info_t *temp_ctrl_get_info(void);
 void temp_ctrl_fsm_init(temp_ctrl_handle_t handle);
 void temp_ctrl_fsm_run(temp_ctrl_handle_t handle);
-void temp_ctrl_time_update(temp_ctrl_handle_t handle);
+void temp_ctrl_fsm_time_update(temp_ctrl_handle_t handle);
+void temp_ctrl_fsm_write_event(temp_ctrl_handle_t handle, event_t *event);
+
 
 
 

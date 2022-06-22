@@ -748,7 +748,7 @@ void ui_thermostat_menu_set_config(ui_thermostat_menu_t *menu, ui_thermostat_men
 
     } break;
 
-    case THERM_ENABLE_CTRL: {
+    case THERM_ENABLE_DISABLE: {
         if (config->select == UI_ITEM_SELECT)
             ui_draw_window(&menu->win.set_unit, color, true);
 

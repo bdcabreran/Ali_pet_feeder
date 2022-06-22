@@ -37,7 +37,7 @@ void time_events_poll_update(void)
         //---------------------------------------------------//
         btn_debounce_run(&navigation_btn);
         ui_fsm_time_update(ui_fsm_get());
-        temp_ctrl_time_update(temp_ctrl_fsm_get());
+        temp_ctrl_fsm_time_update(temp_ctrl_fsm_get());
 
         //---------------------------------------------------//
         time_event_set_pending_update(false); 
