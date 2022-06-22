@@ -252,42 +252,47 @@ static void entry_action_main_menu(ui_handle_t handle)
     time_event_stop(&handle->event.time.cursor_inact);
 }
 
-
-static void main_menu_on_react(ui_handle_t handle)
+static void main_menu_button_pressed(ui_handle_t handle)
 {
     /*navigation key update item selection*/
 	ui_drawers_config_t *drawer_cfg = &handle->iface.ui.drawers;
-//    ui_main_menu_sel_item_t item = handle->iface.cursor.item;
 
     switch (handle->event.btn)
     {
 
-    case EVT_EXT_BTN_UP_PRESSED:    break;
-    case EVT_EXT_BTN_DOWN_PRESSED:  break;
+    case EVT_EXT_BTN_UP_PRESSED:    {/*Up action in main menu */  } break;
+    case EVT_EXT_BTN_DOWN_PRESSED:  {/*Down action in main menu */} break;
 
     case EVT_EXT_BTN_LEFT_PRESSED:
     {
+        /*deselect previous item */
         ui_update_item_selection(handle, UI_ITEM_DESELECT);
 
+        /*update item pointer */
         if(handle->iface.cursor.item > 0)
         	handle->iface.cursor.item -= 1;
 		else
 			handle->iface.cursor.item = UI_MAIN_MENU_ITEM_DATE_TIME;
 
+        /*select new item */
         ui_update_item_selection(handle, UI_ITEM_SELECT);
         time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
     } break;
         
     case EVT_EXT_BTN_RIGHT_PRESSED: {
         ui_update_item_selection(handle, UI_ITEM_DESELECT);
+
         handle->iface.cursor.item += 1;
         handle->iface.cursor.item %= UI_MAIN_MENU_ITEMn;
+
         ui_update_item_selection(handle, UI_ITEM_SELECT);
         time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
-
     } break;
 
+    /*item menu enter */
     case EVT_EXT_BTN_ENTER_PRESSED: { main_menu_enter_pressed(handle); } break;
+
+    /*open/close drawer request */
     case EVT_EXT_BTN_UP_AND_ENTER_PRESSED:   {drawer_cfg->drawer.no = DRAWER_NO_1; enter_seq_drawer_request(handle); } break;
     case EVT_EXT_BTN_DOWN_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_2; enter_seq_drawer_request(handle); } break;
     case EVT_EXT_BTN_LEFT_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_3; enter_seq_drawer_request(handle); } break;
@@ -296,16 +301,23 @@ static void main_menu_on_react(ui_handle_t handle)
     default:
         break;
     };
+}
 
+
+static void main_menu_on_react(ui_handle_t handle)
+{
+    /*process button events */
     if (handle->event.btn != EVT_EXT_BTN_INVALID)
+    {
+        main_menu_button_pressed(handle);
         handle->event.btn = EVT_EXT_BTN_INVALID;
+    }
 
     /* update gui timer event */
     if(time_event_is_raised(&handle->event.time.update_gui) == true)
     {
         time_event_start(&handle->event.time.update_gui, UPDATE_GUI_MS);
         ui_update_battery(handle);
-        // ui_update_date_time(handle);
     }
 
     /* item cursor timer event */
@@ -478,9 +490,6 @@ static void feeder_config_on_react(ui_handle_t handle)
         ui_feeder_config_t *config = &handle->iface.ui.feeder_menu[drawer_no];
         config->select.single = UI_ITEM_DESELECT;
         ui_feeder_menu_set_config(&ui_feeder_menu, config);
-
-        // handle->iface.cursor.item--;
-        // handle->iface.cursor.item %= FEEDER_CNFn;
 
         if (handle->iface.cursor.item > FEEDER_CNF_OPEN_TIME_HOUR)
             handle->iface.cursor.item--;
@@ -876,12 +885,12 @@ static void ui_update_date_time(ui_handle_t handle)
 
 static void ui_update_thermostat(ui_handle_t handle)
 {
-    // ui_fsm_dbg("update thermostat status \r\n");
+    /*get information from temperature fsm */
+    thermostat_info_t *info = temp_ctrl_get_info();
     ui_thermostat_config_t *ui_config = &handle->iface.ui.therm;
-//    static uint8_t dummy_temp_val = 0;
     ui_config->select = UI_ITEM_DESELECT;
-    ui_config->temp.unit = TEMP_UNITS_CELSIUS;
-    ui_config->temp.val =  99; //(dummy_temp_val++ % 99);
+    ui_config->temp.unit = info->unit;
+    ui_config->temp.val =  info->value.sensed;
     ui_thermostat_set_config(&ui_thermostat, ui_config);
 }
 

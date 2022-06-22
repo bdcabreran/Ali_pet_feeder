@@ -16,6 +16,14 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 
+static void print_startup_msg(void)
+{
+  printf("#########################################");
+  printf("Author :\t Embedded-Tech\r\n");
+  printf("Project:\t pet-feeder v%s\r\n", FW_VERSION);
+  printf("Updated:\t %s\r\n", __DATE__);
+  printf("#########################################");
+}
 
 /**
   * @brief  The application entry point.
@@ -23,7 +31,11 @@
   */
 int main(void)
 {
+  /*Init peripherals */
   init_peripherals();
+
+  /*startup info */
+  print_startup_msg();
 
   /*Init navigation button control */
   btn_debounce_init(&navigation_btn);
@@ -36,12 +48,15 @@ int main(void)
   ui_handle_t ui_fsm = ui_fsm_get();
   ui_fsm_init(ui_fsm);
 
-  printf("Pet Feeder V%s\r\n", FW_VERSION);
+  /*Init Temperature Control */
+  temp_ctrl_handle_t temp_fsm = temp_ctrl_fsm_get();
+  temp_ctrl_fsm_init(temp_fsm);
 
   /* Infinite loop */
   while (1)
   {
     ui_fsm_run(ui_fsm);
+    temp_ctrl_fsm_run(temp_fsm);
     event_manager_fsm_run(evm_fsm);
     time_events_poll_update();
   }
