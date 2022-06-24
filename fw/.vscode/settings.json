@@ -17,7 +17,10 @@
         "temp_ctrl_fsm.h": "c",
         "algorithm": "c",
         "stdint.h": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "feeder.h": "c",
+        "limits": "c",
+        "*.tcc": "c"
     },
     "cSpell.words": [
         "inact",

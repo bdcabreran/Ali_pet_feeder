@@ -2,15 +2,19 @@
 
 drawer_ctrl_info_t drawer_info[DRAWERn] = {
     {.no = DRAWER_NO_1,
+     .manually_open = false,
      .status.curr = DRAWER_ST_CLOSE,
      .status.next = DRAWER_ST_INVALID},
     {.no = DRAWER_NO_2,
+     .manually_open = false,
      .status.curr = DRAWER_ST_CLOSE,
      .status.next = DRAWER_ST_INVALID},
     {.no = DRAWER_NO_3,
+     .manually_open = false,
      .status.curr = DRAWER_ST_CLOSE,
      .status.next = DRAWER_ST_INVALID},
     {.no = DRAWER_NO_4,
+     .manually_open = false,
      .status.curr = DRAWER_ST_CLOSE,
      .status.next = DRAWER_ST_INVALID},
 };

@@ -28,7 +28,6 @@ typedef enum
     FEEDER_FSM,
     TEMP_CTRL_FSM,
     UI_FSM_LAST,
-
 }fsm_list_t;
 
 #define IS_VALID_FSM_SRC_DST(fsm) (fsm > UI_FSM_INVALID && fsm < UI_FSM_LAST)

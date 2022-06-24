@@ -13,6 +13,7 @@
 #define DRAWER_FSM_H
 
 #include "stdint.h"
+#include "stdbool.h"
 #include "event_manager_fsm.h"
 
 typedef enum
@@ -37,6 +38,7 @@ typedef enum
 typedef struct
 {
     drawer_no_t no;
+    bool manually_open;
     struct 
     {
         drawer_st_t curr;

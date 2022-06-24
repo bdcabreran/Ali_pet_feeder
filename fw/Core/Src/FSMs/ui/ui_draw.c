@@ -32,7 +32,6 @@ typedef struct
     uint16_t y;
 } pos_t;
 
-static const char *am_fm_str[TIMEn] = {"AM", "FM"}; 
 static const char *c_f_str[TEMP_UNITSn] = {"C", "F"}; 
 
 

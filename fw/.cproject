@@ -59,7 +59,7 @@
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/feeder"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/power"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/temperature"/>
-									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/feeder_scheduler"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/feeder"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/API/rtc"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1414022680" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
