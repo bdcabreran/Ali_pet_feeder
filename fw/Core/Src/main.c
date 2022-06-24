@@ -15,47 +15,41 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "init_periph.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
+#include "event_manager_fsm.h"
 
 /* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
 /* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-/* USER CODE END PD */
-
 /* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
 /* Private variables ---------------------------------------------------------*/
 
 
-/* USER CODE BEGIN PV */
+void control_motor(int drawer, int fwd, int bwd){
+    if(drawer == 1){
+      TIM2->CCR1 = fwd;
+      TIM2->CCR2 = bwd;
+    }
 
-/* USER CODE END PV */
+    if(drawer == 2){
+      TIM2->CCR3 = fwd;
+      TIM2->CCR4 = bwd;
+    }
 
-/* Private function prototypes -----------------------------------------------*/
+    if(drawer == 3){
+      TIM1->CCR1 = fwd;
+      TIM1->CCR2 = bwd;
+    }
 
-/* USER CODE BEGIN PFP */
+    if(drawer == 4){
+      TIM1->CCR3 = fwd;
+      TIM1->CCR4 = bwd;
+    }    
+}
 
-/* USER CODE END PFP */
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
@@ -63,48 +57,44 @@
   */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-  init_peripherals();
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  init_peripherals();
+ 
 
-  /* USER CODE BEGIN 2 */
 
-  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // Init channel 1 PWM
-  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2); // Init channel 2 PWM
-  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3); // Init channel 3 PWM
-  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4); // Init channel 4 PWM
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // Init channel 1 PWM
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2); // Init channel 2 PWM
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3); // Init channel 3 PWM
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4); // Init channel 4 PWM
+
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // Init channel 1 PWM
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2); // Init channel 2 PWM
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3); // Init channel 3 PWM
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4); // Init channel 4 PWM
+
+  //TIM2->CCR1 = arr_max; // Timer channel 1 output value
+  //TIM2->CCR2 = arr_min; // Timer channel 2 output value
+  //TIM2->CCR3 = 10000; // Timer channel 3 output value
+  //TIM2->CCR4 = 5000;  // Timer channel 4 output value
   
-  //TIM2->CCR1 = 30000; // Tiemr channel 1 output value
-  //TIM2->CCR2 = 30000; // Tiemr channel 2 output value
-  //TIM2->CCR3 = 30000; // Tiemr channel 3 output value
-  //TIM2->CCR4 = 30000; // Tiemr channel 4 output value
-  /* USER CODE END 2 */
+
+  /*Init UI */
+  //ui_handle_t ui_fsm = ui_fsm_get();
+  //ui_fsm_init(ui_fsm);
 
   /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
+  while (1)  {
+    
+    //ui_fsm_run(ui_fsm);
+    TIM1->CCR4 = 300;  // Timer channel 4 output value
+    control_motor(1, 360, 0); // Forward drawer 1
+    control_motor(2, 0, 360); // Backward drawer 2
+    control_motor(3, 360, 0); // Forward drawer 3
+    //control_motor(4, 0, 360); // Backward drawer 4
 
-    /* USER CODE BEGIN 3 */
+
   }
-  /* USER CODE END 3 */
 }
 
 

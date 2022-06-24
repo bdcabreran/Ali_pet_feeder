@@ -15,6 +15,7 @@ extern SPI_HandleTypeDef hspi2;
 extern DMA_HandleTypeDef hdma_spi2_rx;
 extern DMA_HandleTypeDef hdma_spi2_tx;
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim2;
 
 
 void init_peripherals(void);
