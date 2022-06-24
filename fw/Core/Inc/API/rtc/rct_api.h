@@ -2,6 +2,9 @@
 #define __RTC_API_H__
 
 #include <stdint.h>
+#include <stdbool.h>
+
+#define RTC_MOCK
 
 typedef struct date_time_st{
     uint16_t year;
@@ -12,10 +15,21 @@ typedef struct date_time_st{
     uint8_t seconds;
     uint16_t milliseconds;
     uint16_t microseconds;
+    uint16_t dayOfWeek;
+    uint16_t dayOfMonth;
+    bool hour_24h_format;
 }date_time_t;
 
-uint8_t rtc_init(uint8_t address);
-void rtc_set_time(date_time_t date_time);
+typedef struct
+{
+  void (*init)(void);
+  void (*set_time)(date_time_t date_time);
+  void (*get_time)(date_time_t *date_time);
+}RTC_driver_t;
 
-date_time_t rtc_get_time(void);
+void rtc_init(uint8_t address);
+void rtc_set_time(date_time_t date_time);
+void rtc_get_time(date_time_t *date_time);
+
+
 #endif /*__RTC_API_H__*/
