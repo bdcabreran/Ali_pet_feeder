@@ -139,12 +139,12 @@ static void ui_update_battery(ui_handle_t handle);
 // static void ui_update_date_time(ui_handle_t handle);
 static void ui_update_thermostat(ui_handle_t handle);
 static void notify_manual_drawer_operation(ui_handle_t handle);
-static void ui_update_item_selection(ui_handle_t handle, ui_select_t select);
+static void ui_main_menu_update_item_selection(ui_handle_t handle, ui_select_t select);
 
-static void main_menu_enter_pressed(ui_handle_t handle);
+static void main_menu_enter_key_pressed(ui_handle_t handle);
 static void feeder_config_enter_pressed(ui_handle_t handle);
-static void drawer_select_enter_pressed(ui_handle_t handle);
-static void drawer_select_key_pressed(ui_handle_t handle);
+static void drawer_select_enter_key_pressed(ui_handle_t handle);
+static void drawer_select_right_left_key_pressed(ui_handle_t handle);
 
 
 static void time_config_increase_hour( uint8_t *hour);
@@ -179,6 +179,7 @@ void ui_fsm_init(ui_handle_t handle)
     ui_drawers_show(&ui_drawers, true);
     ui_thermostat_show(&ui_thermostat, true);
     ui_petcall_show(&ui_petcall, true);
+    ui_date_time_show(&ui_date_time, true);
 
     // thermostat demo
     ui_update_thermostat(handle);
@@ -236,7 +237,7 @@ void ui_fsm_write_event(ui_handle_t handle, event_t *event)
 
 static void enter_seq_main_menu(ui_handle_t handle)
 {
-    ui_fsm_dbg("enter seq \t[ main menu ]");
+    ui_fsm_dbg("enter seq \t[ main menu ]\r\n");
     fsm_set_next_state(handle, ST_UI_MAIN_MENU);
     entry_action_main_menu(handle);
 }
@@ -252,6 +253,31 @@ static void entry_action_main_menu(ui_handle_t handle)
     time_event_stop(&handle->event.time.cursor_inact);
 }
 
+static void main_menu_left_right_key_pressed(ui_handle_t handle)
+{
+    ui_main_menu_update_item_selection(handle, UI_ITEM_DESELECT);
+
+    if (handle->event.btn == EVT_EXT_BTN_LEFT_PRESSED)
+    {
+        if (handle->iface.cursor.item > 0)
+            handle->iface.cursor.item -= 1;
+        else
+            handle->iface.cursor.item = UI_MAIN_MENU_ITEM_DATE_TIME;
+    }
+
+    else if (handle->event.btn == EVT_EXT_BTN_RIGHT_PRESSED)
+    {
+        if (handle->iface.cursor.item < UI_MAIN_MENU_ITEMn)
+            handle->iface.cursor.item += 1;
+        else
+            handle->iface.cursor.item = UI_MAIN_MENU_ITEM_DRAWERS;
+    }
+
+    ui_main_menu_update_item_selection(handle, UI_ITEM_SELECT);
+
+    printf("ui item selected [%d]\r\n", handle->iface.cursor.item);
+}
+
 static void main_menu_button_pressed(ui_handle_t handle)
 {
     /*navigation key update item selection*/
@@ -264,33 +290,13 @@ static void main_menu_button_pressed(ui_handle_t handle)
     case EVT_EXT_BTN_DOWN_PRESSED:  {/*Down action in main menu */} break;
 
     case EVT_EXT_BTN_LEFT_PRESSED:
-    {
-        /*deselect previous item */
-        ui_update_item_selection(handle, UI_ITEM_DESELECT);
-
-        /*update item pointer */
-        if(handle->iface.cursor.item > 0)
-        	handle->iface.cursor.item -= 1;
-		else
-			handle->iface.cursor.item = UI_MAIN_MENU_ITEM_DATE_TIME;
-
-        /*select new item */
-        ui_update_item_selection(handle, UI_ITEM_SELECT);
-        time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
-    } break;
-        
     case EVT_EXT_BTN_RIGHT_PRESSED: {
-        ui_update_item_selection(handle, UI_ITEM_DESELECT);
-
-        handle->iface.cursor.item += 1;
-        handle->iface.cursor.item %= UI_MAIN_MENU_ITEMn;
-
-        ui_update_item_selection(handle, UI_ITEM_SELECT);
+        main_menu_left_right_key_pressed(handle);
         time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
     } break;
 
     /*item menu enter */
-    case EVT_EXT_BTN_ENTER_PRESSED: { main_menu_enter_pressed(handle); } break;
+    case EVT_EXT_BTN_ENTER_PRESSED: { main_menu_enter_key_pressed(handle); } break;
 
     /*open/close drawer request */
     case EVT_EXT_BTN_UP_AND_ENTER_PRESSED:   {drawer_cfg->drawer.no = DRAWER_NO_1; enter_seq_drawer_request(handle); } break;
@@ -323,18 +329,17 @@ static void main_menu_on_react(ui_handle_t handle)
     /* item cursor timer event */
     if(time_event_is_raised(&handle->event.time.cursor_inact) == true)
     {
-        ui_update_item_selection(handle, UI_ITEM_DESELECT);
+        ui_main_menu_update_item_selection(handle, UI_ITEM_DESELECT);
         time_event_stop(&handle->event.time.cursor_inact);
         handle->iface.cursor.item = UI_MAIN_MENU_ITEM_DATE_TIME;
     }
-    
 }
 
 
 /////////////////////////////////// Drawer Request State  ///////////////////////////////////////////
 void enter_seq_drawer_request(ui_handle_t handle)
 {
-    ui_fsm_dbg("enter seq \t[ drawer request ]");
+    ui_fsm_dbg("enter seq \t[ drawer request ]\r\n");
     fsm_set_next_state(handle, ST_UI_DRAWER_ST_REQUEST);
     entry_action_drawer_request(handle);
 }
@@ -381,7 +386,7 @@ void enter_seq_drawer_select(ui_handle_t handle)
 static void entry_action_drawer_select(ui_handle_t handle)
 {
     /*deselect main window */
-    ui_update_item_selection(handle, UI_ITEM_DESELECT);
+    ui_main_menu_update_item_selection(handle, UI_ITEM_DESELECT);
 
     /*select first element */
     ui_drawers_config_t *config = &handle->iface.ui.drawers;
@@ -402,13 +407,13 @@ static void drawer_select_on_react(ui_handle_t handle)
 
     case EVT_EXT_BTN_LEFT_PRESSED : 
     case EVT_EXT_BTN_RIGHT_PRESSED: {
-        drawer_select_key_pressed(handle);
+        drawer_select_right_left_key_pressed(handle);
         time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
     } break;
 
     case EVT_EXT_BTN_UP_PRESSED:    break;
     case EVT_EXT_BTN_DOWN_PRESSED:  break;
-    case EVT_EXT_BTN_ENTER_PRESSED: { drawer_select_enter_pressed(handle); } break;
+    case EVT_EXT_BTN_ENTER_PRESSED: { drawer_select_enter_key_pressed(handle); } break;
     
     default:
         break;
@@ -843,14 +848,14 @@ static void notify_manual_drawer_operation(ui_handle_t handle)
 
     if (info->status.curr == DRAWER_ST_CLOSE || info->status.curr == DRAWER_ST_CLOSING)
     {
-        sprintf(str, "Opening Drawer no %d", drawer_cfg->drawer.no + 1);
+        sprintf(str, "Opening Drawer no %d\r\n", drawer_cfg->drawer.no + 1);
         ui_fsm_dbg("%s\r\n", str);
         event.info.name = EVT_EXT_DRW_OPEN;
     }
 
     else if (info->status.curr == DRAWER_ST_OPEN || info->status.curr == DRAWER_ST_OPENING)
     {
-        sprintf(str, "Closing Drawer no %d", drawer_cfg->drawer.no + 1);
+        sprintf(str, "Closing Drawer no %d\r\n", drawer_cfg->drawer.no + 1);
         ui_fsm_dbg("%s\r\n", str);
         event.info.name = EVT_EXT_DRW_CLOSE;
     }
@@ -886,15 +891,17 @@ static void ui_update_date_time(ui_handle_t handle)
 static void ui_update_thermostat(ui_handle_t handle)
 {
     /*get information from temperature fsm */
+#if 0
     thermostat_info_t *info = temp_ctrl_get_info();
     ui_thermostat_config_t *ui_config = &handle->iface.ui.therm;
     ui_config->select = UI_ITEM_DESELECT;
     ui_config->temp.unit = info->control.unit;
     ui_config->temp.val =  info->sensed.temp;
     ui_thermostat_set_config(&ui_thermostat, ui_config);
+#endif 
 }
 
-static void drawer_select_enter_pressed(ui_handle_t handle)
+static void drawer_select_enter_key_pressed(ui_handle_t handle)
 {
     ui_fsm_dbg("drawer enter pressed\r\n");
     if(handle->iface.ui.drawers.select.single == UI_ITEM_SELECT)
@@ -903,7 +910,7 @@ static void drawer_select_enter_pressed(ui_handle_t handle)
     }
 }
 
-static void drawer_select_key_pressed(ui_handle_t handle)
+static void drawer_select_right_left_key_pressed(ui_handle_t handle)
 {
     ui_fsm_dbg("drawer key pressed \r\n");
     ui_drawers_config_t *config = &handle->iface.ui.drawers;
@@ -931,7 +938,7 @@ static void drawer_select_key_pressed(ui_handle_t handle)
     ui_drawers_set_config(&ui_drawers, config);
 }
 
-static void main_menu_enter_pressed(ui_handle_t handle)
+static void main_menu_enter_key_pressed(ui_handle_t handle)
 {
     /* define enter sequence according item selected */
     switch (handle->iface.cursor.item)
@@ -988,7 +995,7 @@ static void feeder_config_enter_pressed(ui_handle_t handle)
 }
 
 
-static void ui_update_item_selection(ui_handle_t handle, ui_select_t select)
+static void ui_main_menu_update_item_selection(ui_handle_t handle, ui_select_t select)
 {
     switch (handle->iface.cursor.item)
     {

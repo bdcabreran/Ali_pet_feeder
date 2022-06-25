@@ -2,6 +2,8 @@
 #include "printf_dbg.h"
 #include "time_event.h"
 #include "rct_api.h"
+#include <stdio.h>
+#include <strings.h>
 
 /**@brief Enable/Disable debug messages */
 #define feeder_FSM_DEBUG 1
@@ -35,9 +37,6 @@ typedef enum
     ST_feeder_WATCHER,
     ST_feeder_DATE_TIME_CONFIG,
     ST_feeder_FEEDING_TIME_CONFIG,
-    ST_feeder_FEEDER_CONFIG,
-    ST_feeder_FEEDING_START,
-    ST_feeder_FEEDING_END,
     ST_feeder_LAST,
 }feeder_state_t;
 
@@ -85,9 +84,20 @@ struct feeder_fsm_t
 static struct feeder_fsm_t feeder_fsm;
 
 /////////////////////// Static state function declaration //////////////////////////////////////
-static void main_menu_enter_seq(feeder_handle_t handle);
-static void entry_action_main_menu(feeder_handle_t handle);
-static void main_menu_on_react(feeder_handle_t handle);
+
+/////////////////////////////////// State Function Declaration   ///////////////////////////////////////////
+
+static void enter_seq_watcher(feeder_handle_t handle);
+static void enter_seq_date_time_config(feeder_handle_t handle);
+static void enter_seq_feeding_time_config(feeder_handle_t handle);
+
+static void watcher_on_react(feeder_handle_t handle);
+static void date_time_config_on_react(feeder_handle_t handle);
+static void feeding_time_config_on_react(feeder_handle_t handle);
+
+static void entry_action_watcher(feeder_handle_t handle);
+static void entry_action_date_time_config(feeder_handle_t handle);
+static void entry_action_feeding_time_config(feeder_handle_t handle);
 
 
 ////////////////////////////// Public function declaration //////////////////////////////////////
@@ -118,9 +128,6 @@ void feeder_fsm_run(feeder_handle_t handle)
     case ST_feeder_WATCHER:            { watcher_on_react(handle);} break;
     case ST_feeder_DATE_TIME_CONFIG:   { date_time_config_on_react(handle);} break;
     case ST_feeder_FEEDING_TIME_CONFIG:{ feeding_time_config_on_react(handle);} break;
-    case ST_feeder_FEEDER_CONFIG:      { feeder_config_on_react(handle);} break;
-    case ST_feeder_FEEDING_START:      { feeding_start_on_react(handle);} break;
-    case ST_feeder_FEEDING_END:        { feeding_end_on_react(handle);} break;
     default:
         break;
     }
@@ -150,80 +157,13 @@ void feeder_fsm_set_ext_event(feeder_handle_t handle, event_t *event)
         handle->event.external.name = event->info.name;
         memcpy((uint8_t *)&handle->event.external.data.config_rtc, (uint8_t*)event->data.buff, sizeof(feeder_ev_ext_data_t));
     }
-}
-
-/////////////////////////////////// State Function Declaration   ///////////////////////////////////////////
-
-static void enter_seq_watcher(feeder_handle_t handle);
-static void enter_seq_date_time_config(feeder_handle_t handle);
-static void enter_seq_feeding_time_config(feeder_handle_t handle);
-static void enter_seq_feeder_config(feeder_handle_t handle);
-static void enter_seq_feeding_start(feeder_handle_t handle);
-static void enter_seq_feeding_end(feeder_handle_t handle); 
-
-static void watcher_on_react(feeder_handle_t handle);
-static void date_time_config_on_react(feeder_handle_t handle);
-static void feeding_time_config_on_react(feeder_handle_t handle);
-static void feeder_config_on_react(feeder_handle_t handle);
-static void feeding_start_on_react(feeder_handle_t handle);
-static void feeding_end_on_react(feeder_handle_t handle); 
-
-static void entry_action_watcher(feeder_handle_t handle);
-static void entry_action_date_time_config(feeder_handle_t handle);
-static void entry_action_feeding_time_config(feeder_handle_t handle);
-static void entry_action_feeder_config(feeder_handle_t handle);
-static void entry_action_feeding_start(feeder_handle_t handle);
-static void entry_action_feeding_end(feeder_handle_t handle); 
-
-
-////////////////////////////////// FEEDING STATE Function Definition ////////////////////////////////////
-static void enter_seq_feeding_start(feeder_handle_t handle)
-{
-    feeder_dbg("enter seq: \t[ feeding start]\r\n");
-    fsm_set_next_state(handle, ST_feeder_FEEDING_START );
-    entry_action_feeding_start(handle);
-}
-static void entry_action_feeding_start(feeder_handle_t handle)
-{
-    /*Get Drawers Current status */
-    drawer_ctrl_info_t *info = drawer_fsm_get_info(handle->iface.drawer);
-
-}
-static void feeding_start_on_react(feeder_handle_t handle)
-{
-
-}
-
-////////////////////////////////// FEEDING END State Function Definition ////////////////////////////////////
-static void enter_seq_feeding_end(feeder_handle_t handle)
-{
-    feeder_dbg("enter seq: \t[ feeding end ]\r\n");
-    fsm_set_next_state(handle, ST_feeder_FEEDING_END);
-    entry_action_feeding_end(handle);
-} 
-static void feeding_end_on_react(feeder_handle_t handle)
-{
-
-} 
-static void entry_action_feeding_end(feeder_handle_t handle)
-{
-
-} 
-
-////////////////////////////////// State Function Definition ////////////////////////////////////
-static void enter_seq_feeder_config(feeder_handle_t handle)
-{
-    feeder_dbg("enter seq: \t[feeder config ]\r\n");
-    fsm_set_next_state(handle, ST_feeder_FEEDER_CONFIG);
-    entry_action_feeder_config(handle);
-}
-static void feeder_config_on_react(feeder_handle_t handle)
-{
-
-}
-static void entry_action_feeder_config(feeder_handle_t handle)
-{
-
+    else if(event->info.name == EVT_EXT_feeder_CONFIG_FEEDING_TIME)
+    {
+        feeder_ev_ext_data_t *data = (feeder_ev_ext_data_t *)&event->data.buff;
+        handle->event.external.name = event->info.name;
+        handle->event.external.data.config_feeding_time.drawer_no = data->config_feeding_time.drawer_no;
+        handle->event.external.data.config_feeding_time.config = data->config_feeding_time.config;
+    }
 }
 
 ////////////////////////////////// State Function Definition ////////////////////////////////////
@@ -235,11 +175,18 @@ static void enter_seq_feeding_time_config(feeder_handle_t handle)
 }
 static void feeding_time_config_on_react(feeder_handle_t handle)
 {
-
+    enter_seq_watcher(handle);
 }
 static void entry_action_feeding_time_config(feeder_handle_t handle)
 {
+    drawer_no_t drawer_no = handle->event.external.data.config_feeding_time.drawer_no;
+    feeder_drawer_data_t *drawer_cfg = &handle->iface.feeder.drawer.no_1;
 
+    for (uint8_t drawer_cnt = 0; drawer_cnt < drawer_no; drawer_cnt++)
+        drawer_cfg++;
+
+    /*store new information */
+    memcpy((uint8_t *)drawer_cfg, (uint8_t *)handle->event.external.data.config_feeding_time.config, sizeof(feeder_drawer_data_t));
 }
 
 ////////////////////////////////// State Function Definition ////////////////////////////////////
@@ -279,6 +226,7 @@ static date_info_t rtc_get_date_info(feeder_handle_t handle)
     date_info_t info;
     info.day = 25;
     info.month = 30;
+    return info;
 }
 
 static time_info_t rtc_get_time_info(feeder_handle_t handle)
@@ -287,6 +235,7 @@ static time_info_t rtc_get_time_info(feeder_handle_t handle)
     info.hour = 10;
     info.minute = 25;
     info.am_fm = TIME_AM;
+    return info;
 }
 
 static bool date_match(date_info_t *date1, date_info_t *date2)
@@ -340,7 +289,7 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
             }
 
             /* check if open time matches */
-            if (time_match(&meal_data->time.open, &rtc_time.hour))
+            if (time_match(&meal_data->time.open, &rtc_time))
             {
                 if (drawer_info->status.curr == DRAWER_ST_CLOSE && drawer_info->status.next == DRAWER_ST_INVALID)
                 {
@@ -352,7 +301,7 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
             }
 
             /* check if close time matches */
-            if (time_match(&meal_data->time.close, &rtc_time.hour))
+            if (time_match(&meal_data->time.close, &rtc_time))
             {
                 if (drawer_info->status.curr == DRAWER_ST_OPEN && drawer_info->status.next == DRAWER_ST_INVALID)
                 {
@@ -365,7 +314,6 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
         }
         drawer++;
     }
-
 }
 
 static void watcher_on_react(feeder_handle_t handle)
@@ -374,9 +322,15 @@ static void watcher_on_react(feeder_handle_t handle)
     {
         enter_seq_date_time_config(handle);
     }
+    else if(handle->event.external.name == EVT_EXT_feeder_CONFIG_FEEDING_TIME)
+    {
+        enter_seq_feeding_time_config(handle);
+    }
 
+    /* check time events */
     if(time_event_is_raised(&handle->event.time.update) == true)
     {
         check_if_feeding_time_is_elapsed(handle);
+        enter_seq_watcher(handle);
     }
 }

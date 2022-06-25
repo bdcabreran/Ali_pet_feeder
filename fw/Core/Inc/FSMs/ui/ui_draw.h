@@ -209,6 +209,7 @@ typedef struct
 
 typedef struct
 {
+    
     struct 
     {
         ui_window_t main;

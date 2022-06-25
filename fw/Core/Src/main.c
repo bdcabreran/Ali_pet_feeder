@@ -18,11 +18,11 @@
 
 static void print_startup_msg(void)
 {
-  printf("#########################################");
+  printf("#########################################\r\n");
   printf("Author :\t Embedded-Tech\r\n");
   printf("Project:\t pet-feeder v%s\r\n", FW_VERSION);
   printf("Updated:\t %s\r\n", __DATE__);
-  printf("#########################################");
+  printf("#########################################\r\n");
 }
 
 /**
@@ -52,12 +52,20 @@ int main(void)
   temp_ctrl_handle_t temp_fsm = temp_ctrl_fsm_get();
   temp_ctrl_fsm_init(temp_fsm);
 
+  /*Init Feeder Scheduler */
+  feeder_handle_t feeder_fsm = feeder_fsm_get();
+  feeder_fsm_init(feeder_fsm);
+
+  /*Init Drawer Controller */
+
   /* Infinite loop */
   while (1)
   {
     ui_fsm_run(ui_fsm);
     temp_ctrl_fsm_run(temp_fsm);
     event_manager_fsm_run(evm_fsm);
+    feeder_fsm_run(feeder_fsm);
+
     time_events_poll_update();
   }
 }

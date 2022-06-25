@@ -95,6 +95,13 @@ static void ui_display_string(ui_window_t *win, char *text, sFONT *font, uint16_
     BSP_LCD_SetBackColor(LCD_DEFAULT_BACKCOLOR);
 }
 
+static void ui_display_digits(ui_window_t *win, char *text, uint16_t color)
+{
+    BSP_LCD_SetTextColor(color);
+    BSP_LCD_DisplayDigits(win->x, win->y, text);
+    BSP_LCD_SetBackColor(LCD_DEFAULT_BACKCOLOR);
+}
+
 //////////////////////////////////// Battery Icon Related Functions   //////////////////////////////////////////////
 void ui_battery_init(ui_battery_t *batt)
 {
@@ -464,11 +471,11 @@ void ui_date_time_init(ui_date_time_menu_t *menu)
     menu->win.main.w = 442;
     menu->win.main.h = 161;
 
-    menu->time.hour.x  = menu->win.main.x + 31;
+    menu->time.hour.x  = menu->win.main.x + 50;
     menu->time.hour.y  = menu->win.main.y + 29;
     menu->time.min.x   = menu->win.main.x + 191;
     menu->time.min.y   = menu->win.main.y + 29;
-    menu->date.day.x   = menu->win.main.x + 347;
+    menu->date.day.x   = menu->win.main.x + 340;
     menu->date.day.y   = menu->win.main.y + 61;
     menu->date.month.x = menu->win.main.x + 389;
     menu->date.month.y = menu->win.main.y + 61;
@@ -478,11 +485,11 @@ void ui_date_time_show(ui_date_time_menu_t *menu, bool show)
 {
     if(show)
     {
-        ui_display_string(&menu->time.hour, "12:", &Font24, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->time.min, "00", &Font24, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_digits(&menu->time.hour, "12:", LCD_DEFAULT_TEXTCOLOR);
+        ui_display_digits(&menu->time.min, "00", LCD_DEFAULT_TEXTCOLOR);
 
-        ui_display_string(&menu->date.day, "01/", &Font16, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->date.month, "12", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->date.day, "01/", &Font24, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->date.month, "12", &Font24, LCD_DEFAULT_TEXTCOLOR);
 
         ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
     }
@@ -510,22 +517,22 @@ void ui_date_time_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *c
     {
     case DATE_TIME_CNF_HOUR: {
             sprintf(str, "%.2d", config->time.hour);
-            ui_display_string(&menu->time.hour, str, &Font24, single_color_sel);
+            ui_display_digits(&menu->time.hour, str, single_color_sel);
     } break;
 
     case DATE_TIME_CNF_MIN: {
             sprintf(str, "%.2d", config->time.min);
-            ui_display_string(&menu->time.min, str, &Font24, single_color_sel);
+            ui_display_digits(&menu->time.min, str, single_color_sel);
     } break;
 
     case DATE_TIME_CNF_DAY: {
             sprintf(str, "%.2d", config->date.day);
-            ui_display_string(&menu->date.day, str, &Font16, single_color_sel);
+            ui_display_string(&menu->date.day, str, &Font24, single_color_sel);
     } break;
 
     case DATE_TIME_CNF_MONTH: {
             sprintf(str, "%.2d", config->date.month);
-            ui_display_string(&menu->date.month, str, &Font16, single_color_sel);
+            ui_display_string(&menu->date.month, str, &Font24, single_color_sel);
     } break;
 
     default:
@@ -624,7 +631,6 @@ void ui_thermostat_set_config(ui_thermostat_t *menu, ui_thermostat_config_t *con
         color = UI_SELECTION_COLOR;
     }
     ui_draw_window(&menu->win.main, color, true);
-    ui_thermostat_draw_temp(menu, config->temp.val, config->temp.unit);
 }
 
 

@@ -56,11 +56,10 @@
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/event_manager"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/ui"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/drawer"/>
-									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/feeder"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/power"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/temperature"/>
-									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/feeder"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/API/rtc"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/feeder_scheduler"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1414022680" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -87,7 +86,6 @@
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1757351197.326583282" name="ili9488.h" rcbsApplicability="disable" resourcePath="Core/lcd/ili9488.h" toolsToInvoke=""/>
-					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1757351197.1247750559" name="ili9341.h" rcbsApplicability="disable" resourcePath="Core/lcd/ili9341.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="lcd/ili9341.h|lcd/ili9341.c|Src/tiny_printf.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>

@@ -16,8 +16,12 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "itm_dbg.h"
+#include "init_periph.h"
 
-#define USE_PRINTF_ITM (1)
+#define USE_PRINTF_ITM   (1)
+#define USE_PRINTF_UART2 (0)
+
+#define USE_PRINTF_COLOR (0)
 
 typedef enum
 {
@@ -64,9 +68,9 @@ extern const char *str_color[E_LAST];
 #define printf_dbg_color(color, format, ...) \
     do                                     \
     {                                      \
-        printf(str_color[color]);          \
+        /*printf(str_color[color]);*/      \
         printf(format, ##__VA_ARGS__);     \
-        printf(str_color[E_RESET]);        \
+        /*printf(str_color[E_RESET]);*/       \
     } while (0)
 
 

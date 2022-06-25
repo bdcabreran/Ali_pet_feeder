@@ -110,6 +110,7 @@ typedef enum
 {
     EVT_EXT_feeder_INVALID = 0,
     EVT_EXT_feeder_CONFIG_DATE_TIME,
+    EVT_EXT_feeder_CONFIG_FEEDING_TIME,
     EVT_EXT_feeder_LAST
 }feeder_ev_ext_name_t;
 
@@ -120,8 +121,13 @@ typedef struct
 }feeder_date_time_config_t;
 
 typedef struct
-{
+{    
     feeder_date_time_config_t config_rtc;
+    struct
+    {
+        uint8_t drawer_no;
+        feeder_drawer_data_t *config;
+    }config_feeding_time;
 }feeder_ev_ext_data_t;
 
 typedef struct

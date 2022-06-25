@@ -106,11 +106,13 @@ static void measure_temperature(temp_ctrl_handle_t handle)
 {
     if (handle->iface.therm_info.control.unit == TEMP_UNITS_CELSIUS)
     {
+        temp_ctrl_dbg("measure temperature in celsius\r\n");
         /*!< TODO : */
         //handle->iface.therm_info.value.sensed = sensor_read_temperature_in_celsius();
     }
     else
     {
+        temp_ctrl_dbg("measure temperature in fahrenheit\r\n");
         /*!< TODO : */
         //handle->iface.therm_info.value.sensed = sensor_read_temperature_in_fahrenheit();
     }
@@ -139,14 +141,15 @@ static void sensing_temp_on_react(temp_ctrl_handle_t handle)
         {
             if(handle->iface.therm_info.control.status == TEMP_CTRL_ENABLE)
             {
-                enter_seq_control_temp(handle);
                 time_event_stop(&handle->event.time.sampling_period);
+                enter_seq_control_temp(handle);
+                temp_ctrl_dbg("Temp out of range, control is enabled\r\n");
             }
             else
             {
-                enter_seq_sensing_temp(handle);
                 time_event_stop(&handle->event.time.sampling_period);
-                temp_ctrl_dbg("Temp out of range, but control is disabled\r\n");
+                enter_seq_sensing_temp(handle);
+                temp_ctrl_dbg("Temp out of range, control is disabled\r\n");
             }
         }
         else
@@ -195,6 +198,7 @@ static void control_temp_on_react(temp_ctrl_handle_t handle)
     {
         /*!<TODO : */
         // turn_off_cooler()
+        temp_ctrl_dbg("temperature too high, turn on cooler \r\n");
         handle->event.internal.name = EVT_INT_TEMP_CTRL_INVALID;
 
     }
@@ -202,6 +206,7 @@ static void control_temp_on_react(temp_ctrl_handle_t handle)
     {
         /*Transition action */
         // turn_on_cooler()
+        temp_ctrl_dbg("temperature too high, turn off cooler \r\n");
         handle->event.internal.name = EVT_INT_TEMP_CTRL_INVALID;
     }
 

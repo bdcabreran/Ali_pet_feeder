@@ -9,12 +9,16 @@ typedef struct
     uint16_t      pin;
 }gpio_port_pin_t;
 
-extern ADC_HandleTypeDef hadc1;
-extern I2C_HandleTypeDef hi2c1;
-extern SPI_HandleTypeDef hspi2;
-extern DMA_HandleTypeDef hdma_spi2_rx;
-extern DMA_HandleTypeDef hdma_spi2_tx;
-extern TIM_HandleTypeDef htim1;
+extern ADC_HandleTypeDef  hadc1;
+extern I2C_HandleTypeDef  hi2c1;
+extern SPI_HandleTypeDef  hspi2;
+extern DMA_HandleTypeDef  hdma_spi2_rx;
+extern DMA_HandleTypeDef  hdma_spi2_tx;
+extern TIM_HandleTypeDef  htim1;
+extern UART_HandleTypeDef huart2;
+
+// comment if no used
+// #define USE_UART2_PRINTF
 
 
 void init_peripherals(void);
@@ -98,6 +102,11 @@ void init_peripherals(void);
 #define RTC_SCL_GPIO_Port GPIOB
 #define RTC_SDA_Pin GPIO_PIN_7
 #define RTC_SDA_GPIO_Port GPIOB
+
+#define USART_TX_Pin GPIO_PIN_2
+#define USART_TX_GPIO_Port GPIOA
+#define USART_RX_Pin GPIO_PIN_3
+#define USART_RX_GPIO_Port GPIOA
 
 
 #endif

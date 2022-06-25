@@ -18,9 +18,13 @@ int _write(int file, char *ptr, int len)
 #if USE_PRINTF_ITM
     /*write transmit function associated to a peripheral where you want to remap printf */
     return itm_write(ptr, len);
-#else
-    return 0;
 #endif
+
+#if USE_PRINTF_UART2
+    HAL_UART_Transmit(&huart2, ptr, len, HAL_MAX_DELAY);
+    return len;
+#endif
+
 }
 
 void print_buffer(uint8_t format, uint8_t *buff, uint8_t len)

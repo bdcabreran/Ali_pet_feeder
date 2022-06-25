@@ -1106,8 +1106,8 @@ void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text)
  */
 void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit) {
 
-  volatile uint16_t x[6] = {0};
-  volatile uint16_t y[6] = {0};
+  volatile uint16_t x[7] = {0};
+  volatile uint16_t y[7] = {0};
     
 
   BSP_LCD_SetTextColor(LCD_COLOR_BLACK);

@@ -22,6 +22,8 @@ DMA_HandleTypeDef hdma_spi2_rx;
 DMA_HandleTypeDef hdma_spi2_tx;
 TIM_HandleTypeDef htim1;
 
+
+
 /* Private function prototypes -----------------------------------------------*/
 extern void Error_Handler(void);
 
@@ -147,7 +149,7 @@ static void MX_SPI2_Init(void)
   hspi2.Instance = SPI2;
   hspi2.Init.Mode = SPI_MODE_MASTER;
   hspi2.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.DataSize = SPI_DATASIZE_16BIT;
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
@@ -320,6 +322,35 @@ static void MX_GPIO_Init(void)
 
 }
 
+
+#ifdef USE_UART2_PRINTF
+UART_HandleTypeDef huart2;
+
+/**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+#endif
+
+
+
 void init_peripherals(void)
 {
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -335,6 +366,11 @@ void init_peripherals(void)
   MX_DMA_Init();
   MX_TIM1_Init();
   MX_I2C1_Init();
+
+  #ifdef USE_UART2_PRINTF
+  /* Init UART for Debugging Purposes */
+  MX_USART2_UART_Init();
+  #endif
 
   /* Init ITM */
   itm_enable();
