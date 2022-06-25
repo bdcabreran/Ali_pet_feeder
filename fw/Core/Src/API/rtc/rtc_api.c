@@ -11,17 +11,53 @@
 #include <stdint.h>
 #include "rct_api.h"
 #include  "rtc_1307.h"
+#include <string.h>
 
-uint8_t rtc_init(uint8_t address){
+void rtc_init_mock(void);
+void rtc_set_time_mock(date_time_t date_time);
+void rtc_get_time_mock(date_time_t *date_time);
 
+date_time_t date_time_mock;
+
+RTC_driver_t  mock_rtc_drv={
+	rtc_init_mock,
+	rtc_set_time_mock,
+	rtc_get_time_mock
+};
+
+
+#ifdef RTC_MOCK
+	RTC_driver_t  *rtc_drv = &mock_rtc_drv;
+#else
+	extern RTC_driver_t  *rtc_drv;
+#endif
+
+
+
+void rtc_init(uint8_t address){
+	rtc_drv->init();
 }
 
 void rtc_set_time(date_time_t date_time){
-
+	rtc_drv->set_time(date_time);
 }
 
-date_time_t rtc_get_time(void){
-	date_time_t date_time;
-
-	return date_time;
+void rtc_get_time(date_time_t *date_time){
+	rtc_drv->get_time(date_time);
 }
+
+
+#ifdef RTC_MOCK
+void rtc_init_mock(void){
+
+}
+void rtc_set_time_mock(date_time_t date_time){
+	memcpy(&date_time_mock,&date_time,sizeof(date_time_t));
+}
+void rtc_get_time_mock(date_time_t *date_time){
+	date_time_mock.seconds++;
+	date_time_mock.minutes++;
+	date_time_mock.hours++;
+	memcpy(&date_time,&date_time_mock,sizeof(date_time_t));
+}
+#endif

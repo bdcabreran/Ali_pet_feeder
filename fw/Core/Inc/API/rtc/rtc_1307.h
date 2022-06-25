@@ -13,30 +13,19 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-//0x68
-#define DS1307_ADDR 0xD0  /*8 BIT ADDRESS , first bit 'r/w*/
+#include "rct_api.h"
 
-void init_ds1307(void);
-
-
-// Values in RTC are stored in Binary Coded Decimal. These functions convert to/from Decimal
-uint8_t BCDtoDEC(uint8_t val);
-uint8_t DECtoBCD(uint8_t val);
-
-uint8_t readRegister(uint8_t addr);
-bool writeRegister(uint8_t addr, uint8_t val);
-bool readMultipleRegisters(uint8_t addr, uint8_t *dest, uint8_t len);
-bool writeMultipleRegisters(uint8_t addr, uint8_t *values, uint8_t len);
-
-bool writeConfigEEPROM_RAMmirror(uint8_t eepromaddr, uint8_t val);
-uint8_t readConfigEEPROM_RAMmirror(uint8_t eepromaddr);
-bool waitforEEPROM();
-void reset();
-
-void setBit(uint8_t reg_addr, uint8_t bit_num);
-void clearBit(uint8_t reg_addr, uint8_t bit_num);
-bool readBit(uint8_t reg_addr, uint8_t bit_num);
-
+#define DS1307_ADDR 0xD0
+#define REG_SECONDS   0X00
+#define REG_MINUTES   0X01
+#define REG_HOURS     0X02
+#define REG_DAY       0X03
+#define REG_DATE      0X04
+#define REG_MONTH     0X05
+#define REG_YEAR      0X06
+#define REG_CONTROL   0X07
+#define REG_RAM_START 0X08
+#define REG_RAM_END   0X3F
 
 typedef enum days_of_the_week_enum {
  	DAY_MON= 1,
@@ -48,23 +37,29 @@ typedef enum days_of_the_week_enum {
  	DAY_SUN= 7
 }days_of_the_week_t;
 
-    uint8_t decToBcd(uint8_t val);
-    uint8_t bcdToDec(uint8_t val);
 
-    void startClock(void);
-    void stopClock(void);
-    void set_time(void);
-    void getTime(void);
-    void fillByHMS(uint8_t _hour, uint8_t _minute, uint8_t _second);
-    void fillByYMD(uint16_t _year, uint8_t _month, uint8_t _day);
-    void fillDayOfWeek(uint8_t _dow);
- 
 
-	// clock.fillByYMD(2013, 1, 19); //Jan 19,2013
-    // clock.fillByHMS(15, 28, 30); //15:28 30"
-    // clock.fillDayOfWeek(SAT);//Saturday
-    // clock.setTime();//write time to the RTC chip
+uint8_t readRegister(uint8_t addr);
+bool writeRegister(uint8_t addr, uint8_t val);
+bool readMultipleRegisters(uint8_t addr, uint8_t *dest, uint8_t len);
+bool writeMultipleRegisters(uint8_t addr, uint8_t *values, uint8_t len);
 
-//    clock.getTime();
+bool writeConfigEEPROM_RAMmirror(uint8_t eepromaddr, uint8_t val);
+uint8_t readConfigEEPROM_RAMmirror(uint8_t eepromaddr);
+bool waitforEEPROM();
+
+void setBit(uint8_t reg_addr, uint8_t bit_num);
+void clearBit(uint8_t reg_addr, uint8_t bit_num);
+bool readBit(uint8_t reg_addr, uint8_t bit_num);
+
+void startClock(void);
+void stopClock(void);
+
+uint8_t decToBcd(uint8_t val);
+uint8_t bcdToDec(uint8_t val);
+
+void ds1307_get_time(date_time_t *date_time);
+void ds1307_set_time(date_time_t date_time);
+void ds1307_init(void);
 
 #endif /*__DS1307_H__*/
