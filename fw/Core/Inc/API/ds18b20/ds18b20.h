@@ -65,7 +65,7 @@ void			Ds18b20_Init(osPriority Priority);
 #else
 bool			Ds18b20_Init(void);
 #endif
-bool			Ds18b20_ManualConvert(void);
+bool			Ds18b20_ManualConvert(float 		*temperature);
 //###################################################################################
 uint8_t 	DS18B20_Start(OneWire_t* OneWireStruct, uint8_t* ROM);
 void 			DS18B20_StartAll(OneWire_t* OneWireStruct);

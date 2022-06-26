@@ -1,5 +1,21 @@
+/**
+ * @file ds18b20.c
+ * @author Mauro R (emauriciorg@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2022-06-26
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 
+/*
+	Use 
+	1. Call Ds18b20_Init
+	2. Ds18b20_ManualConvert(&your_float_temperature_variable)
+	3. This sensor sould be read in intervals of greater than 0.5s due to the nature of the protocl
 
+*/
 #include "ds18b20.h"
 
 
@@ -58,8 +74,12 @@ bool	Ds18b20_Init(void)
 }
 #endif
 //###########################################################################################
-bool	Ds18b20_ManualConvert(void)
+bool	Ds18b20_ManualConvert(float 		*temperature)
 {
+	#ifdef MOCK_SENSOR_DS18B20
+		*temperature =23.3;
+		return true;
+	#endif
 	#if (_DS18B20_USE_FREERTOS==1)
 	Ds18b20StartConvert=1;
 	while(Ds18b20StartConvert==1)
@@ -93,6 +113,9 @@ bool	Ds18b20_ManualConvert(void)
 		for (uint8_t i = 0; i < TempSensorCount; i++)
 			ds18b20[i].DataIsValid = false;
 	}
+	
+	*temperature = ds18b20[0].Temperature; // override other sensors, we are using only sensor index 0;
+	
 	if(Ds18b20Timeout==0)
 		return false;
 	else

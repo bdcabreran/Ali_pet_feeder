@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-#include "stm32f0xx_hal.h"
+#include "stm32f1xx_hal.h"
 #if (_DS18B20_USE_FREERTOS==1)
 #include "cmsis_os.h"
 #define	OneWireDelay(x)			osDelay(x)
