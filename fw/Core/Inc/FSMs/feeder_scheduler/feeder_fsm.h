@@ -146,6 +146,6 @@ feeder_config_t *feeder_fsm_get_info(void);
 void feeder_fsm_init(feeder_handle_t handle);
 void feeder_fsm_run(feeder_handle_t handle);
 void feeder_fsm_time_update(feeder_handle_t handle);
-void feeder_fsm_set_ext_event(feeder_handle_t handle, event_t *event);
+void feeder_fsm_write_event(feeder_handle_t handle, event_t *event);
 
 #endif /*__feeder_H__*/

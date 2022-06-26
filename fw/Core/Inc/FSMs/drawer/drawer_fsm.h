@@ -35,9 +35,18 @@ typedef enum
     DRAWER_ST_LAST,
 }drawer_st_t;
 
+typedef enum
+{
+    DRAWER_REQUEST_TYPE_INVALID,
+    DRAWER_REQUEST_TYPE_PROGRAMMED,
+    DRAWER_REQUEST_TYPE_MANUAL,
+    DRAWER_REQUEST_TYPE_LAST,
+}drawer_request_type_t;
+
+
 typedef struct
 {
-    bool manually_open;
+    drawer_request_type_t request_type;
     struct 
     {
         drawer_st_t curr;
@@ -57,11 +66,13 @@ typedef enum
     EVT_EXT_DRAWER_CTRL_LAST
 }drawer_ctrl_ev_ext_name_t;
 
-#define IS_DRAWER_CTRL_EV_EXT(evt) (evt > EVT_EXT_DRW_INVALID && evt  < EVT_EXT_DRW_LAST)
+
+#define IS_DRAWER_CTRL_EV_EXT(evt) (evt > EVT_EXT_DRAWER_CTRL_INVALID && evt  < EVT_EXT_DRAWER_CTRL_LAST)
 
 typedef struct
 {
     drawer_no_t drawer_no;
+    drawer_request_type_t request_type;
 }drawer_ctrl_ev_ext_data_t;
 
 typedef struct
@@ -76,8 +87,9 @@ typedef struct drawer_ctrl_fsm_t* drawer_ctrl_handle_t;
 
 drawer_ctrl_handle_t drawer_ctrl_fsm_get(void);
 drawer_ctrl_info_t *drawer_ctrl_fsm_get_info(drawer_no_t drawer_no);
-
-
+void drawer_ctrl_fsm_init(drawer_ctrl_handle_t handle);
+void drawer_ctrl_fsm_run(drawer_ctrl_handle_t handle);
+void drawer_ctrl_fsm_write_event(drawer_ctrl_handle_t handle, event_t *event);
 
 
 #endif 

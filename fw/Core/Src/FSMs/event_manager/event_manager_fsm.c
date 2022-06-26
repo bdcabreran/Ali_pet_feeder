@@ -165,15 +165,24 @@ static void entry_action_notify_event(event_manager_handle_t handle)
         case UI_FSM:
         {
             ui_fsm_write_event(ui_fsm_get(), &handle->iface.event);
-        }break; 
+        }break;
+
+        case FEEDER_FSM:
+        {
+            feeder_fsm_write_event(feeder_fsm_get(), &handle->iface.event);
+
+        }break;
     
         case DRAWER_FSM:
         {
-            drawer_fsm_set_ext_evt(&handle->iface.event);
-        }break; 
+            drawer_ctrl_fsm_write_event(drawer_ctrl_fsm_get(),&handle->iface.event);
+        }break;
 
+        case TEMP_CTRL_FSM: 
+        {
+            temp_ctrl_fsm_write_event(temp_ctrl_fsm_get(), &handle->iface.event);
 
-
+        }break;
 
     default:
         break;

@@ -57,15 +57,20 @@ int main(void)
   feeder_fsm_init(feeder_fsm);
 
   /*Init Drawer Controller */
+  drawer_ctrl_handle_t drawer_fsm = drawer_ctrl_fsm_get();
+  drawer_ctrl_fsm_init(drawer_fsm);
 
   /* Infinite loop */
   while (1)
   {
+    /* run FSMs : */
     ui_fsm_run(ui_fsm);
     temp_ctrl_fsm_run(temp_fsm);
     event_manager_fsm_run(evm_fsm);
     feeder_fsm_run(feeder_fsm);
+    drawer_ctrl_fsm_run(drawer_fsm);
 
+    /* update FSMs */
     time_events_poll_update();
   }
 }

@@ -150,7 +150,7 @@ void feeder_fsm_time_update(feeder_handle_t handle)
 	}
 }
 
-void feeder_fsm_set_ext_event(feeder_handle_t handle, event_t *event)
+void feeder_fsm_write_event(feeder_handle_t handle, event_t *event)
 {
     if(event->info.name == EVT_EXT_feeder_CONFIG_DATE_TIME)
     {
@@ -265,11 +265,11 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
 
     for (int drawer_idx = 0; drawer_idx < DRAWERn; drawer_idx++)
     {
-        drawer_ctrl_info_t *drawer_info = drawer_fsm_get_info(drawer_idx);
+        drawer_ctrl_info_t *drawer_info = drawer_ctrl_fsm_get_info(drawer_idx);
 
-        if (drawer_info->manually_open == true)
+        if (drawer_info->request_type == DRAWER_REQUEST_TYPE_MANUAL)
         {
-            feeder_dbg("drawer no [%d] skipped, manually opened [%d]\r\n", drawer_info->no + 1, drawer_info->status.curr);
+            feeder_dbg("drawer no [%d] skipped, manually opened [%d]\r\n", drawer_idx + 1, drawer_info->status.curr);
             continue;
         }
 

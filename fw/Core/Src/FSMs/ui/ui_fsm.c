@@ -1,9 +1,7 @@
 #include "ui_fsm.h"
 #include "printf_dbg.h"
-#include "buttons.h"
 #include "time_event.h"
 #include "ui_draw.h"
-#include "drawer_fsm.h"
 #include "string.h"
 
 /**@brief Enable/Disable debug messages */
@@ -353,7 +351,7 @@ void entry_action_drawer_request(ui_handle_t handle)
     
     /* Update UI Elements */
     ui_drawers_config_t *ui_config = &handle->iface.ui.drawers;
-    drawer_ctrl_info_t *info = drawer_fsm_get_info(ui_config->drawer.no);
+    drawer_ctrl_info_t *info = drawer_ctrl_fsm_get_info(ui_config->drawer.no);
     ui_config->drawer.st = info->status.curr;
     ui_config->select.single = UI_ITEM_SELECT;
     ui_drawers_set_config(&ui_drawers, ui_config);
@@ -835,30 +833,35 @@ static void notify_manual_drawer_operation(ui_handle_t handle)
 {
     char str[30];
     ui_drawers_config_t *drawer_cfg = &handle->iface.ui.drawers;
-    drawer_ctrl_info_t *info = drawer_fsm_get_info(drawer_cfg->drawer.no);
+    drawer_ctrl_info_t *info = drawer_ctrl_fsm_get_info(drawer_cfg->drawer.no);
     event_t event;
 
-    event.info.name = EVT_EXT_DRW_INVALID;
+    event.info.name = EVT_EXT_DRAWER_CTRL_INVALID;
     event.info.fsm.src = UI_FSM;
     event.info.fsm.dst = DRAWER_FSM;
-    event.info.data_len = sizeof(drawer_ev_ext_data_t);
-    ((drawer_ev_ext_data_t*)event.data.buff)->no = drawer_cfg->drawer.no;
+    event.info.data_len = sizeof(drawer_ctrl_ev_ext_data_t);
+
+    drawer_ctrl_ev_ext_data_t *event_data = (drawer_ctrl_ev_ext_data_t*)event.data.buff;
 
     if (info->status.curr == DRAWER_ST_CLOSE || info->status.curr == DRAWER_ST_CLOSING)
     {
         sprintf(str, "Opening Drawer no %d\r\n", drawer_cfg->drawer.no + 1);
         ui_fsm_dbg("%s\r\n", str);
-        event.info.name = EVT_EXT_DRW_OPEN;
+        event.info.name = EVT_EXT_DRAWER_CTRL_OPEN;
+        event_data->drawer_no = drawer_cfg->drawer.no;
+        event_data->request_type = DRAWER_REQUEST_TYPE_MANUAL;
     }
 
     else if (info->status.curr == DRAWER_ST_OPEN || info->status.curr == DRAWER_ST_OPENING)
     {
         sprintf(str, "Closing Drawer no %d\r\n", drawer_cfg->drawer.no + 1);
         ui_fsm_dbg("%s\r\n", str);
-        event.info.name = EVT_EXT_DRW_CLOSE;
+        event.info.name = EVT_EXT_DRAWER_CTRL_CLOSE;
+        event_data->drawer_no = drawer_cfg->drawer.no;
+        event_data->request_type = DRAWER_REQUEST_TYPE_MANUAL;
     }
 
-    if(event.info.name != EVT_EXT_DRW_INVALID)
+    if(event.info.name != EVT_EXT_DRAWER_CTRL_INVALID)
     {
         event_manager_write(event_manager_fsm_get(), &event);
     }
