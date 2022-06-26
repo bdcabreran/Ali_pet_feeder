@@ -37,7 +37,6 @@ typedef enum
 
 typedef struct
 {
-    drawer_no_t no;
     bool manually_open;
     struct 
     {
@@ -52,23 +51,33 @@ typedef struct
  */
 typedef enum
 {
-    EVT_EXT_DRW_INVALID = 0,
-    EVT_EXT_DRW_OPEN,
-    EVT_EXT_DRW_CLOSE,
-    EVT_EXT_DRW_LAST
-}drawer_ev_ext_name_t;
+    EVT_EXT_DRAWER_CTRL_INVALID = 0,
+    EVT_EXT_DRAWER_CTRL_OPEN,
+    EVT_EXT_DRAWER_CTRL_CLOSE,
+    EVT_EXT_DRAWER_CTRL_LAST
+}drawer_ctrl_ev_ext_name_t;
 
-#define IS_DRAWER_EV_EXT(evt) (evt > EVT_EXT_DRW_INVALID && evt  < EVT_EXT_DRW_LAST)
+#define IS_DRAWER_CTRL_EV_EXT(evt) (evt > EVT_EXT_DRW_INVALID && evt  < EVT_EXT_DRW_LAST)
 
 typedef struct
 {
-    drawer_no_t no;
-}drawer_ev_ext_data_t;
+    drawer_no_t drawer_no;
+}drawer_ctrl_ev_ext_data_t;
+
+typedef struct
+{
+    drawer_ctrl_ev_ext_name_t name;
+    drawer_ctrl_ev_ext_data_t data;
+}drawer_ctrl_ev_ext_t;
+
+typedef struct drawer_ctrl_fsm_t* drawer_ctrl_handle_t;
+
+/*Exported Public Functions */
+
+drawer_ctrl_handle_t drawer_ctrl_fsm_get(void);
+drawer_ctrl_info_t *drawer_ctrl_fsm_get_info(drawer_no_t drawer_no);
 
 
-drawer_ctrl_info_t *drawer_fsm_get_info(drawer_no_t no);
 
-
-void drawer_fsm_set_ext_evt(event_t *event);
 
 #endif 

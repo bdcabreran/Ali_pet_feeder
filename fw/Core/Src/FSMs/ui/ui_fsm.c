@@ -181,8 +181,6 @@ void ui_fsm_init(ui_handle_t handle)
     ui_petcall_show(&ui_petcall, true);
     ui_date_time_show(&ui_date_time, true);
 
-    // thermostat demo
-    ui_update_thermostat(handle);
 
 	enter_seq_main_menu(handle);
 }
