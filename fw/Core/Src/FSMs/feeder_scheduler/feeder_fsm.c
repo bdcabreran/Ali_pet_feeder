@@ -24,7 +24,7 @@
 	} while (0)
 #endif
 
-const char *am_fm_str[TIMEn] = {"AM", "FM"}; 
+const char *am_fm_str[TIMEn] = {"AM", "PM"}; 
 
 
 
