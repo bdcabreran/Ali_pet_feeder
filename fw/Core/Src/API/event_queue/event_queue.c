@@ -1,3 +1,13 @@
+/**
+ * @file event_queue.c
+ * @author Bayron Cabrera (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2022-06-26
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "event_queue.h"
 #include "printf_dbg.h"
 
