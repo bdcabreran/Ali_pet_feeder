@@ -64,7 +64,7 @@ petcall_handle_t petcall_fsm_get(void);
 void petcall_fsm_init(petcall_handle_t handle);
 void petcall_fsm_run(petcall_handle_t handle);
 void petcall_fsm_write_event(petcall_handle_t handle, event_t *event);
-
+void petcall_fsm_time_update(petcall_handle_t handle);
 
 
 
