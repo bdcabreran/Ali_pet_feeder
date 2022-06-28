@@ -55,7 +55,6 @@ uint16_t battery_read_voltage(void) {
 
 void read_adc(uint32_t *adc_sample_array)
 {
-	uint32_t sample_counter  = 0;
 	
 	HAL_ADC_Start(&hadc1);
 	HAL_ADC_PollForConversion(&hadc1,ADC_TIMEOUT);
