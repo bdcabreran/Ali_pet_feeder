@@ -142,7 +142,7 @@ static void fsm_set_next_state(feeder_handle_t handle, feeder_state_t next_st)
 
 void feeder_fsm_time_update(feeder_handle_t handle)
 {
-	time_event_t *time_event = (time_event_t *)&handle->event;
+	time_event_t *time_event = (time_event_t *)&handle->event.time;
 	for (int tev_idx = 0; tev_idx < sizeof(handle->event.time) / sizeof(time_event_t); tev_idx++)
 	{
 		time_event_update(time_event);

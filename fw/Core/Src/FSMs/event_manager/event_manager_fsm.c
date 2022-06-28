@@ -184,6 +184,11 @@ static void entry_action_notify_event(event_manager_handle_t handle)
 
         }break;
 
+        case PETCALL_FSM:
+        {   
+            petcall_fsm_write_event(petcall_fsm_get(), &handle->iface.event);
+        }break;
+
     default:
         break;
     }

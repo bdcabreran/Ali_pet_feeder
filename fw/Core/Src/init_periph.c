@@ -191,8 +191,6 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
-
-
 }
 
 
