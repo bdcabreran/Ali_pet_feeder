@@ -192,8 +192,8 @@ void     BSP_LCD_ReadRGB16Image(uint16_t Xpos, uint16_t Ypos, uint16_t Xsize, ui
 void     BSP_LCD_Scroll(int16_t Scroll, uint16_t TopFix, uint16_t BottonFix);
  
 
-void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text);
-void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit);
+void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text, uint16_t color);
+void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit, uint16_t color);
 void BSP_LCD_Colon(uint16_t xpos,uint16_t ypos);
 
 #ifdef __cplusplus

@@ -222,7 +222,7 @@ typedef struct
 typedef struct
 {
     date_time_config_t set;
-    union
+    struct
     {
         struct
         {

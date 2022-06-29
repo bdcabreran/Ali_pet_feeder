@@ -1078,7 +1078,7 @@ void BSP_LCD_Scroll(int16_t Scroll, uint16_t TopFix, uint16_t BottonFix)
  * @param Text stream of text containing numbers "0"-"9" or ":"
  * @param Mode 
  */
-void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text)
+void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text, uint16_t color)
 {
     uint8_t digit_count = 1;
     uint16_t x = Xpos;
@@ -1089,7 +1089,7 @@ void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text)
         Xpos+=30; //next offset should include a small gap from the colon
         
       }else{
-        BSP_LCD_DrawDigits(x ,  Ypos, (*Text)-'0');
+        BSP_LCD_DrawDigits(x ,  Ypos, (*Text)-'0', color);
         x = Xpos + (LCD_SEGMENT_DIGIT_SPACING_OFFSET*digit_count);
         digit_count++;
       }
@@ -1104,13 +1104,13 @@ void BSP_LCD_DisplayDigits(uint16_t Xpos, uint16_t Ypos, uint8_t *Text)
  * @param ypos 
  * @param digit int number 0-9
  */
-void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit) {
+void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit, uint16_t color) {
 
   volatile uint16_t x[7] = {0};
   volatile uint16_t y[7] = {0};
     
 
-  BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+  BSP_LCD_SetTextColor(color);
 
     x[0] = xpos;
     x[1] = x[0] - (LCD_SEGMENT_WIDTH + LCD_SEGMENT_GAP);
@@ -1150,7 +1150,7 @@ void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit) {
         }
     
       if(digit_segment[digit] &(0x1<<segment)){
-        BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+        BSP_LCD_SetTextColor(color);
          BSP_LCD_FillRect(xrect,yrect, width, height ); 
       }
       else{
@@ -1158,6 +1158,8 @@ void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit) {
            BSP_LCD_FillRect(xrect,yrect, width, height );
       }
     }
+
+    BSP_LCD_SetTextColor(LCD_DEFAULT_TEXTCOLOR);
 }
 
 void BSP_LCD_Colon(uint16_t xpos,uint16_t ypos){

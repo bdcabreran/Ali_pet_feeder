@@ -98,7 +98,7 @@ static void ui_display_string(ui_window_t *win, char *text, sFONT *font, uint16_
 static void ui_display_digits(ui_window_t *win, char *text, uint16_t color)
 {
     BSP_LCD_SetTextColor(color);
-    BSP_LCD_DisplayDigits(win->x, win->y, text);
+    BSP_LCD_DisplayDigits(win->x, win->y, text, color);
     BSP_LCD_SetBackColor(LCD_DEFAULT_BACKCOLOR);
 }
 

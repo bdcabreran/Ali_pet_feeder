@@ -57,10 +57,12 @@ typedef enum
 
 typedef enum
 {
+    DATE_TIME_CNF_INVALID,
     DATE_TIME_CNF_HOUR,
     DATE_TIME_CNF_MIN,
     DATE_TIME_CNF_DAY,
     DATE_TIME_CNF_MONTH,
+    DATE_TIME_CNF_LAST
 }date_time_config_t;
 
 typedef struct

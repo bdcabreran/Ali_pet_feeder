@@ -13,6 +13,8 @@
 #include "init_periph.h"
 #include "lcd_api.h"
 #include "itm_dbg.h"
+#include "rct_api.h"
+#include "rtc_1307.h"
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
@@ -418,4 +420,7 @@ void init_peripherals(void)
   
   /* Initialize LCD drivers*/
   BSP_LCD_Init();
+
+  /* Initialize RTC */
+  rtc_init(DS1307_ADDR);
 }

@@ -32,7 +32,7 @@ static void print_startup_msg(void)
 int main(void)
 {
   /*Init peripherals */
-  init_peripherals();
+	init_peripherals();
 
   /*startup info */
   print_startup_msg();
@@ -63,6 +63,8 @@ int main(void)
   /*Init Petcall */
   petcall_handle_t petcall_fsm = petcall_fsm_get();
   petcall_fsm_init(petcall_fsm);
+
+  /*Testing Set DATE TIME functions*/
 
   /* Infinite loop */
   while (1)
