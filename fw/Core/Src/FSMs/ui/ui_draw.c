@@ -15,7 +15,7 @@ ui_thermostat_t        ui_thermostat;
 ui_petcall_t           ui_petcall;
 ui_date_time_menu_t    ui_date_time;
 ui_feeder_menu_t       ui_feeder_menu;
-ui_thermostat_config_t ui_therm_conf;
+ui_thermostat_menu_t   ui_therm_menu;
 ui_petcall_config_t    ui_petcall_conf;
 ui_notification_msg_t  ui_notification;
 
@@ -569,7 +569,7 @@ void ui_thermostat_show(ui_thermostat_t *menu, bool show)
 {
     if(show)
     {
-        ui_draw_icon(&menu->icon.therm);
+//        ui_draw_icon(&menu->icon.therm);
         ui_window_t win = {.x = menu->shape.temp.x + 1, .y = menu->shape.temp.y + 1, .w = menu->shape.temp.w - 2, .h = menu->shape.temp.h - 2};
         ui_draw_window(&menu->shape.temp, LCD_DEFAULT_TEXTCOLOR, true);
         ui_draw_circle(&menu->shape.circle, 8, LCD_DEFAULT_TEXTCOLOR);
@@ -589,7 +589,7 @@ static void ui_thermostat_draw_temp(ui_thermostat_t *therm, uint8_t temp_lvl, te
     float hight = therm->shape.temp.h * (temp_lvl / 99.0);
     char str[5] = {0};
     uint16_t color = LCD_COLOR_BLUE;
-    sprintf(str, ".%.2d%s", temp_lvl, c_f_str[units]);
+    sprintf(str, "%.2d%s", temp_lvl, c_f_str[units]);
 
     uint8_t temp_h = therm->shape.temp.h;
     therm->shape.temp.h = (int)hight;
@@ -597,11 +597,11 @@ static void ui_thermostat_draw_temp(ui_thermostat_t *therm, uint8_t temp_lvl, te
     if(units == TEMP_UNITS_CELSIUS)
     {
         /*Low temp value level */
-        if(temp_lvl > 0 && temp_lvl < 17)
+        if(temp_lvl > 0 && temp_lvl < 20)
             color = LCD_COLOR_BLUE;
 
         /*Medium temp level */
-        if(temp_lvl >= 17  && temp_lvl < 70)
+        if(temp_lvl >= 20  && temp_lvl < 70)
             color = LCD_COLOR_YELLOW;
 
         /*High temp level */
@@ -611,11 +611,11 @@ static void ui_thermostat_draw_temp(ui_thermostat_t *therm, uint8_t temp_lvl, te
 
     /*!>TODO : add fahrenheit option*/
     ui_window_t win = {.x = therm->shape.temp.x + 1, .y = therm->shape.temp.y + 1, .w = therm->shape.temp.w - 2, .h = therm->shape.temp.h - 2};
+    /*!< TODO : Fix filling animation */
     ui_fill_circle(&therm->shape.circle, 7, LCD_DEFAULT_BACKCOLOR);
     ui_fill_window(&win, LCD_DEFAULT_BACKCOLOR);
     ui_fill_circle(&therm->shape.circle, 7, color);
-    ui_fill_window(&win, color);
-    sprintf(str, "%d%s", temp_lvl, c_f_str[units]);
+    // ui_fill_window(&win, color);
     ui_display_string(&therm->text.temp, str, &Font20, LCD_DEFAULT_TEXTCOLOR);
 
     therm->shape.temp.h = temp_h;
@@ -631,6 +631,11 @@ void ui_thermostat_set_config(ui_thermostat_t *menu, ui_thermostat_config_t *con
         color = UI_SELECTION_COLOR;
     }
     ui_draw_window(&menu->win.main, color, true);
+
+    if(config->set == THERM_ICON_SET_SENSED_TEMP)
+    {
+        ui_thermostat_draw_temp(menu, config->temp.val, config->temp.unit);
+    }
 }
 
 
@@ -644,60 +649,89 @@ void ui_thermostat_menu_init(ui_thermostat_menu_t *menu)
     menu->win.main.h = 161;
     menu->win.main.w = 442;
 
-    menu->win.set_temp.x = menu->win.main.x + 190; 
-    menu->win.set_temp.y = menu->win.main.y + 4;
+    menu->win.set_temp.x = menu->win.main.x + 230; 
+    menu->win.set_temp.y = menu->win.main.y + 24;
     menu->win.set_temp.h = 40; 
     menu->win.set_temp.w = 74;
 
-    menu->win.set_unit.x = menu->win.main.x + 190;
-    menu->win.set_unit.y = menu->win.main.y + 55;
-    menu->win.set_unit.w = 40;
-    menu->win.set_unit.h = 74;
+    menu->win.unit_f.x = menu->win.main.x + 170 + 105;
+    menu->win.unit_f.y = menu->win.main.y + 65;
+    menu->win.unit_f.w = 20;
+    menu->win.unit_f.h = 20;
 
-    menu->win.enable_temp.x = menu->win.main.x + 190;
-    menu->win.enable_temp.y = menu->win.main.y + 104;
-    menu->win.enable_temp.w = 40;
-    menu->win.enable_temp.h = 74;
+    menu->win.unit_c.x = menu->win.main.x + 260 + 140;
+    menu->win.unit_c.y = menu->win.main.y + 65;
+    menu->win.unit_c.w = 20;
+    menu->win.unit_c.h = 20;
 
-    menu->icon.therm.ptr = enable_icon;
+    menu->win.temp_off.x = menu->win.main.x + 260 + 140;
+    menu->win.temp_off.y = menu->win.main.y + 115;
+    menu->win.temp_off.w = 20;
+    menu->win.temp_off.h = 20;
+
+    menu->win.temp_on.x = menu->win.main.x + 170 + 105;
+    menu->win.temp_on.y = menu->win.main.y + 115;
+    menu->win.temp_on.w = 20;
+    menu->win.temp_on.h = 20;
+
+    menu->win.selection.x = menu->win.main.x + 5;
+    menu->win.selection.y = menu->win.main.y + 20;
+    menu->win.selection.w = menu->win.main.w - 10;
+    menu->win.selection.h = 30;
+
+    // menu->icon.therm.ptr = enable_icon;
 
     /* Adjust text window */
-    menu->text.ctrl_temp.x = menu->win.set_temp.x + 5;      
-    menu->text.ctrl_temp.y = menu->win.set_temp.y + 5;
+    menu->text.ctrl_temp.x = menu->win.main.x + 260;   
+    menu->text.ctrl_temp.y = menu->win.main.y + 24;
 }
 
 void ui_thermostat_menu_show(ui_thermostat_menu_t *menu, bool show)
 {
-    char *str_titles[3] = {"Set Temperature :", "Set Units :", "Thermostat : "};
-    char *str_options[2] = {"Fahrenheit/Celsius", "On/Off"};
+
+    char *str_titles[3] = {"Set Temperature:", "Units:", "Thermostat:"};
+    char *str_options[4] = {"Fahrenheit", "Celsius", "On", "Off"};
 
     if(show)
     {
         // display static text 
-        ui_window_t set_temp = {.x = menu->win.main.x + 33, .y =  menu->win.main.y + 14};
-        ui_display_string(&set_temp, str_titles[0], &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_window_t set_temp = {.x = menu->win.main.x + 25, .y =  menu->win.main.y + 24};
+        ui_display_string(&set_temp, str_titles[0], &Font20, LCD_DEFAULT_TEXTCOLOR);
 
-        ui_window_t set_units = {.x = menu->win.main.x + 33, .y =  menu->win.main.y + 60};
-        ui_display_string(&set_units, str_titles[1], &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_window_t set_units = {.x = menu->win.main.x + 25, .y =  menu->win.main.y + 70};
+        ui_display_string(&set_units, str_titles[1], &Font20, LCD_DEFAULT_TEXTCOLOR);
 
-        ui_window_t therm_en = {.x = menu->win.main.x + 33, .y =  menu->win.main.y + 109};
-        ui_display_string(&therm_en, str_titles[2], &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_window_t therm_en = {.x = menu->win.main.x + 25, .y =  menu->win.main.y + 119};
+        ui_display_string(&therm_en, str_titles[2], &Font20, LCD_DEFAULT_TEXTCOLOR);
 
-        ui_window_t f_c_option = {.x = menu->win.main.x + 289, .y =  menu->win.main.y + 60};
-        ui_display_string(&f_c_option, str_options[0], &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_window_t f_option = {.x = menu->win.main.x + 160, .y =  menu->win.main.y + 70};
+        ui_display_string(&f_option, str_options[0], &Font16, LCD_DEFAULT_TEXTCOLOR);
 
-        ui_window_t therm_en_option = {.x = menu->win.main.x + 289, .y =  menu->win.main.y + 113};
-        ui_display_string(&therm_en_option, str_options[1], &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_window_t c_option = {.x = menu->win.main.x + 310, .y =  menu->win.main.y + 70};
+        ui_display_string(&c_option, str_options[1], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+        ui_window_t therm_on = {.x = menu->win.main.x + 200, .y =  menu->win.main.y + 119};
+        ui_display_string(&therm_on, str_options[2], &Font16, LCD_DEFAULT_TEXTCOLOR);
+
+        ui_window_t therm_off = {.x = menu->win.main.x + 330, .y =  menu->win.main.y + 119};
+        ui_display_string(&therm_off, str_options[3], &Font16, LCD_DEFAULT_TEXTCOLOR);
 
         // display static icons
 
         /*adjust offset */
-        menu->icon.therm.x = menu->win.set_unit.x; 
-        menu->icon.therm.y = menu->win.set_unit.y; 
-        ui_draw_icon(&menu->icon.therm);
-        menu->icon.therm.x = menu->win.enable_temp.x; 
-        menu->icon.therm.y = menu->win.enable_temp.y; 
-        ui_draw_icon(&menu->icon.therm);
+        // menu->icon.therm.x = menu->win.set_unit.x; 
+        // menu->icon.therm.y = menu->win.set_unit.y; 
+        // ui_draw_icon(&menu->icon.therm);
+        // menu->icon.therm.x = menu->win.enable_temp.x; 
+        // menu->icon.therm.y = menu->win.enable_temp.y; 
+        // ui_draw_icon(&menu->icon.therm);
+
+        ui_draw_window(&menu->win.temp_off, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_window(&menu->win.temp_on, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_window(&menu->win.unit_c, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_window(&menu->win.unit_f, LCD_DEFAULT_TEXTCOLOR, true);
+
+        
         
         // display default text val 
         ui_display_string(&menu->text.ctrl_temp, "--C", &Font16, LCD_DEFAULT_TEXTCOLOR);
@@ -712,64 +746,82 @@ void ui_thermostat_menu_show(ui_thermostat_menu_t *menu, bool show)
 void ui_thermostat_menu_set_config(ui_thermostat_menu_t *menu, ui_thermostat_menu_config_t *config)
 {
     char str[5];
-    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
-    sFONT *font = &LCD_DEFAULT_FONT;
+    uint16_t single_color = LCD_DEFAULT_TEXTCOLOR;
+    uint16_t main_color = LCD_DEFAULT_TEXTCOLOR;
+    uint16_t selection = LCD_DEFAULT_BACKCOLOR;
 
-    if (config->select == UI_ITEM_SELECT)
+    sFONT *font = &Font20;
+
+    if (config->select.single == UI_ITEM_SELECT)
     {
-        color = UI_SELECTION_COLOR;
+        selection = UI_SELECTION_COLOR;
+        single_color = UI_SELECTION_COLOR;
         font = &Font20;
     }
+
+    if (config->select.main == UI_ITEM_SELECT )
+    {
+        main_color = UI_SELECTION_COLOR;
+    }
+
+    ui_draw_window(&menu->win.main, main_color, true);
 
     switch (config->set)
     {
     case THERM_SET_TEMPERATURE: {
-        if (config->select == UI_ITEM_SELECT)
-            ui_draw_window(&menu->text.ctrl_temp, color, true);
-        sprintf(str, "%d%s", config->temp.val, (char*)c_f_str[config->temp.unit]);
-        ui_display_string(&menu->text.ctrl_temp, str, font, color);
+
+        menu->win.selection.y = menu->win.main.y + 20;
+        ui_draw_window(&menu->win.selection, selection, true);
+        // ui_draw_window(&menu->text.ctrl_temp, single_color, true);
+        sprintf(str, "%.2d%s", config->temp.val, (char*)c_f_str[config->temp.unit]);
+        ui_display_string(&menu->text.ctrl_temp, str, font, single_color);
      } break;
 
     case THERM_SET_UNIT: { 
-        if (config->select == UI_ITEM_SELECT)
-            ui_draw_window(&menu->win.set_unit, color, true);
+        menu->win.selection.y = menu->win.main.y + 61;
+        ui_draw_window(&menu->win.selection, selection, true);
 
-        sprintf(str, "%d%s", config->temp.val, c_f_str[config->temp.unit]);
-        ui_display_string(&menu->text.ctrl_temp, str, font, color);
-
-        /*adjust offset */
-        ui_window_t win_c = {.x = menu->win.set_unit.x, .y = menu->win.set_unit.y};
-        ui_window_t win_f = {.x = menu->win.set_unit.x, .y = menu->win.set_unit.y};
-        
-        /*clean previous state */
-        ui_draw_circle(&win_c,  9, LCD_DEFAULT_BACKCOLOR);
-        ui_draw_circle(&win_f, 9, LCD_DEFAULT_BACKCOLOR);
+            ui_window_t win_f = {.x = menu->win.unit_f.x + 1, .y = menu->win.unit_f.y + 1, .h = menu->win.unit_f.h - 2, .w = menu->win.unit_f.w - 2};
+            ui_window_t win_c = {.x = menu->win.unit_c.x + 1, .y = menu->win.unit_c.y + 1, .h = menu->win.unit_c.h - 2, .w = menu->win.unit_c.w - 2};
 
         if(config->temp.unit == TEMP_UNITS_CELSIUS)
-            ui_draw_circle(&win_c,  9, color);
+        {
+            ui_clear_window(&win_f);
+            ui_draw_window(&menu->win.unit_c, LCD_DEFAULT_TEXTCOLOR, true);
+            ui_fill_window(&win_c, LCD_COLOR_GREEN);
+        }
+        else if (config->temp.unit == TEMP_UNITS_FAHRENHEIT)
+        {
+            ui_clear_window(&win_c);
+            ui_draw_window(&menu->win.unit_f, LCD_DEFAULT_TEXTCOLOR, true);
+            ui_fill_window(&win_f, LCD_COLOR_GREEN);
+        }
 
-        else if(config->temp.unit == TEMP_UNITS_FAHRENHEIT)
-            ui_draw_circle(&win_f,  9, color);
+        sprintf(str, "%.2d%s", config->temp.val, (char*)c_f_str[config->temp.unit]);
+        ui_display_string(&menu->text.ctrl_temp, str, font, LCD_DEFAULT_TEXTCOLOR);
 
     } break;
 
     case THERM_ENABLE_DISABLE: {
-        if (config->select == UI_ITEM_SELECT)
-            ui_draw_window(&menu->win.set_unit, color, true);
 
-        /*adjust offset */
-        ui_window_t therm_en = {.x = menu->win.set_unit.x, .y = menu->win.set_unit.y};
-        ui_window_t therm_dis = {.x = menu->win.set_unit.x, .y = menu->win.set_unit.y};
-        
-        /*clean previous state */
-        ui_draw_circle(&therm_en,  9, LCD_DEFAULT_BACKCOLOR);
-        ui_draw_circle(&therm_dis, 9, LCD_DEFAULT_BACKCOLOR);
+        menu->win.selection.y = menu->win.main.y + 111;
+        ui_draw_window(&menu->win.selection, selection, true);
 
-        if (config->temp.unit == TEMP_UNITS_CELSIUS)
-            ui_draw_circle(&therm_en, 9, color);
+        ui_window_t win_on  = {.x = menu->win.temp_on.x + 1, .y = menu->win.temp_on.y + 1, .h = menu->win.temp_on.h - 2, .w = menu->win.temp_on.w - 2};
+        ui_window_t win_off = {.x = menu->win.temp_off.x + 1, .y = menu->win.temp_off.y + 1, .h = menu->win.temp_off.h - 2, .w = menu->win.temp_off.w - 2};
 
-        else if (config->temp.unit == TEMP_UNITS_FAHRENHEIT)
-            ui_draw_circle(&therm_dis, 9, color);
+        if(config->temp.status == TEMP_CTRL_ENABLE)
+        {
+            ui_clear_window(&win_off);
+            ui_draw_window(&menu->win.temp_on, LCD_DEFAULT_TEXTCOLOR, true);
+            ui_fill_window(&win_on, LCD_COLOR_GREEN);
+        }
+        else if (config->temp.status == TEMP_CTRL_DISABLE)
+        {
+            ui_clear_window(&win_on);
+            ui_draw_window(&menu->win.temp_off, LCD_DEFAULT_TEXTCOLOR, true);
+            ui_fill_window(&win_off, LCD_COLOR_GREEN);
+        }
      } break;
 
     default:

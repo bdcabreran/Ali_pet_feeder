@@ -32,8 +32,10 @@
 
 typedef enum
 {
+    TEMP_CTRL_INVALID,
     TEMP_CTRL_ENABLE,
     TEMP_CTRL_DISABLE,
+    TEMP_CTRL_LAST
 }temperature_ctrl_st_t;
 
 typedef enum

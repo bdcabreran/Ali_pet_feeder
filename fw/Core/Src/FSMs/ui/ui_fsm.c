@@ -41,7 +41,7 @@ typedef enum
     ST_UI_DRAWER_ST_REQUEST,
     ST_UI_DATE_TIME_CONFIG,
     ST_UI_PETCALL_CONFIG,
-    ST_UI_THERM_CONFIG,
+    ST_UI_THERM_MENU_CONFIG,
     ST_UI_BATT_CONFIG,
     ST_UI_LAST,
 }ui_state_t;
@@ -158,6 +158,11 @@ static void date_time_config_enter_key_pressed(ui_handle_t handle);
 static void date_time_config_left_right_key_pressed(ui_handle_t handle);
 static void date_time_config_up_down_key_pressed(ui_handle_t handle);
 
+/* Thermostat menu Push button Functions */
+static void therm_menu_right_left_key_pressed(ui_handle_t handle);
+static void therm_menu_enter_key_pressed(ui_handle_t handle);
+static void therm_menu_up_down_pressed(ui_handle_t handle);
+
 /* Date-time configuration functions */
 static void time_config_increase_hour( uint8_t *hour);
 static void time_config_decrease_hour(uint8_t *hour);
@@ -167,6 +172,9 @@ static void date_config_increase_day(uint8_t *day);
 static void date_config_decrease_day(uint8_t *day);
 static void date_config_increase_month(uint8_t *month);
 static void date_config_decrease_month(uint8_t *month);
+static void temperature_increase(uint8_t *temp);
+static void temperature_decrease(uint8_t *temp);
+
 
 ////////////////////////////// Public function declaration //////////////////////////////////////
 
@@ -185,6 +193,7 @@ void ui_fsm_init(ui_handle_t handle)
     ui_feeder_menu_init(&ui_feeder_menu);
     ui_date_time_init(&ui_date_time);
     ui_notification_msg_init(&ui_notification);
+    ui_thermostat_menu_init(&ui_therm_menu);
 
     /*display fixed elements in the Screen */
     ui_battery_show(&ui_battery, true);
@@ -207,7 +216,7 @@ void ui_fsm_run(ui_handle_t handle)
         case ST_UI_FEEDER_CONFIG:      feeder_config_on_react(handle);     break;
         case ST_UI_DRAWER_SELECT:      drawer_select_on_react(handle);     break;
         case ST_UI_DRAWER_ST_REQUEST:  drawer_request_on_react(handle);    break;
-        case ST_UI_THERM_CONFIG:       therm_config_on_react(handle);      break;
+        case ST_UI_THERM_MENU_CONFIG:  therm_config_on_react(handle);      break;
         case ST_UI_BATT_CONFIG:        battery_config_on_react(handle);    break;
 
     default:
@@ -551,24 +560,98 @@ static void feeder_config_on_react(ui_handle_t handle)
 static void enter_seq_therm_config(ui_handle_t handle)
 {
     ui_fsm_dbg("\t enter seq [ therm config ] \r\n");
-    fsm_set_next_state(handle, ST_UI_THERM_CONFIG);
+    fsm_set_next_state(handle, ST_UI_THERM_MENU_CONFIG);
     entry_action_therm_config(handle);
 }
 
 static void entry_action_therm_config(ui_handle_t handle)
 {
-    ui_feeder_menu_show(&ui_feeder_menu, false);
-    ui_notification_msg_show(&ui_notification, true);
-    ui_notification_msg_set(&ui_notification, "Thermostat Menu.");
-    time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+    ui_thermostat_menu_config_t *ui_config = &handle->iface.ui.therm_menu;
+
+    /*Select First Item in Date Time Menu */
+    ui_date_time_show(&ui_date_time, false);
+    ui_thermostat_menu_show(&ui_therm_menu, true);
+
+    /*Load initial configuration*/
+    ui_config->temp.unit = TEMP_UNITS_CELSIUS;      /*!< TODO : read from flash */
+    ui_config->temp.status = TEMP_CTRL_ENABLE;      /*!< TODO : read from flash */
+    ui_config->select.single = UI_ITEM_DESELECT;
+    ui_config->set = THERM_SET_TEMPERATURE;
+    ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
+    ui_config->set = THERM_SET_UNIT;
+    ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
+    ui_config->set = THERM_ENABLE_DISABLE;
+    ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
+
+    /*Select first element in list */
+    handle->iface.cursor.item = THERM_SET_TEMPERATURE;
+    ui_config->set = handle->iface.cursor.item;
+    ui_config->select.main = UI_ITEM_SELECT;
+    ui_config->select.single = UI_ITEM_SELECT;
+    ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
+
+    /*Start timer for cursor inactivity*/
+    time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);    
+}
+
+static void exit_action_therm_config(ui_handle_t handle)
+{
+    ui_thermostat_menu_config_t *ui_config = &handle->iface.ui.therm_menu;
+    ui_config->set = handle->iface.cursor.item;
+    ui_config->select.single = UI_ITEM_DESELECT;
+    ui_config->select.main = UI_ITEM_DESELECT;
+
+    ui_thermostat_config_t *config =  &handle->iface.ui.therm;
+    config->select = UI_ITEM_DESELECT;
+    ui_thermostat_set_config(&ui_thermostat, config);
+    
+    ui_thermostat_menu_show(&ui_therm_menu, false);
 }
 
 static void therm_config_on_react(ui_handle_t handle)
 {
+
+        if (handle->event.btn != EVT_EXT_BTN_INVALID)
+    {
+        switch (handle->event.btn)
+        {
+
+        case EVT_EXT_BTN_LEFT_PRESSED:
+        case EVT_EXT_BTN_RIGHT_PRESSED:
+        {
+            therm_menu_right_left_key_pressed(handle);
+            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+        }
+        break;
+
+        case EVT_EXT_BTN_UP_PRESSED:
+        case EVT_EXT_BTN_DOWN_PRESSED:
+        {
+
+            therm_menu_up_down_pressed(handle);
+            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+        }
+        break;
+
+        case EVT_EXT_BTN_ENTER_PRESSED:
+        {
+            therm_menu_enter_key_pressed(handle);
+            time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+        }
+        break;
+
+        default:
+            break;
+        };
+
+        handle->event.btn = EVT_EXT_BTN_INVALID;
+    }
+
+
     /* item cursor inactivity timer event */
     if(time_event_is_raised(&handle->event.time.cursor_inact) == true)
     {
-        exit_action_feeder_config(handle);
+        exit_action_therm_config(handle);
         enter_seq_main_menu(handle);
     }
 }
@@ -647,7 +730,7 @@ static void entry_action_date_time_config(ui_handle_t handle)
     ui_date_time_set_config(&ui_date_time, ui_config);
 
     /*Start timer for cursor inactivity*/
-    time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+    time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
 }
 
 static void exit_action_date_time_config(ui_handle_t handle)
@@ -781,15 +864,13 @@ static void ui_update_date_time(ui_handle_t handle)
 
 static void ui_update_thermostat(ui_handle_t handle)
 {
-    /*get information from temperature fsm */
-#if 0
-    thermostat_info_t *info = temp_ctrl_get_info();
+    //thermostat_info_t *info = temp_ctrl_get_info();
+    static thermostat_info_t info = {.sensed.temp = 25, .control.unit = TEMP_UNITS_CELSIUS};
     ui_thermostat_config_t *ui_config = &handle->iface.ui.therm;
-    ui_config->select = UI_ITEM_DESELECT;
-    ui_config->temp.unit = info->control.unit;
-    ui_config->temp.val =  info->sensed.temp;
+    ui_config->set = THERM_ICON_SET_SENSED_TEMP;
+    ui_config->temp.val =  (info.sensed.temp++)%99;
+    ui_config->temp.unit =  info.control.unit;
     ui_thermostat_set_config(&ui_thermostat, ui_config);
-#endif 
 }
 
 static void drawer_select_enter_key_pressed(ui_handle_t handle)
@@ -1168,12 +1249,109 @@ static void date_time_config_up_down_key_pressed(ui_handle_t handle)
     ui_date_time_set_config(&ui_date_time, config);
 }
 
+
+static void therm_menu_right_left_key_pressed(ui_handle_t handle)
+{
+    ui_thermostat_menu_config_t *config = &handle->iface.ui.therm_menu;
+    bool left_pressed = false;
+
+    if (handle->event.btn == EVT_EXT_BTN_LEFT_PRESSED)
+        left_pressed = true;
+    else
+        left_pressed = false;
+
+    /*increase item value */
+    switch (handle->iface.cursor.item)
+    {
+        case THERM_SET_TEMPERATURE: {
+            if(left_pressed)
+                temperature_increase(&config->temp.val);
+            else 
+                temperature_decrease(&config->temp.val);
+        } break;
+
+        case THERM_SET_UNIT: {
+            if (config->temp.unit == TEMP_UNITS_CELSIUS)
+                config->temp.unit = TEMP_UNITS_FAHRENHEIT;
+            else
+                config->temp.unit = TEMP_UNITS_CELSIUS;
+        } break;
+
+        case THERM_ENABLE_DISABLE: {
+            
+            if(config->temp.status == TEMP_CTRL_DISABLE)
+                config->temp.status = TEMP_CTRL_ENABLE;
+            else
+                config->temp.status = TEMP_CTRL_DISABLE;
+            
+        } break;
+
+    default: break;
+    }
+
+    ui_thermostat_menu_set_config(&ui_therm_menu, config);
+}
+
+static void therm_menu_up_down_pressed(ui_handle_t handle)
+{
+ui_thermostat_menu_config_t *ui_config = &handle->iface.ui.therm_menu;
+
+    ui_config->select.single = UI_ITEM_DESELECT;
+    ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
+
+    if(handle->event.btn ==  EVT_EXT_BTN_DOWN_PRESSED)
+    {
+        if (handle->iface.cursor.item > THERM_SET_TEMPERATURE)
+            handle->iface.cursor.item--;
+        else
+            handle->iface.cursor.item =  THERM_ENABLE_DISABLE;
+    }
+
+    else if (handle->event.btn ==  EVT_EXT_BTN_UP_PRESSED)
+    {
+        if(handle->iface.cursor.item < THERM_ENABLE_DISABLE)
+            handle->iface.cursor.item++;
+        else
+            handle->iface.cursor.item  = THERM_SET_TEMPERATURE;
+    }
+    
+    ui_config->set = handle->iface.cursor.item;
+    ui_config->select.single = UI_ITEM_SELECT;
+    ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
+    
+    ui_fsm_dbg("therm menu config item update [%d]\r\n", handle->iface.cursor.item);
+}
+
+static void therm_menu_enter_key_pressed(ui_handle_t handle)
+{
+    /* Notify Saving Data */
+    ui_thermostat_menu_show(&ui_therm_menu, false);
+    ui_notification_msg_show(&ui_notification, true);
+    ui_notification_msg_set(&ui_notification, "Saving Therm Config.");
+}
+
+static void temperature_increase(uint8_t *temp)
+{
+    if ((*temp) < 99)
+        (*temp)++;
+    else
+        (*temp) = 0;
+}
+
+static void temperature_decrease(uint8_t *temp)
+{
+    if ((*temp) > 0)
+        (*temp)--;
+    else
+        (*temp) = 99;
+}
+
 static void time_config_increase_hour(uint8_t *hour)
 {
-    if ((*hour) < 12)
+    if ((*hour) < 99)
         (*hour)++;
     else
-        (*hour) = 1;
+        (*hour) = 0;
 }
 
 static void time_config_decrease_hour(uint8_t *hour)

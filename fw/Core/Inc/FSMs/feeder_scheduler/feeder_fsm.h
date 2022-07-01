@@ -65,6 +65,8 @@ typedef enum
     DATE_TIME_CNF_LAST
 }date_time_config_t;
 
+
+
 typedef struct
 {
     uint8_t hour;

@@ -85,6 +85,13 @@ typedef enum
 
 typedef enum
 {
+    THERM_ICON_CNF_INVALID,
+    THERM_ICON_SET_SENSED_TEMP,
+    THERM_ICON_CNF_LAST,
+}ui_thermostat_icon_config_t;
+
+typedef enum
+{
     THERM_INVALID,
     THERM_SET_TEMPERATURE,
     THERM_SET_UNIT,
@@ -262,6 +269,7 @@ typedef struct
 
 typedef struct
 {
+    ui_thermostat_icon_config_t set;
     struct
     {
         uint8_t val;
@@ -280,8 +288,11 @@ typedef struct
     {
         ui_window_t main;
         ui_window_t set_temp;
-        ui_window_t set_unit;
-        ui_window_t enable_temp;
+        ui_window_t unit_c;
+        ui_window_t unit_f;
+        ui_window_t temp_on;
+        ui_window_t temp_off;
+        ui_window_t selection;
     }win;
 
     struct
@@ -296,6 +307,7 @@ typedef struct
 
 }ui_thermostat_menu_t;
 
+
 typedef struct
 {
     ui_thermostat_config_list_t set;
@@ -303,10 +315,16 @@ typedef struct
     {
         uint8_t val;
         temperature_unit_t unit;
+        temperature_ctrl_st_t status;
     }temp;
 
-    ui_select_t select;
-}ui_thermostat_menu_config_t;
+
+    struct{
+        ui_select_t main;
+        ui_select_t single;
+    }select;
+}
+ui_thermostat_menu_config_t;
 
 //------------- PetCall icon ----------------//
 
@@ -368,7 +386,7 @@ extern ui_petcall_t    ui_petcall;
 
 extern ui_date_time_menu_t    ui_date_time;
 extern ui_feeder_menu_t       ui_feeder_menu;
-extern ui_thermostat_config_t ui_therm_conf;
+extern ui_thermostat_menu_t   ui_therm_menu;
 extern ui_petcall_config_t    ui_petcall_conf;
 extern ui_notification_msg_t  ui_notification;
 
