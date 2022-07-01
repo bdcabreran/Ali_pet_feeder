@@ -9,13 +9,22 @@
    - 2: 320x480 micro-sd in the bottom (portrait)
    - 3: 480x320 micro-sd in the right (landscape)
 */
-#define  ILI9488_ORIENTATION       3
+#define  ILI9488_ORIENTATION       1
 
 /* Color mode
    - 0: RGB565 (R:bit15..11, G:bit10..5, B:bit4..0) (default)
    - 1: BRG565 (B:bit15..11, G:bit10..5, R:bit4..0)
 */
 #define  ILI9488_COLORMODE         0
+
+
+/* Display Pixel Interface 
+   - 0: (DPI) 16bit/pixel  (DBI) 16bit/pixel
+   - 1: (DPI) 18bit/pixel  (DBI) 18bit/pixel     (default)
+   - 2: (DPI) 24bit/pixel  (DBI) 24bit/pixel 
+   - 3: (DPI) 24bit/pixel  (DBI) 3bit/pixel 
+*/
+#define ILI9488_DPI 0
 
 /* Touchscreen
    - 0: touchscreen disabled (default)

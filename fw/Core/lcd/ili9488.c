@@ -243,7 +243,21 @@ void ili9488_Init(void)
   LCD_IO_WriteCmd8MultipleData8(ILI9488_VMCTR1, (uint8_t *)"\x00\x12\x80", 3);
   LCD_Delay(5);
   #if ILI9488_INTERFACE == 0
-  LCD_IO_WriteCmd8(ILI9488_PIXFMT); LCD_IO_WriteData8(0x66); // Interface Pixel Format (24 bit)
+
+  #if ILI9488_DPI == 0
+  LCD_IO_WriteCmd8(ILI9488_PIXFMT); LCD_IO_WriteData8(0x55); // Interface Pixel Format (16 bit)
+
+  #elif ILI9488_DPI == 1
+  LCD_IO_WriteCmd8(ILI9488_PIXFMT); LCD_IO_WriteData8(0x66); // Interface Pixel Format (18 bit)
+
+  #elif ILI9488_DPI == 2
+  LCD_IO_WriteCmd8(ILI9488_PIXFMT); LCD_IO_WriteData8(0x77); // Interface Pixel Format (24 bit)
+
+  #elif ILI9488_DPI == 3
+  LCD_IO_WriteCmd8(ILI9488_PIXFMT); LCD_IO_WriteData8(0x51); // Interface Pixel Format (16 bit), (DBI) 3bit/pixel 
+
+  #endif 
+
   #if LCD_SPI_MODE != 2
   // LCD_IO_WriteCmd8(0xFB); LCD_IO_WriteData8(0x80);
   LCD_IO_WriteCmd8(ILI9488_IMCTR); LCD_IO_WriteData8(0x80); // Interface Mode Control (SDO NOT USE)
