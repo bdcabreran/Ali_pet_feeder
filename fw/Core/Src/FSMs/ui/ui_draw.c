@@ -879,17 +879,41 @@ void ui_petcall_set_config(ui_petcall_t *menu, ui_petcall_config_t *config)
 /* Pet Call Config Menu Function */
 void ui_petcall_menu_init(ui_petcall_menu_t *menu)
 {
-    menu->win.main.x = 17;
-    menu->win.main.y = 116; 
-    menu->win.main.w = 442;
-    menu->win.main.h = 161;
+    menu->main.win.x = 17;
+    menu->main.win.y = 116; 
+    menu->main.win.w = 442;
+    menu->main.win.h = 161;
+
+    menu->play.win.x = 20;
+    menu->play.win.y = 25;
+    menu->play.win.w = 64;
+    menu->play.win.h = 81;
+
+    menu->erase.win.x = 20;
+    menu->erase.win.y = 25;
+    menu->erase.win.w = 64;
+    menu->erase.win.h = 81;
+    
+    menu->mic.win.x = 20;
+    menu->mic.win.y = 25;
+    menu->mic.win.w = 64;
+    menu->mic.win.h = 81;
+
+    menu->on_off.win.x = 20;
+    menu->on_off.win.y = 25;
+    menu->on_off.win.w = 64;
+    menu->on_off.win.h = 81;
 }
 
 void ui_petcall_menu_show(ui_petcall_menu_t *menu, bool show)
 {
+    char *title = "Record Pet Call";
+
     if(show)
     {
         ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_window_t set_temp = {.x = menu->win.main.x + 25, .y =  menu->win.main.y + 24};
+        ui_display_string(&set_temp, title, &Font20, LCD_DEFAULT_TEXTCOLOR);
     }
     else
     {

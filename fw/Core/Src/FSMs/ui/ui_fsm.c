@@ -163,6 +163,11 @@ static void therm_menu_right_left_key_pressed(ui_handle_t handle);
 static void therm_menu_enter_key_pressed(ui_handle_t handle);
 static void therm_menu_up_down_pressed(ui_handle_t handle);
 
+/* Thermostat menu Push button Functions */
+static void petcall_menu_right_left_key_pressed(ui_handle_t handle);
+static void petcall_menu_enter_key_pressed(ui_handle_t handle);
+static void petcall_menu_up_down_pressed(ui_handle_t handle);
+
 /* Date-time configuration functions */
 static void time_config_increase_hour( uint8_t *hour);
 static void time_config_decrease_hour(uint8_t *hour);
@@ -667,10 +672,15 @@ static void enter_seq_petcall_config(ui_handle_t handle)
 
 static void entry_action_petcall_config(ui_handle_t handle)
 {
-    ui_feeder_menu_show(&ui_feeder_menu, false);
-    ui_notification_msg_show(&ui_notification, true);
-    ui_notification_msg_set(&ui_notification, "Petcall Menu.");
+    ui_date_time_show(&ui_feeder_menu, false);
     time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+}
+
+static void exit_action_petcall_config(ui_handle_t handle)
+{
+    ui_petcall_menu_show(&ui_petcall, false);
+    ui_notification_msg_show(&ui_notification, true);
+    ui_notification_msg_set(&ui_notification, "Saving Petcall Config.");
 }
 
 static void petcall_config_on_react(ui_handle_t handle)
@@ -1329,6 +1339,28 @@ static void therm_menu_enter_key_pressed(ui_handle_t handle)
     ui_notification_msg_show(&ui_notification, true);
     ui_notification_msg_set(&ui_notification, "Saving Therm Config.");
 }
+
+
+static void petcall_menu_right_left_key_pressed(ui_handle_t handle)
+{
+
+}
+
+
+static void petcall_menu_enter_key_pressed(ui_handle_t handle)
+{
+
+}
+
+
+static void petcall_menu_up_down_pressed(ui_handle_t handle)
+{
+
+}
+
+
+
+
 
 static void temperature_increase(uint8_t *temp)
 {

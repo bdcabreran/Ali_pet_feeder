@@ -64,6 +64,9 @@ int main(void)
   petcall_handle_t petcall_fsm = petcall_fsm_get();
   petcall_fsm_init(petcall_fsm);
 
+  /*System clock Speed */
+  printf("System CLK speed [%d]Hz\r\n", HAL_RCC_GetHCLKFreq());
+
   /* Infinite loop */
   while (1)
   {

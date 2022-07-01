@@ -100,6 +100,19 @@ typedef enum
 }ui_thermostat_config_list_t;
 
 
+typedef enum
+{
+    PETCALL_INVALID,
+    PETCALL_ENABLE_DISABLE,
+    PETCALL_START_RECORDING,
+    PETCALL_STOP_RECORDING,
+    PETCALL_PLAY_START,
+    PETCALL_PLAY_STOP,
+    PETCALL_DELETE_RECORDING,
+    PETCALL_LAST,
+}ui_petcall_config_list_t
+
+
 //------------- UI Battery Configuration ----------------//
 typedef struct
 {
@@ -342,11 +355,6 @@ typedef struct
     
 }ui_petcall_t;
 
-typedef struct
-{
-    uint8_t enable;
-    ui_select_t select;
-}ui_petcall_config_t;
 
 //------------- PetCall icon ----------------//
 
@@ -354,14 +362,54 @@ typedef struct
 {
     struct
     {
-        ui_window_t main;
-    }win;
+        ui_window_t win;
+        ui_window_t title;
+    } main;
 
-}ui_petcall_menu_t;
+    struct
+    {
+        ui_window_t win;
+        ui_window_t title;
+    } on_off;
+
+    struct
+    {
+        ui_window_t win;
+        ui_window_t title;
+    } mic;
+
+    struct
+    {
+        ui_window_t win;
+        ui_window_t title;
+    } play;
+
+    struct
+    {
+        ui_window_t win;
+        ui_window_t title;
+    }erase;
+
+} ui_petcall_menu_t;
 
 typedef struct
 {
-    ui_select_t select;
+    ui_petcall_config_list_t set;
+
+    struct {
+        ui_select_t main;
+        ui_select_t single;
+    }select;
+
+    struct
+    {
+        bool delete;
+        bool record;
+        bool play;
+        bool stop;
+        bool enable;
+    }track;
+
 }ui_petcall_menu_config_t;
 
 
