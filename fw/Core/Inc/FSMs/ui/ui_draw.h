@@ -102,14 +102,13 @@ typedef enum
 
 typedef enum
 {
-    PETCALL_INVALID,
-    PETCALL_ENABLE_DISABLE,
-    PETCALL_START_RECORDING,
-    PETCALL_STOP_RECORDING,
-    PETCALL_PLAY_START,
-    PETCALL_PLAY_STOP,
-    PETCALL_DELETE_RECORDING,
-    PETCALL_LAST,
+    UI_PETCALL_CNF_INVALID,
+    UI_PETCALL_CNF_ENABLE_DISABLE,
+    UI_PETCALL_CNF_REC_START_STOP,
+    UI_PETCALL_CNF_SCORE_START_STOP,
+    UI_PETCALL_CNF_DELETE_RECORDING,
+    UI_PETCALL_CNF_EXIT,
+    UI_PETCALL_CNF_LAST,
 }ui_petcall_config_list_t;
 
 
@@ -411,14 +410,10 @@ typedef struct
         ui_select_t single;
     }select;
 
-    struct
-    {
-        bool delete;
-        bool record;
-        bool play;
-        bool stop;
-        bool enable;
-    }track;
+    petcall_rec_file_t  delete_file;
+    petcall_recording_t rec_start_stop;
+    petcall_score_t     play_stop;
+    petcall_st          en_dis;
 
 }ui_petcall_menu_config_t;
 

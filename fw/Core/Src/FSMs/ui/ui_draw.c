@@ -914,6 +914,18 @@ void ui_petcall_menu_show(ui_petcall_menu_t *menu, bool show)
         ui_draw_window(&menu->main.win, LCD_DEFAULT_TEXTCOLOR, true);
         ui_window_t set_temp = {.x = menu->main.win.x + 25, .y =  menu->main.win.y + 24};
         ui_display_string(&set_temp, title, &Font20, LCD_DEFAULT_TEXTCOLOR);
+
+        /*Display icons */
+        ui_draw_window(&menu->on_off.win, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_window(&menu->mic.win, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_window(&menu->erase.win, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_window(&menu->play.win, LCD_DEFAULT_TEXTCOLOR, true);
+
+        /*Display text for the icons*/
+        ui_display_string(&menu->on_off.title, "on/off", &Font20, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->mic.title, "start", &Font20, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->erase.title, "erase", &Font20, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->play.title, "play", &Font20, LCD_DEFAULT_TEXTCOLOR);
     }
     else
     {
@@ -924,14 +936,80 @@ void ui_petcall_menu_show(ui_petcall_menu_t *menu, bool show)
 
 void ui_petcall_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_t *config)
 {
-    uint16_t color = LCD_DEFAULT_TEXTCOLOR;
+    uint16_t single_color = LCD_DEFAULT_TEXTCOLOR;
+    uint16_t main_color = LCD_DEFAULT_TEXTCOLOR;
 
     if (config->select.main == UI_ITEM_SELECT)
     {
-        color = UI_SELECTION_COLOR;
+        main_color = UI_SELECTION_COLOR;
     }
 
-    ui_draw_window(&menu->main.win, color, true);
+    ui_draw_window(&menu->main.win, main_color, true);
+
+    switch (config->set)
+    {
+
+    case UI_PETCALL_CNF_ENABLE_DISABLE: { 
+        
+        ui_draw_window(&menu->on_off.win, single_color, true);
+
+        if (config->en_dis == PETCALL_ENABLE)
+        {
+            /* Draw ON icon */
+        }
+        else
+        {
+            /*Draw Off icon */
+        }
+    } break;
+
+    case UI_PETCALL_CNF_REC_START_STOP: 
+    { 
+        ui_draw_window(&menu->mic.win, single_color, true);
+
+        if(config->rec_start_stop == PETCALL_REC_START)
+        {
+            // Draw MIC RED
+            ui_display_string(&menu->mic.title, "stop", &Font20, LCD_DEFAULT_TEXTCOLOR); 
+        }
+        else
+        {
+            // Draw MIC BLACK
+            ui_display_string(&menu->mic.title, "start", &Font20, LCD_DEFAULT_TEXTCOLOR); 
+        }
+
+    } break;
+    
+    case UI_PETCALL_CNF_SCORE_START_STOP: 
+    { 
+        ui_draw_window(&menu->play.win, single_color, true);
+
+        if(config->play_stop == PETCALL_SCORE_PLAY)
+        {
+            // Draw Stop Icon
+            ui_display_string(&menu->play.title, "stop", &Font20, LCD_DEFAULT_TEXTCOLOR); 
+        }
+        else
+        {   
+            /* Draw Play Icon */
+            ui_display_string(&menu->play.title, "start", &Font20, LCD_DEFAULT_TEXTCOLOR); 
+        }
+
+    } break;
+
+    case UI_PETCALL_CNF_DELETE_RECORDING: { 
+        ui_draw_window(&menu->erase.win, single_color, true);
+    } break;
+
+    case UI_PETCALL_CNF_EXIT: {
+        ui_draw_window(&menu->main.win, single_color, true);
+    } break;
+    
+    default:
+        break;
+    }
+
+
 }
 
 

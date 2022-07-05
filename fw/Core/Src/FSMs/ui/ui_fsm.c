@@ -616,7 +616,7 @@ static void exit_action_therm_config(ui_handle_t handle)
 static void therm_config_on_react(ui_handle_t handle)
 {
 
-        if (handle->event.btn != EVT_EXT_BTN_INVALID)
+    if (handle->event.btn != EVT_EXT_BTN_INVALID)
     {
         switch (handle->event.btn)
         {
@@ -652,7 +652,6 @@ static void therm_config_on_react(ui_handle_t handle)
         handle->event.btn = EVT_EXT_BTN_INVALID;
     }
 
-
     /* item cursor inactivity timer event */
     if(time_event_is_raised(&handle->event.time.cursor_inact) == true)
     {
@@ -673,22 +672,66 @@ static void enter_seq_petcall_config(ui_handle_t handle)
 static void entry_action_petcall_config(ui_handle_t handle)
 {
     ui_date_time_show(&ui_feeder_menu, false);
+    petcall_config_info_t *info = petcall_fsm_get_info();
+
+    ui_petcall_menu_config_t *ui_config = &handle->iface.ui.petcall_menu;
+    /*load info from flash */
+    ui_config->select.main = UI_ITEM_DESELECT;
+    ui_config->select.single = UI_ITEM_SELECT;
+    ui_config->en_dis = info->petcall_status;
+    ui_config->set = UI_PETCALL_CNF_ENABLE_DISABLE; 
+    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
+
     time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
 }
 
 static void exit_action_petcall_config(ui_handle_t handle)
 {
-    ui_petcall_menu_show(&ui_petcall, false);
-    ui_notification_msg_show(&ui_notification, true);
-    ui_notification_msg_set(&ui_notification, "Saving Petcall Config.");
+
 }
 
 static void petcall_config_on_react(ui_handle_t handle)
 {
+    if (handle->event.btn != EVT_EXT_BTN_INVALID)
+    {
+        switch (handle->event.btn)
+        {
+
+        case EVT_EXT_BTN_LEFT_PRESSED:
+        case EVT_EXT_BTN_RIGHT_PRESSED:
+        {
+            petcall_menu_right_left_key_pressed(handle);
+            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+        }
+        break;
+
+        case EVT_EXT_BTN_UP_PRESSED:
+        case EVT_EXT_BTN_DOWN_PRESSED:
+        {
+
+            petcall_menu_up_down_pressed(handle);
+            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+        }
+        break;
+
+        case EVT_EXT_BTN_ENTER_PRESSED:
+        {
+            petcall_menu_enter_key_pressed(handle);
+            time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+        }
+        break;
+
+        default:
+            break;
+        };
+
+        handle->event.btn = EVT_EXT_BTN_INVALID;
+    }
+
     /* item cursor inactivity timer event */
     if(time_event_is_raised(&handle->event.time.cursor_inact) == true)
     {
-        exit_action_feeder_config(handle);
+        exit_action_petcall_config(handle);
         enter_seq_main_menu(handle);
     }
 }
@@ -1343,24 +1386,112 @@ static void therm_menu_enter_key_pressed(ui_handle_t handle)
 
 static void petcall_menu_right_left_key_pressed(ui_handle_t handle)
 {
+    ui_petcall_menu_config_t *ui_config = &handle->iface.ui.petcall_menu;
 
+    ui_config->select.single = UI_ITEM_DESELECT;
+    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
+
+    if(handle->event.btn ==  EVT_EXT_BTN_LEFT_PRESSED)
+    {
+        if (handle->iface.cursor.item > UI_PETCALL_CNF_ENABLE_DISABLE)
+            handle->iface.cursor.item--;
+        else
+            handle->iface.cursor.item =  UI_PETCALL_CNF_EXIT;
+    }
+
+    else if (handle->event.btn ==  EVT_EXT_BTN_RIGHT_PRESSED)
+    {
+        if(handle->iface.cursor.item < UI_PETCALL_CNF_EXIT)
+            handle->iface.cursor.item++;
+        else
+            handle->iface.cursor.item = UI_PETCALL_CNF_ENABLE_DISABLE;
+    }
+
+    ui_config->select.single = UI_ITEM_SELECT;
+    ui_config->set = handle->iface.cursor.item;
+    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
 }
 
 
 static void petcall_menu_enter_key_pressed(ui_handle_t handle)
 {
+    bool exit_menu = false;
+    ui_petcall_menu_config_t *ui_config = &handle->iface.ui.petcall_menu;
+    petcall_config_info_t *info = petcall_fsm_get_info();
+    
+    event_t event; 
+    event.info.fsm.src = UI_FSM;
+    event.info.fsm.dst = PETCALL_FSM;
+    event.info.name = EVT_EXT_PETCALL_INVALID;
 
+    switch (handle->iface.cursor.item)
+    {
+        case UI_PETCALL_CNF_ENABLE_DISABLE:   {
+            ui_config->en_dis = !ui_config->en_dis;
+
+            if(ui_config->en_dis == PETCALL_ENABLE)
+                event.info.name = EVT_EXT_PETCALL_ENABLE;
+            else 
+                event.info.name = EVT_EXT_PETCALL_DISABLE;       
+        } break;
+
+        case UI_PETCALL_CNF_REC_START_STOP:   {
+            ui_config->rec_start_stop = !ui_config->rec_start_stop;
+
+            if (ui_config->rec_start_stop == PETCALL_REC_START)
+                event.info.name = EVT_EXT_PETCALL_RECORD_START;
+            else
+                event.info.name = EVT_EXT_PETCALL_RECORD_STOP;
+        } break;
+
+        case UI_PETCALL_CNF_SCORE_START_STOP: {
+            ui_config->play_stop = !ui_config->play_stop;
+
+            if (ui_config->play_stop == PETCALL_SCORE_PLAY)
+                event.info.name = EVT_EXT_PETCALL_SCORE_PLAY;
+            else
+                event.info.name = EVT_EXT_PETCALL_RECORD_STOP;
+        } break;
+
+        case UI_PETCALL_CNF_DELETE_RECORDING: {
+            ui_config->delete_file = info->rec_file;
+
+            if(ui_config->delete_file = PETCALL_REC_FILE_AVAILABLE)
+                event.info.name = EVT_EXT_PETCALL_DELETE;
+            
+        } break;
+
+        case UI_PETCALL_CNF_EXIT: {
+            exit_menu = true;
+        } break;
+
+        default: break;
+    }
+
+    if(event.info.name != EVT_EXT_PETCALL_INVALID)
+    {
+        petcall_fsm_write_event(petcall_fsm_get(), &event);
+    }
+
+    if(exit_menu)
+    {
+        ui_petcall_menu_show(&ui_petcall, false);
+        ui_notification_msg_show(&ui_notification, true);
+        ui_notification_msg_set(&ui_notification, "Saving Petcall Config.");
+
+        enter_seq_main_menu(handle);
+    }
 }
-
 
 static void petcall_menu_up_down_pressed(ui_handle_t handle)
 {
-
+    if (handle->event.btn == EVT_EXT_BTN_UP_PRESSED)
+    {
+    }
+    else if (handle->event.btn == EVT_EXT_BTN_DOWN_PRESSED)
+    {
+    }
 }
-
-
-
-
 
 static void temperature_increase(uint8_t *temp)
 {

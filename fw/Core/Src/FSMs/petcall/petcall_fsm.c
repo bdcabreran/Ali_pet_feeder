@@ -100,8 +100,8 @@ static void entry_action_active(petcall_handle_t handle);
 static void petcall_remove_rec_file(petcall_handle_t handle);
 static void petcall_record_start(petcall_handle_t handle);
 static void petcall_record_stop(petcall_handle_t handle);
-static void petcall_play_start(petcall_handle_t handle);
-static void petcall_play_stop(petcall_handle_t handle);
+static void petcall_score_play(petcall_handle_t handle);
+static void petcall_score_stop(petcall_handle_t handle);
 
 /************ Public Function definition *************/
 
@@ -110,7 +110,7 @@ petcall_handle_t petcall_fsm_get(void)
     return &petcall_fsm;
 }
 
-petcall_config_info_t *petcall_fsm_info(void)
+petcall_config_info_t *petcall_fsm_get_info(void)
 {
     return &petcall_fsm.iface.petcall_info;
 }
@@ -118,9 +118,10 @@ petcall_config_info_t *petcall_fsm_info(void)
 void petcall_fsm_init(petcall_handle_t handle)
 {
     /*read from IC if there si a rec file available*/
+
     /*read from flash petcall config */
-    if (handle->iface.petcall_info.status == PETCALL_ENABLE &&
-        handle->iface.petcall_info.rec_file_available == true)
+    if (handle->iface.petcall_info.petcall_status == PETCALL_ENABLE &&
+        handle->iface.petcall_info.rec_file == PETCALL_REC_FILE_AVAILABLE)
     {
         enter_seq_active(handle);
     }
@@ -182,7 +183,7 @@ static void enter_seq_inactive(petcall_handle_t handle)
 
 static void entry_action_inactive(petcall_handle_t handle)
 {
-    handle->iface.petcall_info.status = PETCALL_DISABLE;
+    handle->iface.petcall_info.petcall_status = PETCALL_DISABLE;
 }
 
 static void inactive_on_react(petcall_handle_t handle)
@@ -190,7 +191,7 @@ static void inactive_on_react(petcall_handle_t handle)
     if(handle->event.external.name == EVT_EXT_PETCALL_ENABLE)
     {
         /*check if there is rec file available */
-        if(handle->iface.petcall_info.rec_file_available == true)
+        if(handle->iface.petcall_info.rec_file == PETCALL_REC_FILE_AVAILABLE)
             enter_seq_active(handle);
         else {
             petcall_dbg("there are no rec file available\r\n");
@@ -202,7 +203,7 @@ static void inactive_on_react(petcall_handle_t handle)
         enter_seq_record(handle);
     }
 
-    else if(handle->event.external.name == EVT_EXT_PETCALL_PLAY_START)
+    else if(handle->event.external.name == EVT_EXT_PETCALL_SCORE_PLAY)
     {
         enter_seq_play(handle);
     }
@@ -219,7 +220,7 @@ static void enter_seq_record(petcall_handle_t handle)
 
 static void entry_action_record(petcall_handle_t handle)
 {
-    if(handle->iface.petcall_info.rec_file_available == true)
+    if(handle->iface.petcall_info.rec_file == PETCALL_REC_FILE_AVAILABLE)
         petcall_remove_rec_file(handle);
 
     petcall_record_start(handle);
@@ -233,7 +234,7 @@ static void record_on_react(petcall_handle_t handle)
     {
         petcall_record_stop(handle);
 
-        if (handle->iface.petcall_info.status == PETCALL_ENABLE)
+        if (handle->iface.petcall_info.petcall_status == PETCALL_ENABLE)
             enter_seq_active(handle);
         else
             enter_seq_inactive(handle);
@@ -251,18 +252,18 @@ static void enter_seq_play(petcall_handle_t handle)
 
 static void entry_action_play(petcall_handle_t handle)
 {
-    petcall_play_start(handle);
+    petcall_score_play(handle);
     time_event_start(&handle->event.time.play_timeout, PLAY_PETCALL_TIMEOUT_MS);
 }
 
 static void play_on_react(petcall_handle_t handle)
 {
-    if (handle->event.external.name == EVT_EXT_PETCALL_PLAY_STOP ||
+    if (handle->event.external.name == EVT_EXT_PETCALL_SCORE_STOP ||
         time_event_is_raised(&handle->event.time.play_timeout) == true)
     {
-        petcall_play_stop(handle);
+        petcall_score_stop(handle);
         
-        if (handle->iface.petcall_info.status == PETCALL_ENABLE)
+        if (handle->iface.petcall_info.petcall_status == PETCALL_ENABLE)
             enter_seq_active(handle);
         else
             enter_seq_inactive(handle);
@@ -281,7 +282,7 @@ static void enter_seq_active(petcall_handle_t handle)
 
 static void entry_action_active(petcall_handle_t handle)
 {
-    handle->iface.petcall_info.status = PETCALL_ENABLE;
+    handle->iface.petcall_info.petcall_status = PETCALL_ENABLE;
 }
 
 static void active_on_react(petcall_handle_t handle)
@@ -289,7 +290,7 @@ static void active_on_react(petcall_handle_t handle)
     if(handle->event.external.name == EVT_EXT_PETCALL_DISABLE)
     {
         /*check if there is rec file available */
-        if(handle->iface.petcall_info.rec_file_available == true)
+        if(handle->iface.petcall_info.rec_file == PETCALL_REC_FILE_AVAILABLE)
             enter_seq_active(handle);
         else {
             petcall_dbg("there is no rec file available\r\n");
@@ -301,7 +302,7 @@ static void active_on_react(petcall_handle_t handle)
         enter_seq_record(handle);
     }
 
-    else if(handle->event.external.name == EVT_EXT_PETCALL_PLAY_START)
+    else if(handle->event.external.name == EVT_EXT_PETCALL_SCORE_PLAY)
     {
         enter_seq_play(handle);
     }
@@ -313,28 +314,32 @@ static void petcall_remove_rec_file(petcall_handle_t handle)
 {
     petcall_dbg("deleting petcall rec file ...\r\n");
     /*!< TODO : implement remove petcall routine */
-    handle->iface.petcall_info.rec_file_available = false;
+    handle->iface.petcall_info.rec_file = PETCALL_REC_FILE_NOT_AVAILABLE;
 }
 
 static void petcall_record_start(petcall_handle_t handle)
 {
-    handle->iface.petcall_info.rec_file_available = true;
+    petcall_dbg("petcall record start\r\n");
+    handle->iface.petcall_info.rec_file = PETCALL_REC_FILE_AVAILABLE;
     /*!<TODO : start petcall record*/
 
 }
 
 static void petcall_record_stop(petcall_handle_t handle)
 {   
+    petcall_dbg("petcall record stop\r\n");
     /*!<TODO: stop petcall record*/
 }
 
-static void petcall_play_start(petcall_handle_t handle)
+static void petcall_score_play(petcall_handle_t handle)
 {
+    petcall_dbg("petcall score play\r\n");
     /*!<TODO : start petcall audio play*/
 
 }
-static void petcall_play_stop(petcall_handle_t handle)
+static void petcall_score_stop(petcall_handle_t handle)
 {
+    petcall_dbg("petcall score stop\r\n");
     /*!<TODO : stop petcall audio play*/
 }
 
