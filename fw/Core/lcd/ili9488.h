@@ -19,12 +19,12 @@
 
 
 /* Display Pixel Interface 
-   - 0: (DPI) 16bit/pixel  (DBI) 16bit/pixel
+   - 0: (DPI) 16bit/pixel  (DBI) 16bit/pixel      // Cannot be used in SPI, Only parallel mode 
    - 1: (DPI) 18bit/pixel  (DBI) 18bit/pixel     (default)
    - 2: (DPI) 24bit/pixel  (DBI) 24bit/pixel 
-   - 3: (DPI) 24bit/pixel  (DBI) 3bit/pixel 
+   - 3: (DPI) 18bit/pixel  (DBI) 3bit/pixel 
 */
-#define ILI9488_DPI 0
+#define ILI9488_DPI 1
 
 /* Touchscreen
    - 0: touchscreen disabled (default)

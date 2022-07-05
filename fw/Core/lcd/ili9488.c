@@ -254,7 +254,7 @@ void ili9488_Init(void)
   LCD_IO_WriteCmd8(ILI9488_PIXFMT); LCD_IO_WriteData8(0x77); // Interface Pixel Format (24 bit)
 
   #elif ILI9488_DPI == 3
-  LCD_IO_WriteCmd8(ILI9488_PIXFMT); LCD_IO_WriteData8(0x51); // Interface Pixel Format (16 bit), (DBI) 3bit/pixel 
+  LCD_IO_WriteCmd8(ILI9488_PIXFMT); LCD_IO_WriteData8(0x61); // Interface Pixel Format (18 bit), (DBI) 3bit/pixel 
 
   #endif 
 

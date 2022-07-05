@@ -941,7 +941,7 @@ static void main_menu_enter_key_pressed(ui_handle_t handle)
 
     case UI_MAIN_MENU_ITEM_PETCALL:
     {
-        if (handle->iface.ui.petcall.select == UI_ITEM_SELECT)
+        if (handle->iface.ui.petcall.select.main == UI_ITEM_SELECT)
             enter_seq_petcall_config(handle);
     }
     break;
@@ -1136,7 +1136,7 @@ static void ui_main_menu_update_item_selection(ui_handle_t handle, ui_select_t s
     case UI_MAIN_MENU_ITEM_PETCALL:
     {
         ui_petcall_config_t *config = &handle->iface.ui.petcall;
-        config->select = select;
+        config->select.main = select;
         ui_petcall_set_config(&ui_petcall, config);
     }
     break;

@@ -16,7 +16,7 @@ ui_petcall_t           ui_petcall;
 ui_date_time_menu_t    ui_date_time;
 ui_feeder_menu_t       ui_feeder_menu;
 ui_thermostat_menu_t   ui_therm_menu;
-ui_petcall_config_t    ui_petcall_conf;
+ui_petcall_menu_t      ui_petcall_menu;
 ui_notification_msg_t  ui_notification;
 
 typedef struct
@@ -569,7 +569,7 @@ void ui_thermostat_show(ui_thermostat_t *menu, bool show)
 {
     if(show)
     {
-//        ui_draw_icon(&menu->icon.therm);
+        ui_draw_icon(&menu->icon.therm);
         ui_window_t win = {.x = menu->shape.temp.x + 1, .y = menu->shape.temp.y + 1, .w = menu->shape.temp.w - 2, .h = menu->shape.temp.h - 2};
         ui_draw_window(&menu->shape.temp, LCD_DEFAULT_TEXTCOLOR, true);
         ui_draw_circle(&menu->shape.circle, 8, LCD_DEFAULT_TEXTCOLOR);
@@ -866,7 +866,7 @@ void ui_petcall_set_config(ui_petcall_t *menu, ui_petcall_config_t *config)
 {
     uint16_t win_color = LCD_DEFAULT_BACKCOLOR;
 
-    if (config->select == UI_ITEM_SELECT)
+    if (config->select.main == UI_ITEM_SELECT)
     {
         win_color = UI_SELECTION_COLOR;
     }
@@ -911,13 +911,13 @@ void ui_petcall_menu_show(ui_petcall_menu_t *menu, bool show)
 
     if(show)
     {
-        ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
-        ui_window_t set_temp = {.x = menu->win.main.x + 25, .y =  menu->win.main.y + 24};
+        ui_draw_window(&menu->main.win, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_window_t set_temp = {.x = menu->main.win.x + 25, .y =  menu->main.win.y + 24};
         ui_display_string(&set_temp, title, &Font20, LCD_DEFAULT_TEXTCOLOR);
     }
     else
     {
-        ui_clear_window(&menu->win.main);
+        ui_clear_window(&menu->main.win);
     }
 
 }
@@ -926,12 +926,12 @@ void ui_petcall_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_
 {
     uint16_t color = LCD_DEFAULT_TEXTCOLOR;
 
-    if (config->select == UI_ITEM_SELECT)
+    if (config->select.main == UI_ITEM_SELECT)
     {
         color = UI_SELECTION_COLOR;
     }
 
-    ui_draw_window(&menu->win.main, color, true);
+    ui_draw_window(&menu->main.win, color, true);
 }
 
 

@@ -16,15 +16,22 @@
 #include "rct_api.h"
 #include "rtc_1307.h"
 
+/*Choose SPI To Use, if set to 0, SPI1 will be used  */
+
+
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 I2C_HandleTypeDef hi2c1;
-SPI_HandleTypeDef hspi2;
-DMA_HandleTypeDef hdma_spi2_rx;
-DMA_HandleTypeDef hdma_spi2_tx;
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3; // for ds18b sensor (temperature)
 
+
+/*LCD library handles initialization */
+#if 0
+SPI_HandleTypeDef hspi2;
+DMA_HandleTypeDef hdma_spi2_rx;
+DMA_HandleTypeDef hdma_spi2_tx;
+#endif 
 
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,7 +67,9 @@ static void SystemClock_Config(void)
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
+  // Use OVER CLOCK (RCC_PLL_MUL10) //80MHz
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL10; 
+  // RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
 	Error_Handler();
@@ -72,7 +81,10 @@ static void SystemClock_Config(void)
 							  |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  // Use OVER CLOCK (RCC_HCLK_DIV1)
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  // RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
@@ -142,6 +154,7 @@ static void MX_I2C1_Init(void)
   }
 }
 
+#if 0
 /**
   * @brief SPI2 Initialization Function
   * @param None
@@ -167,6 +180,9 @@ static void MX_SPI2_Init(void)
     Error_Handler();
   }
 }
+#endif
+
+
 
 /**
   * @brief TIM1 Initialization Function
@@ -405,7 +421,6 @@ void init_peripherals(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ADC1_Init();
-  MX_SPI2_Init();
   MX_DMA_Init();
   MX_TIM1_Init();
   MX_I2C1_Init();

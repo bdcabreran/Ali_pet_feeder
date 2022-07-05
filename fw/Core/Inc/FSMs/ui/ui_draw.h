@@ -110,7 +110,7 @@ typedef enum
     PETCALL_PLAY_STOP,
     PETCALL_DELETE_RECORDING,
     PETCALL_LAST,
-}ui_petcall_config_list_t
+}ui_petcall_config_list_t;
 
 
 //------------- UI Battery Configuration ----------------//
@@ -355,6 +355,16 @@ typedef struct
     
 }ui_petcall_t;
 
+typedef struct
+{
+    ui_petcall_config_list_t set;
+
+    struct {
+        ui_select_t main;
+        ui_select_t single;
+    }select;
+}ui_petcall_config_t;
+
 
 //------------- PetCall icon ----------------//
 
@@ -435,7 +445,7 @@ extern ui_petcall_t    ui_petcall;
 extern ui_date_time_menu_t    ui_date_time;
 extern ui_feeder_menu_t       ui_feeder_menu;
 extern ui_thermostat_menu_t   ui_therm_menu;
-extern ui_petcall_config_t    ui_petcall_conf;
+extern ui_petcall_menu_t      ui_petcall_menu;
 extern ui_notification_msg_t  ui_notification;
 
 

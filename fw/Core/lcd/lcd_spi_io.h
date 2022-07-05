@@ -82,3 +82,4 @@
 #define LCD_DMA_RX_FREE     free
 /* Inlude for malloc/free functions */
 #include <stdlib.h>
+
