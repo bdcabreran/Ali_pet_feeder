@@ -74,7 +74,7 @@ int main(void)
     ui_fsm_run(ui_fsm);
     temp_ctrl_fsm_run(temp_fsm);
     event_manager_fsm_run(evm_fsm);
-    feeder_fsm_run(feeder_fsm);
+    feeder_fsm_run(feeder_fsm);                                         
     drawer_ctrl_fsm_run(drawer_fsm);
     petcall_fsm_run(petcall_fsm);
 

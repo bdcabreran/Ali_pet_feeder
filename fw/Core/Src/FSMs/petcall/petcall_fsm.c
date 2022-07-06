@@ -118,6 +118,10 @@ petcall_config_info_t *petcall_fsm_get_info(void)
 void petcall_fsm_init(petcall_handle_t handle)
 {
     /*read from IC if there si a rec file available*/
+    handle->iface.petcall_info.petcall_status = PETCALL_ENABLE;
+    handle->iface.petcall_info.rec_file = PETCALL_REC_FILE_AVAILABLE;
+    handle->iface.petcall_info.rec_status = PETCALL_REC_START;
+    handle->iface.petcall_info.score = PETCALL_SCORE_PLAY;
 
     /*read from flash petcall config */
     if (handle->iface.petcall_info.petcall_status == PETCALL_ENABLE &&

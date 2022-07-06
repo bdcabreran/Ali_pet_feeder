@@ -123,6 +123,7 @@ static void therm_config_on_react(ui_handle_t handle);
 static void enter_seq_petcall_config(ui_handle_t handle);
 static void entry_action_petcall_config(ui_handle_t handle);
 static void petcall_config_on_react(ui_handle_t handle);
+static void exit_action_petcall_config(ui_handle_t handle);
 
 static void enter_seq_battery_config(ui_handle_t handle);
 static void entry_action_battery_config(ui_handle_t handle);
@@ -165,7 +166,7 @@ static void therm_menu_up_down_pressed(ui_handle_t handle);
 
 /* Thermostat menu Push button Functions */
 static void petcall_menu_right_left_key_pressed(ui_handle_t handle);
-static void petcall_menu_enter_key_pressed(ui_handle_t handle);
+static bool petcall_menu_enter_key_pressed(ui_handle_t handle);
 static void petcall_menu_up_down_pressed(ui_handle_t handle);
 
 /* Date-time configuration functions */
@@ -199,6 +200,7 @@ void ui_fsm_init(ui_handle_t handle)
     ui_date_time_init(&ui_date_time);
     ui_notification_msg_init(&ui_notification);
     ui_thermostat_menu_init(&ui_therm_menu);
+    ui_petcall_menu_init(&ui_petcall_menu);
 
     /*display fixed elements in the Screen */
     ui_battery_show(&ui_battery, true);
@@ -672,22 +674,54 @@ static void enter_seq_petcall_config(ui_handle_t handle)
 static void entry_action_petcall_config(ui_handle_t handle)
 {
     ui_date_time_show(&ui_feeder_menu, false);
+    ui_petcall_menu_show(&ui_petcall_menu, true);
     petcall_config_info_t *info = petcall_fsm_get_info();
 
     ui_petcall_menu_config_t *ui_config = &handle->iface.ui.petcall_menu;
+
+    /*load initial configuration */
+    ui_config->select.main = UI_ITEM_DESELECT;
+    ui_config->select.single = UI_ITEM_DESELECT;
+    ui_config->en_dis = info->petcall_status;
+    ui_config->play_stop = info->score;
+    ui_config->rec_start_stop = info->rec_status;
+    ui_config->delete_file = info->rec_file;
+    ui_config->set = UI_PETCALL_CNF_ENABLE_DISABLE; 
+    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
+    ui_config->set = UI_PETCALL_CNF_REC_START_STOP; 
+    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
+    ui_config->set = UI_PETCALL_CNF_SCORE_START_STOP; 
+    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
+    ui_config->set = UI_PETCALL_CNF_DELETE_RECORDING; 
+    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
+    ui_config->set = UI_PETCALL_CNF_EXIT; 
+    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
+
     /*load info from flash */
+    handle->iface.cursor.item = UI_PETCALL_CNF_ENABLE_DISABLE;
     ui_config->select.main = UI_ITEM_DESELECT;
     ui_config->select.single = UI_ITEM_SELECT;
     ui_config->en_dis = info->petcall_status;
-    ui_config->set = UI_PETCALL_CNF_ENABLE_DISABLE; 
+    ui_config->set = handle->iface.cursor.item; 
     ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
 
-    time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+    time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
 }
 
 static void exit_action_petcall_config(ui_handle_t handle)
 {
+    ui_petcall_menu_config_t *ui_config = &handle->iface.ui.petcall_menu;
+    /*load info from flash */
+    ui_config->select.main = UI_ITEM_DESELECT;
+    ui_config->select.single = UI_ITEM_DESELECT;
+    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
 
+    ui_petcall_config_t *config = &handle->iface.ui.petcall;
+    config->select.main = UI_ITEM_DESELECT;
+    config->select.single = UI_ITEM_DESELECT;
+    ui_petcall_set_config(&ui_petcall, config);
+    
+    ui_petcall_menu_show(&ui_petcall_menu, false);
 }
 
 static void petcall_config_on_react(ui_handle_t handle)
@@ -716,8 +750,10 @@ static void petcall_config_on_react(ui_handle_t handle)
 
         case EVT_EXT_BTN_ENTER_PRESSED:
         {
-            petcall_menu_enter_key_pressed(handle);
-            time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+            if(petcall_menu_enter_key_pressed(handle))
+                time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
+            else
+                time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
         }
         break;
 
@@ -1413,7 +1449,7 @@ static void petcall_menu_right_left_key_pressed(ui_handle_t handle)
 }
 
 
-static void petcall_menu_enter_key_pressed(ui_handle_t handle)
+static bool petcall_menu_enter_key_pressed(ui_handle_t handle)
 {
     bool exit_menu = false;
     ui_petcall_menu_config_t *ui_config = &handle->iface.ui.petcall_menu;
@@ -1468,6 +1504,8 @@ static void petcall_menu_enter_key_pressed(ui_handle_t handle)
         default: break;
     }
 
+    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
+
     if(event.info.name != EVT_EXT_PETCALL_INVALID)
     {
         petcall_fsm_write_event(petcall_fsm_get(), &event);
@@ -1475,12 +1513,12 @@ static void petcall_menu_enter_key_pressed(ui_handle_t handle)
 
     if(exit_menu)
     {
-        ui_petcall_menu_show(&ui_petcall, false);
+        ui_petcall_menu_show(&ui_petcall_menu, false);
         ui_notification_msg_show(&ui_notification, true);
         ui_notification_msg_set(&ui_notification, "Saving Petcall Config.");
-
-        enter_seq_main_menu(handle);
     }
+
+    return exit_menu;
 }
 
 static void petcall_menu_up_down_pressed(ui_handle_t handle)

@@ -356,8 +356,6 @@ typedef struct
 
 typedef struct
 {
-    ui_petcall_config_list_t set;
-
     struct {
         ui_select_t main;
         ui_select_t single;
