@@ -64,6 +64,9 @@ int main(void)
   petcall_handle_t petcall_fsm = petcall_fsm_get();
   petcall_fsm_init(petcall_fsm);
 
+  /*Init Power Ctrl*/
+  power_handle_t power_fsm = power_fsm_get();
+
   /*System clock Speed */
   printf("System CLK speed [%d]Hz\r\n", HAL_RCC_GetHCLKFreq());
 
@@ -74,7 +77,7 @@ int main(void)
     ui_fsm_run(ui_fsm);
     temp_ctrl_fsm_run(temp_fsm);
     event_manager_fsm_run(evm_fsm);
-    feeder_fsm_run(feeder_fsm);                                         
+    feeder_fsm_run(feeder_fsm);                                          
     drawer_ctrl_fsm_run(drawer_fsm);
     petcall_fsm_run(petcall_fsm);
 

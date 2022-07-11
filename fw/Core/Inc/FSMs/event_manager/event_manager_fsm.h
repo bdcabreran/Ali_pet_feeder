@@ -20,6 +20,7 @@
 #include "feeder_fsm.h"
 #include "temp_ctrl_fsm.h"
 #include "petcall_fsm.h"
+#include "power_fsm.h"
 
 typedef enum
 {
@@ -30,6 +31,7 @@ typedef enum
     FEEDER_FSM,
     TEMP_CTRL_FSM,
     PETCALL_FSM,
+    POWER_FSM,
     FSM_LAST,
 }fsm_list_t;
 
