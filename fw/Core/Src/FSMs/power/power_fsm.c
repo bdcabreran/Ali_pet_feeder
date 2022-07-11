@@ -114,7 +114,7 @@ void power_fsm_run(power_handle_t handle)
     }
 }
 
-void power_fsm_time_event_update(power_handle_t handle)
+void power_fsm_time_update(power_handle_t handle)
 {
 	time_event_t *time_event = (time_event_t *)&handle->event.time;
 	for (int tev_idx = 0; tev_idx < sizeof(handle->event.time) / sizeof(time_event_t); tev_idx++)

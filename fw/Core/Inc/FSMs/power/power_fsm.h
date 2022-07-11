@@ -49,7 +49,7 @@ power_fsm_info_t *power_fsm_get_info(void);
 power_handle_t power_fsm_get(void);
 void power_fsm_init(power_handle_t handle);
 void power_fsm_run(power_handle_t handle);
-void power_fsm_time_event_update(power_handle_t handle);
+void power_fsm_time_update(power_handle_t handle);
 
 
 

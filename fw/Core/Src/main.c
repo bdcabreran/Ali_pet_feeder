@@ -66,6 +66,7 @@ int main(void)
 
   /*Init Power Ctrl*/
   power_handle_t power_fsm = power_fsm_get();
+  power_fsm_init(power_fsm);
 
   /*System clock Speed */
   printf("System CLK speed [%d]Hz\r\n", HAL_RCC_GetHCLKFreq());
@@ -80,6 +81,7 @@ int main(void)
     feeder_fsm_run(feeder_fsm);                                          
     drawer_ctrl_fsm_run(drawer_fsm);
     petcall_fsm_run(petcall_fsm);
+    power_fsm_run(power_fsm);
 
     /* update FSMs */
     time_events_poll_update();
