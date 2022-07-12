@@ -66,6 +66,7 @@
 									<listOptionValue builtIn="false" value="../Core/Inc/API/rtc"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/feeder_scheduler"/>
 									<listOptionValue builtIn="false" value="../Core/Inc/FSMs/petcall"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/API/drawer_switch"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1414022680" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>

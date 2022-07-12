@@ -14,6 +14,7 @@
 
 #include "event_queue.h"
 #include "buttons.h"
+#include "drawer_switch.h"
 #include "ui_fsm.h"
 #include "drawer_fsm.h"
 #include "power_fsm.h"

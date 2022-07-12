@@ -9,7 +9,6 @@
 #include "main.h"
 #include "init_periph.h"
 #include "event_manager_fsm.h"
-#include "buttons.h"
 #include "target_version.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -39,6 +38,7 @@ int main(void)
 
   /*Init navigation button control */
   btn_debounce_init(&navigation_btn);
+  drawer_switch_init(&drawer_switches);
 
   /*Init Event Manager*/
   event_manager_handle_t evm_fsm = event_manager_fsm_get();

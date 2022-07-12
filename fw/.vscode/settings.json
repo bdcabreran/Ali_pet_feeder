@@ -23,8 +23,9 @@
         "*.tcc": "c",
         "init_periph.h": "c",
         "itm_dbg.h": "c",
-        "nvf0xm.h": "c"
-
+        "nvf0xm.h": "c",
+        "drawer_switch.h": "c",
+        "target_version.h": "c"
     },
     "cSpell.words": [
         "inact",
