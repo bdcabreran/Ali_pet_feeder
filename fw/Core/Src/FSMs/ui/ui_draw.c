@@ -841,7 +841,7 @@ void ui_petcall_init(ui_petcall_t *menu)
 
     //commented line to save flash memory
     menu->icon.mic.ptr = thermostat;
-    // menu->icon.mic.ptr = &recording_icon;
+    menu->icon.mic.ptr = &recording_icon;
     menu->icon.mic.x = menu->win.main.x + 1;
     menu->icon.mic.y = menu->win.main.y + 9; 
 

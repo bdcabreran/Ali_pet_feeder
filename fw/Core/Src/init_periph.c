@@ -438,4 +438,7 @@ void init_peripherals(void)
 
   /* Initialize RTC */
   rtc_init(DS1307_ADDR);
+
+  /* Initialize Battery */
+  battery_init();
 }

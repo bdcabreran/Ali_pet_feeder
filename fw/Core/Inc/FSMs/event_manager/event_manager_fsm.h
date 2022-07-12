@@ -22,6 +22,7 @@
 #include "temp_ctrl_fsm.h"
 #include "petcall_fsm.h"
 #include "power_fsm.h"
+#include "flash_memory.h"
 
 typedef enum
 {

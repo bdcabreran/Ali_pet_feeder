@@ -10,6 +10,8 @@
 #include "init_periph.h"
 #include "event_manager_fsm.h"
 #include "target_version.h"
+#include "string.h"
+
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -71,6 +73,17 @@ int main(void)
   /*System clock Speed */
   printf("System CLK speed [%ld]Hz\r\n", HAL_RCC_GetHCLKFreq());
 
+  /* flash test */
+  char data_in[] = "This is a message that i want to put into flash device";
+  uint8_t data_in_len = strlen(data_in) / sizeof(uint32_t);
+  printf("data len in words = [%d]\r\n", data_in_len);
+
+  flash_memory_write(data_in, data_in_len);
+
+  char data_out[100];
+  flash_memory_read(data_out, data_in_len);
+  uint8_t data_out_len = strlen(data_out) / sizeof(uint32_t);
+  
   /* Infinite loop */
   while (1)
   {

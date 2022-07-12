@@ -27,18 +27,20 @@ typedef enum
 typedef struct
 {
     battery_st_t  status;
-    uint8_t       charge;
+    uint8_t       charge_percent;
+    uint16_t      voltage;
 }battery_info_t;
 
+#if 0
 typedef enum
 {
     PWR_SRC_BATTERY,
     PWR_SRC_SUPPLY,
 }power_source_type_t;
+#endif
 
 typedef struct
 {
-    power_source_type_t power_src;
     battery_info_t battery;
 }power_fsm_info_t;
 

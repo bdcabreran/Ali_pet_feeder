@@ -23,5 +23,5 @@
 
 
 void battery_init(void);
-
 uint16_t battery_read_voltage(void);
+uint8_t battery_read_voltage_percent(void);

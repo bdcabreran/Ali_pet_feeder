@@ -49,8 +49,10 @@ uint16_t battery_read_voltage(void) {
 	return BATERY_VOLTAGE_CALC(adc_mv);
 }
 
-
-
+uint8_t battery_read_voltage_percent(void)
+{
+	return 100*(battery_read_voltage()/BATTERY_VOLTAGE_MV_FULL);
+}
 
 
 void read_adc(uint32_t *adc_sample_array)
