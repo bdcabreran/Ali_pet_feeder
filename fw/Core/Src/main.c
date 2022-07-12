@@ -69,7 +69,7 @@ int main(void)
   power_fsm_init(power_fsm);
 
   /*System clock Speed */
-  printf("System CLK speed [%d]Hz\r\n", HAL_RCC_GetHCLKFreq());
+  printf("System CLK speed [%ld]Hz\r\n", HAL_RCC_GetHCLKFreq());
 
   /* Infinite loop */
   while (1)
