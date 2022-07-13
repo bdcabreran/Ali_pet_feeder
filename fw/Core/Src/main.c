@@ -26,6 +26,10 @@ static void print_startup_msg(void)
   printf("#########################################\r\n");
 }
 
+uint8_t GUI_Initialized = 0;
+extern void MainTask(void);
+
+
 /**
   * @brief  The application entry point.
   * @retval int
@@ -84,6 +88,13 @@ int main(void)
   flash_memory_read(data_out, data_in_len);
   uint8_t data_out_len = strlen(data_out) / sizeof(uint32_t);
   
+  GUI_Init();
+
+  GUI_Initialized = 1;
+//  MainTask();
+
+
+
   /* Infinite loop */
   while (1)
   {
