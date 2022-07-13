@@ -91,7 +91,7 @@ int main(void)
   GUI_Init();
 
   GUI_Initialized = 1;
-//  MainTask();
+  MainTask();
 
 
 
