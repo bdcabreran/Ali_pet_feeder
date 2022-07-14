@@ -33,10 +33,17 @@ Purpose     : Simple demo drawing "Hello world"
 *       MainTask
 */
 void MainTask(void) {
+
   GUI_Clear();
-  GUI_SetFont(&GUI_Font20_1);
-  GUI_DispStringAt("Hello world!", (LCD_GetXSize()-100)/2, (LCD_GetYSize()-20)/2);
-  while(1);
+  GUI_SetBkColor(GUI_RED);
+  // GUI_Clear();
+
+  GUI_DrawRect(10, 10, 40, 40);
+  GUI_SetColor(GUI_LIGHTCYAN);
+  GUI_FillRect(10, 10, 40, 40);
+    GUI_SetFont(&GUI_Font20_1);
+    GUI_DispStringAt("Hello world!", (LCD_GetXSize()-100)/2, (LCD_GetYSize()-20)/2);
+  // // while(1);
 }
 
 /*************************** End of file ****************************/

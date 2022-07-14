@@ -89,7 +89,7 @@ void GUI_X_Delay(int ms) {
 *     If not required, leave this routine blank.
 */
 
-void GUI_X_Init(void) {}
+void GUI_X_Init(void) {OS_TimeMS = 0;}
 
 
 /*********************************************************************

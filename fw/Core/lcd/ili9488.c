@@ -212,8 +212,95 @@ void     LCD_IO_WriteCmd8MultipleData16(uint8_t Cmd, uint16_t *pData, uint32_t S
 void     LCD_IO_ReadCmd8MultipleData8(uint8_t Cmd, uint8_t *pData, uint32_t Size, uint32_t DummySize);
 void     LCD_IO_ReadCmd8MultipleData16(uint8_t Cmd, uint16_t *pData, uint32_t Size, uint32_t DummySize);
 void     LCD_IO_ReadCmd8MultipleData24to16(uint8_t Cmd, uint16_t *pData, uint32_t Size, uint32_t DummySize);
+void ILI9488_35_Initial_Code(void);
 
 #define  LCD_IO_WriteData16_to_2x8(dt)    {LCD_IO_WriteData8((dt) >> 8); LCD_IO_WriteData8(dt); }
+
+
+
+void ILI9488_35_Initial_Code(void)
+{
+  // LCD_IO_WriteCmd8
+
+	/* PGAMCTRL (Positive Gamma Control) (E0h) */
+	LCD_IO_WriteCmd8(0xE0);
+	LCD_IO_WriteData8(0x00);
+	LCD_IO_WriteData8(0x07);
+	LCD_IO_WriteData8(0x0f);
+	LCD_IO_WriteData8(0x0D);
+	LCD_IO_WriteData8(0x1B);
+	LCD_IO_WriteData8(0x0A);
+	LCD_IO_WriteData8(0x3c);
+	LCD_IO_WriteData8(0x78);
+	LCD_IO_WriteData8(0x4A);
+	LCD_IO_WriteData8(0x07);
+	LCD_IO_WriteData8(0x0E);
+	LCD_IO_WriteData8(0x09);
+	LCD_IO_WriteData8(0x1B);
+	LCD_IO_WriteData8(0x1e);
+	LCD_IO_WriteData8(0x0f);
+	/* NGAMCTRL (Negative Gamma Control) (E1h)  */
+	LCD_IO_WriteCmd8(0xE1);
+	LCD_IO_WriteData8(0x00);
+	LCD_IO_WriteData8(0x22);
+	LCD_IO_WriteData8(0x24);
+	LCD_IO_WriteData8(0x06);
+	LCD_IO_WriteData8(0x12);
+	LCD_IO_WriteData8(0x07);
+	LCD_IO_WriteData8(0x36);
+	LCD_IO_WriteData8(0x47);
+	LCD_IO_WriteData8(0x47);
+	LCD_IO_WriteData8(0x06);
+	LCD_IO_WriteData8(0x0a);
+	LCD_IO_WriteData8(0x07);
+	LCD_IO_WriteData8(0x30);
+	LCD_IO_WriteData8(0x37);
+	LCD_IO_WriteData8(0x0f);
+	/* Power Control 1 (C0h)  */
+	LCD_IO_WriteCmd8(0xC0);
+	LCD_IO_WriteData8(0x10);
+	LCD_IO_WriteData8(0x10);
+	/* Power Control 2 (C1h)  */
+	LCD_IO_WriteCmd8(0xC1);
+	LCD_IO_WriteData8(0x41);
+	/* VCOM Control (C5h)  */
+	LCD_IO_WriteCmd8(0xC5);
+	LCD_IO_WriteData8(0x00);
+	LCD_IO_WriteData8(0x2c); // VCOM
+	LCD_IO_WriteData8(0x80);
+	/* Memory Access Control (36h)  */
+	LCD_IO_WriteCmd8(0x36);
+	LCD_IO_WriteData8(0x08);
+	/* Interface Pixel Format (3Ah) */
+	LCD_IO_WriteCmd8(0x3A);  //Interface Mode Control
+	LCD_IO_WriteData8(0x55);
+	LCD_IO_WriteCmd8(0xB0);  //Interface Mode Control
+	LCD_IO_WriteData8(0x00);
+	LCD_IO_WriteCmd8(0xB1);   //Frame rate 70HZ
+	LCD_IO_WriteData8(0xB0);
+	/* Display Inversion Control (B4h) */
+	LCD_IO_WriteCmd8(0xB4);
+	LCD_IO_WriteData8(0x02);
+	/* Display Function Control (B6h)  */
+	LCD_IO_WriteCmd8(0xB6);  //RGB/MCU Interface Control
+	LCD_IO_WriteData8(0x02);
+	LCD_IO_WriteData8(0x22);
+	/* Set Image Function (E9h)  */
+	LCD_IO_WriteCmd8(0xE9);
+	LCD_IO_WriteData8(0x00);
+	/* Adjust Control 3 (F7h)  */
+	LCD_IO_WriteCmd8(0XF7);
+	LCD_IO_WriteData8(0xA9);
+	LCD_IO_WriteData8(0x51);
+	LCD_IO_WriteData8(0x2C);
+	LCD_IO_WriteData8(0x82);
+	/* Sleep Out (11h) */
+	LCD_IO_WriteCmd8(0x11);
+	HAL_Delay(150);
+	/* Display ON (29h) */
+	LCD_IO_WriteCmd8(0x29);
+}
+
 
 //-----------------------------------------------------------------------------
 void ili9488_Init(void)
