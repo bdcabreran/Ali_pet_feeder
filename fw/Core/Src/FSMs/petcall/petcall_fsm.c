@@ -1,4 +1,5 @@
 #include "petcall_fsm.h"
+#include "event_manager_fsm.h"
 #include "printf_dbg.h"
 
 /**@brief Enable/Disable debug messages */
@@ -117,6 +118,10 @@ petcall_config_info_t *petcall_fsm_get_info(void)
 
 void petcall_fsm_init(petcall_handle_t handle)
 {
+    user_config_t  *config = user_config_get();
+
+    // config->petcall_info
+
     /*read from IC if there si a rec file available*/
     handle->iface.petcall_info.petcall_status = PETCALL_ENABLE;
     handle->iface.petcall_info.rec_file = PETCALL_REC_FILE_AVAILABLE;

@@ -1,9 +1,8 @@
 #include "feeder_fsm.h"
+#include "event_manager_fsm.h"
 #include "printf_dbg.h"
 #include "time_event.h"
 #include "rct_api.h"
-#include <stdio.h>
-#include <strings.h>
 
 /**@brief Enable/Disable debug messages */
 #define feeder_FSM_DEBUG 1
@@ -24,7 +23,7 @@
 	} while (0)
 #endif
 
-const char *am_fm_str[TIMEn] = {"AM", "PM"}; 
+const char *am_fm_str[3] = {"NA","AM", "PM"}; 
 
 
 
@@ -68,7 +67,7 @@ typedef struct
 
 typedef struct
 {
-    feeder_config_t feeder;
+    feeder_config_info_t feeder;
     drawer_no_t   drawer;
     bool          dt_config_done;   // day time configuration
     event_queue_t queue;
@@ -85,7 +84,6 @@ static struct feeder_fsm_t feeder_fsm;
 
 /////////////////////// Static state function declaration //////////////////////////////////////
 
-/////////////////////////////////// State Function Declaration   ///////////////////////////////////////////
 
 static void enter_seq_watcher(feeder_handle_t handle);
 static void enter_seq_date_time_config(feeder_handle_t handle);
@@ -99,10 +97,14 @@ static void entry_action_watcher(feeder_handle_t handle);
 static void entry_action_date_time_config(feeder_handle_t handle);
 static void entry_action_feeding_time_config(feeder_handle_t handle);
 
+/////////////////////////////////// Miscellaneous Function Declaration   ///////////////////////////////////////////
+static bool get_user_configuration_from_flash(feeder_handle_t handle);
+
+
 
 ////////////////////////////// Public function declaration //////////////////////////////////////
 
-feeder_config_t *feeder_fsm_get_info(void)
+feeder_config_info_t *feeder_fsm_get_info(void)
 {
     return &feeder_fsm.iface.feeder;
 }
@@ -115,7 +117,11 @@ feeder_handle_t feeder_fsm_get(void)
 void feeder_fsm_init(feeder_handle_t handle)
 {
     /*Init Default Configuration */
-    memset((uint8_t *)&handle->iface.feeder, 0, sizeof(feeder_config_t));
+    memset((uint8_t *)&handle->iface.feeder, 0, sizeof(feeder_config_info_t));
+
+    /*Load User Configuration */
+    get_user_configuration_from_flash(handle);
+
     handle->iface.drawer = DRAWER_NO_1;
     handle->iface.dt_config_done = false;
     enter_seq_watcher(handle);
@@ -200,12 +206,23 @@ static void date_time_config_on_react(feeder_handle_t handle)
 {
     enter_seq_watcher(handle);
 }
+
 static void entry_action_date_time_config(feeder_handle_t handle)
 {
+    feeder_dbg("saving time to RTC \r\n");
+
     handle->iface.dt_config_done = true;
-    /*!<TODO : send date and time values to RTC 
-    rtc_set_date_time();
-    */
+
+    date_time_t date_time;
+    date_time.day = handle->event.external.data.config_rtc.date.day;
+    date_time.month = handle->event.external.data.config_rtc.date.month;
+    date_time.hours = handle->event.external.data.config_rtc.time.hour;
+    date_time.minutes = handle->event.external.data.config_rtc.time.minute;
+    date_time.am_fm = handle->event.external.data.config_rtc.time.am_fm;
+    date_time.hour_24h_format = false;
+
+    rtc_set_time(date_time); 
+    rtc_print_time();
 }
 
 ////////////////////////////////// State Function Definition ////////////////////////////////////
@@ -219,23 +236,6 @@ static void entry_action_watcher(feeder_handle_t handle)
 {
 
     time_event_start(&handle->event.time.update, FEEDER_UPDATE_TIME_MS);
-}
-
-static date_info_t rtc_get_date_info(feeder_handle_t handle)
-{
-    date_info_t info;
-    info.day = 25;
-    info.month = 30;
-    return info;
-}
-
-static time_info_t rtc_get_time_info(feeder_handle_t handle)
-{
-    time_info_t info;
-    info.hour = 10;
-    info.minute = 25;
-    info.am_fm = TIME_AM;
-    return info;
 }
 
 static bool date_match(date_info_t *date1, date_info_t *date2)
@@ -256,7 +256,9 @@ static bool time_match(time_info_t *time1, time_info_t *time2)
 
 static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
 {
-    /*Get Date from RTC */
+    /*Get Date Time     from RTC */
+
+     
     date_info_t rtc_date = rtc_get_date_info(handle);
     time_info_t rtc_time = rtc_get_time_info(handle);
 
@@ -279,7 +281,7 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
             /*check if date matches*/
             meal_data = &drawer->config[meal_idx];
 
-            if (drawer->daily_st == FEEDER_DAILY_MEAL_DISABLE)
+            if (drawer->daily_st == FEEDER_DAILY_MEAL_ST_DISABLE)
             {
                 if (date_match(&meal_data->date, &rtc_date) == false)
                 {
@@ -333,4 +335,76 @@ static void watcher_on_react(feeder_handle_t handle)
         check_if_feeding_time_is_elapsed(handle);
         enter_seq_watcher(handle);
     }
+}
+
+/////////////////////////////////// Miscellaneous Function Definition   ///////////////////////////////////////////
+static bool is_valid_feeder_config(feeder_config_info_t *info)
+{
+    feeder_drawer_data_t *drawer_data = &info->drawer.no_1;
+
+    for (size_t drawer_no = 0; drawer_no < DRAWERn; drawer_no++)
+    {
+        if (!IS_VALID_FEEDER_DAILY_ST(drawer_data->daily_st))
+            return false;
+
+        for (size_t meal = 0; meal < FEEDER_MEALn; meal++)
+        {
+            if (!IS_VALID_FEEDER_DATE_DAY(drawer_data->config[meal].date.day))
+                return false;
+            if (!IS_VALID_FEEDER_DATE_MONTH(drawer_data->config[meal].date.month))
+                return false;
+            if (!IS_VALID_FEEDER_HOUR(drawer_data->config[meal].time.close.hour))
+                return false;
+            if (!IS_VALID_FEEDER_HOUR(drawer_data->config[meal].time.open.hour))
+                return false;
+        }
+        drawer_data++;
+    }
+
+    return true;
+}
+
+static bool get_user_configuration_from_flash(feeder_handle_t handle)
+{
+    user_config_t *user_config = user_config_get();
+    feeder_config_info_t *flash_config = &user_config->feeder_info;
+    feeder_config_info_t *ram_config = &handle->iface.feeder;
+
+    if(user_config->data_available)
+    {
+        /*check if there is valid data in flash*/
+        if(is_valid_feeder_config(flash_config))
+        {
+            feeder_dbg("valid feeder configuration found, loading values ...\r\n");
+            memcpy((uint8_t *)ram_config, (uint8_t *)flash_config, sizeof(feeder_config_info_t));
+        }
+        else
+        {
+            feeder_dbg("Invalid feeder configuration from flash, initializing configuration by default..\r\n");
+
+            feeder_drawer_data_t *drawer_data = &handle->iface.feeder.drawer.no_1;
+
+            for (size_t drawer_no = 0; drawer_no < DRAWERn; drawer_no++)
+            {
+                drawer_data->daily_st = FEEDER_DAILY_MEAL_ST_DISABLE;
+
+                for (size_t meal = 0; meal < FEEDER_MEALn; meal++)
+                {
+                    drawer_data->config[meal].date.day = 0;
+                    drawer_data->config[meal].date.month = 0;
+                    drawer_data->config[meal].time.close.hour = 0;
+                    drawer_data->config[meal].time.close.minute = 0;
+                    drawer_data->config[meal].time.close.am_fm = TIME_PM;
+                    drawer_data->config[meal].time.open.hour = 0;
+                    drawer_data->config[meal].time.open.minute = 0;
+                    drawer_data->config[meal].time.open.am_fm = TIME_PM;
+                }
+                drawer_data++;
+            }
+
+            user_config_set();
+        }
+    }
+
+    return false;
 }

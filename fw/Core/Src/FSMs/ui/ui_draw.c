@@ -32,7 +32,7 @@ typedef struct
     uint16_t y;
 } pos_t;
 
-static const char *c_f_str[TEMP_UNITSn] = {"C", "F"}; 
+static const char *c_f_str[3] = {'N',"C", "F"};
 
 
 //////////////////////////////////// Static Common Functions  //////////////////////////////////////////////
@@ -380,7 +380,7 @@ void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show)
     }
 }
 
-void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_t *config)
+void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_info_t *config)
 {
     char str[5];
     uint16_t color = LCD_DEFAULT_TEXTCOLOR;
@@ -443,7 +443,7 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_t *confi
             ui_window_t win = {.x = menu->win.daily.x + 1, .y = menu->win.daily.y + 1, \
                                 .h = menu->win.daily.h - 2, .w = menu->win.daily.w - 2};
 
-            if(config->date.daily_st == FEEDER_DAILY_MEAL_ENABLE)
+            if(config->date.daily_st == FEEDER_DAILY_MEAL_ST_ENABLE)
             {
                 ui_fill_window(&win, LCD_COLOR_GREEN);
             }

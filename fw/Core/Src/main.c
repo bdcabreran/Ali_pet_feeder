@@ -45,7 +45,9 @@ int main(void)
 
   /*Init navigation button control */
   btn_debounce_init(&navigation_btn);
-//  drawer_switch_init(&drawer_switches);
+
+  /*Init drawer switches control */
+  drawer_switch_init(&drawer_switches);
 
   /*Init Event Manager*/
   event_manager_handle_t evm_fsm = event_manager_fsm_get();
@@ -88,19 +90,12 @@ int main(void)
 //  char data_out[100];
 //  flash_memory_read(data_out, data_in_len);
 //  uint8_t data_out_len = strlen(data_out) / sizeof(uint32_t);
-  
-  __HAL_RCC_CRC_CLK_ENABLE();
-
-  GUI_Init();
-
-  GUI_Initialized = 1;
-  MainTask();
 
   /* Infinite loop */
   while (1)
   {
     /* run FSMs : */
-//    ui_fsm_run(ui_fsm);
+    ui_fsm_run(ui_fsm);
     temp_ctrl_fsm_run(temp_fsm);
     event_manager_fsm_run(evm_fsm);
     feeder_fsm_run(feeder_fsm);                                          

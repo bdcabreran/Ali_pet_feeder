@@ -11,7 +11,9 @@
 #ifndef __FEEDER_FSM_H__
 #define __FEEDER_FSM_H__
 
-#include "event_manager_fsm.h"
+#include <stdio.h>
+#include <strings.h>
+#include "event_queue.h"
 
 #define FEEDER_UPDATE_TIME_MS   (60000) //1 min 
 
@@ -43,16 +45,18 @@ typedef enum
 
 typedef enum
 {
-    FEEDER_DAILY_MEAL_DISABLE,
-    FEEDER_DAILY_MEAL_ENABLE,
-    FEEDER_DAILYn,
+    FEEDER_DAILY_MEAL_ST_INVALID,
+    FEEDER_DAILY_MEAL_ST_DISABLE,
+    FEEDER_DAILY_MEAL_ST_ENABLE,
+    FEEDER_DAILY_MEAL_ST_LAST,
 }feeder_daily_st_t;
 
 typedef enum
 {
+    TIME_INVALID,
     TIME_AM,
-    TIME_FM,
-    TIMEn,
+    TIME_PM,
+    TIME_LAST,
 }time_am_fm_t;
 
 typedef enum
@@ -64,8 +68,6 @@ typedef enum
     DATE_TIME_CNF_MONTH,
     DATE_TIME_CNF_LAST
 }date_time_config_t;
-
-
 
 typedef struct
 {
@@ -91,6 +93,11 @@ typedef struct
 
 }feeder_meal_data_t;
 
+#define IS_VALID_FEEDER_DATE_DAY(day) (day >= 0 && day <= 31)
+#define IS_VALID_FEEDER_DATE_MONTH(month) (month >= 0 && month <= 12)
+#define IS_VALID_FEEDER_HOUR(hour) (hour >= 0 && hour <= 12)
+#define IS_VALID_FEEDER_DAILY_ST(state) (state > FEEDER_DAILY_MEAL_ST_INVALID && state < FEEDER_DAILY_MEAL_ST_LAST)
+
 typedef struct
 {
     feeder_meal_data_t config[FEEDER_MEALn];
@@ -107,7 +114,7 @@ typedef struct
         feeder_drawer_data_t no_4;
     }drawer;
 
-}feeder_config_t;
+}feeder_config_info_t;
 
 
 typedef enum
@@ -140,12 +147,12 @@ typedef struct
     feeder_ev_ext_data_t data;
 }feeder_ev_ext_t;
 
-extern const char *am_fm_str[TIMEn]; 
+extern const char *am_fm_str[3]; 
 
 typedef struct feeder_fsm_t* feeder_handle_t;
 
 feeder_handle_t feeder_fsm_get(void);
-feeder_config_t *feeder_fsm_get_info(void);
+feeder_config_info_t *feeder_fsm_get_info(void);
 
 void feeder_fsm_init(feeder_handle_t handle);
 void feeder_fsm_run(feeder_handle_t handle);

@@ -25,7 +25,9 @@
         "itm_dbg.h": "c",
         "nvf0xm.h": "c",
         "drawer_switch.h": "c",
-        "target_version.h": "c"
+        "target_version.h": "c",
+        "flash_memory.h": "c",
+        "stdio.h": "c"
     },
     "cSpell.words": [
         "inact",

@@ -12,6 +12,7 @@
 #include "rct_api.h"
 #include  "rtc_1307.h"
 #include <string.h>
+#include "printf_dbg.h"
 
 void rtc_init_mock(void);
 void rtc_set_time_mock(date_time_t date_time);
@@ -46,6 +47,17 @@ void rtc_get_time(date_time_t *date_time){
 	rtc_drv->get_time(date_time);
 }
 
+void rtc_print_time(void)
+{
+	date_time_t date_time;
+	rtc_get_time(&date_time);
+	printf("RTC debug information : \r\n");
+	printf("month\t: [%d]\r\n", date_time.month);
+	printf("day\t: [%d]\r\n", date_time.day);
+	printf("hour\t: [%d]\r\n", date_time.hours);
+	printf("minute\t: [%d]\r\n", date_time.minutes);
+	printf("Time\t: [%s]\r\n", date_time.am_fm == 1 ? "am" : "fm");
+}
 
 #ifdef RTC_MOCK
 void rtc_init_mock(void){

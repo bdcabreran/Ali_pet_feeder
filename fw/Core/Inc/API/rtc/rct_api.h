@@ -17,6 +17,7 @@ typedef struct date_time_st{
     uint16_t microseconds;
     uint16_t dayOfWeek;
     uint16_t dayOfMonth;
+    uint8_t am_fm;  // 1 - am, 2 - fm
     bool hour_24h_format;
 }date_time_t;
 
@@ -30,6 +31,8 @@ typedef struct
 void rtc_init(uint8_t address);
 void rtc_set_time(date_time_t date_time);
 void rtc_get_time(date_time_t *date_time);
+void rtc_print_time(void);
+
 
 
 #endif /*__RTC_API_H__*/

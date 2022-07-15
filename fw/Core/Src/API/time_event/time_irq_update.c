@@ -34,9 +34,9 @@ void time_events_poll_update(void)
     {
         /*Update Time Events of the state machines */
         btn_debounce_run(&navigation_btn);
-    //    drawer_switch_run(&drawer_switches);
+        drawer_switch_run(&drawer_switches);
 
-//        ui_fsm_time_update(ui_fsm_get());
+        ui_fsm_time_update(ui_fsm_get());
         temp_ctrl_fsm_time_update(temp_ctrl_fsm_get());
         feeder_fsm_time_update(feeder_fsm_get());
         petcall_fsm_time_update(petcall_fsm_get());
