@@ -9,6 +9,7 @@
    - 2: 320x480 micro-sd in the bottom (portrait)
    - 3: 480x320 micro-sd in the right (landscape)
 */
+// #define  ILI9488_ORIENTATION       1
 #define  ILI9488_ORIENTATION       1
 
 /* Color mode

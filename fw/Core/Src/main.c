@@ -82,18 +82,18 @@ int main(void)
   uint8_t data_in_len = strlen(data_in) / sizeof(uint32_t);
   printf("data len in words = [%d]\r\n", data_in_len);
 
-  flash_memory_write(data_in, data_in_len);
-
-  char data_out[100];
-  flash_memory_read(data_out, data_in_len);
-  uint8_t data_out_len = strlen(data_out) / sizeof(uint32_t);
+//  flash_memory_write(data_in, data_in_len);
+//
+//  char data_out[100];
+//  flash_memory_read(data_out, data_in_len);
+//  uint8_t data_out_len = strlen(data_out) / sizeof(uint32_t);
   
-  GUI_Init();
-
-  GUI_Initialized = 1;
+//  __HAL_RCC_CRC_CLK_ENABLE();
+//
+//  GUI_Init();
+//
+//  GUI_Initialized = 1;
 //  MainTask();
-
-
 
   /* Infinite loop */
   while (1)

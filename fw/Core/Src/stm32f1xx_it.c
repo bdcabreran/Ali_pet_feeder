@@ -18,6 +18,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_it.h"
+#include "GUI.h"
+extern volatile GUI_TIMER_TIME OS_TimeMS;
+
+
 /* Private includes ----------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -111,6 +115,7 @@ void SysTick_Handler(void)
 {
   HAL_SYSTICK_Callback();
   HAL_IncTick();
+  OS_TimeMS++;
 }
 
 /******************************************************************************/

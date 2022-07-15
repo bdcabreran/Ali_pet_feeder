@@ -1269,6 +1269,7 @@ __weak void LCD_IO_ReadCmd16MultipleData24to16(uint16_t Cmd, uint16_t *pData, ui
 #else
 
 //-----------------------------------------------------------------------------
+
 void LCD_IO_ReadCmd8MultipleData8(uint8_t Cmd, uint8_t *pData, uint32_t Size, uint32_t DummySize)
 {
   WaitForDmaEnd();

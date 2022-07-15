@@ -66,8 +66,10 @@ Purpose     : Display controller configuration (single layer)
 //
 // Physical display size
 //
-#define XSIZE_PHYS  240	 // To be adapted to x-screen size
-#define YSIZE_PHYS  320 // To be adapted to y-screen size
+#define XSIZE_PHYS  320	 // To be adapted to x-screen size
+#define YSIZE_PHYS  480 // To be adapted to y-screen size
+// #define XSIZE_PHYS  240	 // To be adapted to x-screen size
+// #define YSIZE_PHYS  320 // To be adapted to y-screen size
 
 /*********************************************************************
 *
@@ -109,7 +111,8 @@ Purpose     : Display controller configuration (single layer)
 */
 static void LcdWriteReg(U16 Data) {
   // ... TBD by user
-	LCD_WriteReg(Data);
+	// LCD_WriteReg(Data);
+  LCD_IO_WriteCmd16(Data);
 }
 
 /********************************************************************
@@ -121,7 +124,8 @@ static void LcdWriteReg(U16 Data) {
 */
 static void LcdWriteData(U16 Data) {
   // ... TBD by user
-	LCD_WriteData(Data);
+	//LCD_WriteData(Data);
+  LCD_IO_WriteData16(Data);
 }
 
 /********************************************************************
@@ -132,9 +136,9 @@ static void LcdWriteData(U16 Data) {
 *   Writes multiple values to a display register.
 */
 static void LcdWriteDataMultiple(U16 * pData, int NumItems) {
-  while (NumItems--) {
-    // ... TBD by user
-		LCD_WriteData(*pData++);
+  while (NumItems--)
+  {
+    LCD_IO_WriteData16(*pData++);
   }
 }
 
@@ -146,9 +150,11 @@ static void LcdWriteDataMultiple(U16 * pData, int NumItems) {
 *   Reads multiple values from a display register.
 */
 static void LcdReadDataMultiple(U16 * pData, int NumItems) {
-  while (NumItems--) {
-    *pData++=Read_IO_Port();
-  }
+
+    for (; NumItems; NumItems--) {   
+    LCD_IO_ReadCmd8MultipleData16(0x00, pData, 1,1 );	
+    pData++;		
+    }
 }
 
 /*********************************************************************
@@ -157,6 +163,110 @@ static void LcdReadDataMultiple(U16 * pData, int NumItems) {
 *
 **********************************************************************
 */
+
+void LcdWriteReg8(U8 Data) {
+  LCD_IO_WriteCmd8(Data);
+}
+
+/********************************************************************
+*
+*       LcdWriteData
+*
+* Function description:
+*   Writes a value to a display register
+*/
+
+static void LcdWriteData8(U8 Data) {  
+  LCD_IO_WriteData8(Data);
+}
+
+/********************************************************************
+*
+*       LcdWriteDataMultiple
+*
+* Function description:
+*   Writes multiple values to a display register.
+*/
+
+
+static void LcdWriteDataMultiple8(U8 * pData, int NumItems) {
+  while (NumItems--) { 
+	LCD_IO_WriteData8(*pData++);
+  }
+}
+
+/********************************************************************
+*
+*       LcdReadData
+*
+* Function description:
+*   Reads multiple values from a display register.
+*/
+
+
+/**********************************************************************/
+
+U8 LcdReadData8_A0(void)
+{
+	U8 readvalue;
+  LCD_IO_ReadCmd8MultipleData8(0x00, &readvalue, 1,1 );
+	// SPI1_CS_L;
+	// SPI1_WRX_L;
+	// readvalue = SPI1_Read(1);
+	// SPI1_CS_H;
+	return readvalue;
+}
+
+
+U16 LcdReadData(void)
+{
+ 	U16 readvalue;
+  LCD_IO_ReadCmd8MultipleData16(0x00, &readvalue, 1,1 );
+	// SPI1_CS_H;
+  // SPI1_WRX_L;
+	// readvalue = SPI1_Read(1);
+	// SPI1_CS_H;
+	return readvalue; 
+}
+
+U8 LcdReadData8_A1(void)
+{
+	U8 readvalue;
+  LCD_IO_ReadCmd8MultipleData8(0x00, &readvalue, 1,1 );
+	// SPI1_CS_H;
+  // SPI1_WRX_L;
+	// readvalue = SPI1_Read(1);
+	// SPI1_CS_H;
+	return readvalue;
+}
+
+/********************************************************************
+*
+*       LcdReadDataMultiple
+*
+* Function description:
+*   Reads multiple values from a display register.
+*/
+
+
+void LcdReadM8_A1(U8 *pData, int NumItems)
+ {
+// 			SPI1_CS_L;
+// 			SPI1_WRX_H;
+			for (; NumItems; NumItems--) {   
+      LCD_IO_ReadCmd8MultipleData8(0x00, pData, 1,1 );	
+      pData++;		
+			}
+			// SPI1_CS_H;
+}
+
+// pfWrite16_A0 void (*)(U16 Data)
+// pfWrite16_A1 void (*)(U16 Data)
+// pfWriteM16_A1 void (*)(U16 * pData, int NumItems)
+// pfRead16_A1 U16 (*)(void)
+// pfReadM16_A1 void (*)(U16 * pData, int NumItems)
+
+
 /*********************************************************************
 *
 *       LCD_X_Config
@@ -187,11 +297,25 @@ void LCD_X_Config(void) {
   //
   // Set controller and operation mode
   //
+  #if 0
+
   PortAPI.pfWrite16_A0  = LcdWriteReg;
   PortAPI.pfWrite16_A1  = LcdWriteData;
   PortAPI.pfWriteM16_A1 = LcdWriteDataMultiple;
+  // PortAPI.pfRead16_A1   = LcdReadData;
   PortAPI.pfReadM16_A1  = LcdReadDataMultiple;
-  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66708, GUIDRV_FLEXCOLOR_M16C0B16);
+  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66709, GUIDRV_FLEXCOLOR_M16C0B16);
+  #endif
+
+  #if 1
+  PortAPI.pfWrite8_A0  = LcdWriteReg8;
+  PortAPI.pfWrite8_A1  = LcdWriteData8;
+  PortAPI.pfWriteM8_A1 = LcdWriteDataMultiple8; 
+  PortAPI.pfRead8_A1   = LcdReadData8_A1;
+  PortAPI.pfReadM8_A1  = LcdReadM8_A1;
+
+  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66709, GUIDRV_FLEXCOLOR_M16C0B8);
+#endif 
 }
 
 /*********************************************************************
@@ -222,7 +346,8 @@ int LCD_X_DisplayDriver(unsigned LayerIndex, unsigned Cmd, void * pData) {
   
   switch (Cmd) {
   case LCD_X_INITCONTROLLER: {
-	 ili9488_Init();
+	  // ili9488_Init();
+    //  ILI9488_35_Initial_Code();
     //
     // Called during the initialization process in order to set up the
     // display controller and put it into operation. If the display
