@@ -26,6 +26,7 @@
    - 3: (DPI) 18bit/pixel  (DBI) 3bit/pixel 
 */
 #define ILI9488_DPI 1
+// #define ILI9488_DPI 0
 
 /* Touchscreen
    - 0: touchscreen disabled (default)

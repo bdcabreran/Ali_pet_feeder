@@ -34,15 +34,11 @@ Purpose     : Simple demo drawing "Hello world"
 */
 void MainTask(void) {
 
+  printf("stmwin v [%d]\r\n", GUI_GetVersionString());
   GUI_Clear();
-  GUI_SetBkColor(GUI_RED);
-  // GUI_Clear();
-
-  GUI_DrawRect(10, 10, 40, 40);
-  GUI_SetColor(GUI_LIGHTCYAN);
-  GUI_FillRect(10, 10, 40, 40);
-    GUI_SetFont(&GUI_Font20_1);
-    GUI_DispStringAt("Hello world!", (LCD_GetXSize()-100)/2, (LCD_GetYSize()-20)/2);
+  GUI_SetFont(&GUI_Font20_1);
+  GUI_DrawRoundedFrame(10, 10, 80, 80, 4, 2);
+  GUI_DispStringAt("Hello world!", (LCD_GetXSize()-100)/2, (LCD_GetYSize()-20)/2);
   // // while(1);
 }
 

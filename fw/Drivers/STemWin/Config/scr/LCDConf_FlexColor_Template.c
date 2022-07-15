@@ -54,6 +54,7 @@ Purpose     : Display controller configuration (single layer)
 #include "GUI.h"
 #include "GUIDRV_FlexColor.h"
 #include "ili9488.h"
+#include "ili9341.h"
 #include "lcd_api.h"
 #include "lcd.h"
 /*********************************************************************
@@ -66,8 +67,8 @@ Purpose     : Display controller configuration (single layer)
 //
 // Physical display size
 //
-#define XSIZE_PHYS  320	 // To be adapted to x-screen size
-#define YSIZE_PHYS  480 // To be adapted to y-screen size
+#define XSIZE_PHYS  ILI9488_LCD_PIXEL_WIDTH	 // To be adapted to x-screen size
+#define YSIZE_PHYS  ILI9488_LCD_PIXEL_HEIGHT // To be adapted to y-screen size
 // #define XSIZE_PHYS  240	 // To be adapted to x-screen size
 // #define YSIZE_PHYS  320 // To be adapted to y-screen size
 
@@ -283,7 +284,7 @@ void LCD_X_Config(void) {
   //
   // Set display driver and color conversion
   //
-  pDevice = GUI_DEVICE_CreateAndLink(GUIDRV_FLEXCOLOR, GUICC_565, 0, 0);
+  pDevice = GUI_DEVICE_CreateAndLink(GUIDRV_FLEXCOLOR, GUICC_666, 0, 0);
   //
   // Display driver configuration, required for Lin-driver
   //
@@ -292,7 +293,7 @@ void LCD_X_Config(void) {
   //
   // Orientation
   //
-  Config.Orientation = GUI_SWAP_XY | GUI_MIRROR_Y;
+  Config.Orientation = GUI_SWAP_XY ;
   GUIDRV_FlexColor_Config(pDevice, &Config);
   //
   // Set controller and operation mode
@@ -302,7 +303,7 @@ void LCD_X_Config(void) {
   PortAPI.pfWrite16_A0  = LcdWriteReg;
   PortAPI.pfWrite16_A1  = LcdWriteData;
   PortAPI.pfWriteM16_A1 = LcdWriteDataMultiple;
-  // PortAPI.pfRead16_A1   = LcdReadData;
+  PortAPI.pfRead16_A1   = LcdReadData;
   PortAPI.pfReadM16_A1  = LcdReadDataMultiple;
   GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66709, GUIDRV_FLEXCOLOR_M16C0B16);
   #endif
@@ -346,7 +347,10 @@ int LCD_X_DisplayDriver(unsigned LayerIndex, unsigned Cmd, void * pData) {
   
   switch (Cmd) {
   case LCD_X_INITCONTROLLER: {
-	  // ili9488_Init();
+
+//    ili9341_Init();
+	  ili9488_Init();
+
     //  ILI9488_35_Initial_Code();
     //
     // Called during the initialization process in order to set up the
