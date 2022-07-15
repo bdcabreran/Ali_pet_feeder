@@ -3,6 +3,7 @@
 		"event_manager_fsm.h": "c",
 		"init_periph.h": "c",
 		"buttons.h": "c",
-		"ui_draw.h": "c"
+		"ui_draw.h": "c",
+		"stm32f1xx_hal.h": "c"
 	}
 }
