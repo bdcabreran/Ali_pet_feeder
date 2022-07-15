@@ -196,8 +196,8 @@ void ui_fsm_init(ui_handle_t handle)
     ui_drawers_init(&ui_drawers);
     ui_thermostat_init(&ui_thermostat);
     ui_petcall_init(&ui_petcall);
+    ui_date_time_menu_init(&ui_date_time_menu);
     ui_feeder_menu_init(&ui_feeder_menu);
-    ui_date_time_init(&ui_date_time);
     ui_notification_msg_init(&ui_notification);
     ui_thermostat_menu_init(&ui_therm_menu);
     ui_petcall_menu_init(&ui_petcall_menu);
@@ -207,8 +207,7 @@ void ui_fsm_init(ui_handle_t handle)
     ui_drawers_show(&ui_drawers, true);
     ui_thermostat_show(&ui_thermostat, true);
     ui_petcall_show(&ui_petcall, true);
-    ui_date_time_show(&ui_date_time, true);
-
+    ui_date_time_menu_show(&ui_date_time_menu, true);
 
 	enter_seq_main_menu(handle);
 }
@@ -271,7 +270,7 @@ static void enter_seq_main_menu(ui_handle_t handle)
 static void entry_action_main_menu(ui_handle_t handle)
 {
     // show date time 
-    ui_date_time_show(&ui_date_time, true);
+    ui_date_time_menu_show(&ui_date_time_menu, true);
     ui_update_battery(handle);
     ui_update_date_time(handle);
 
@@ -376,7 +375,7 @@ void enter_seq_drawer_request(ui_handle_t handle)
 void entry_action_drawer_request(ui_handle_t handle)
 {
     /* Show message in the screen */
-    ui_date_time_show(&ui_date_time, false);
+    ui_date_time_menu_show(&ui_date_time_menu, false);
     ui_notification_msg_show(&ui_notification, true);
 
     /* Notify Drawer FSM */
@@ -476,7 +475,7 @@ static void enter_seq_feeder_config(ui_handle_t handle)
 
 static void entry_action_feeder_config(ui_handle_t handle)
 {
-    ui_date_time_show(&ui_date_time, false);
+    ui_date_time_menu_show(&ui_date_time_menu, false);
     ui_feeder_menu_show(&ui_feeder_menu, true);
 
     ui_feeder_config_t *config = &handle->iface.ui.feeder_menu[handle->iface.ui.drawers.drawer.no];
@@ -576,7 +575,7 @@ static void entry_action_therm_config(ui_handle_t handle)
     ui_thermostat_menu_config_t *ui_config = &handle->iface.ui.therm_menu;
 
     /*Select First Item in Date Time Menu */
-    ui_date_time_show(&ui_date_time, false);
+    ui_date_time_menu_show(&ui_date_time_menu, false);
     ui_thermostat_menu_show(&ui_therm_menu, true);
 
     /*Load initial configuration*/
@@ -673,7 +672,7 @@ static void enter_seq_petcall_config(ui_handle_t handle)
 
 static void entry_action_petcall_config(ui_handle_t handle)
 {
-    ui_date_time_show(&ui_feeder_menu, false);
+    ui_date_time_menu_show(&ui_feeder_menu, false);
     ui_petcall_menu_show(&ui_petcall_menu, true);
     petcall_config_info_t *info = petcall_fsm_get_info();
 
@@ -816,7 +815,7 @@ static void entry_action_date_time_config(ui_handle_t handle)
     ui_date_time_config_t *ui_config = &handle->iface.ui.dt_menu;
     ui_config->set = handle->iface.cursor.item;
     ui_config->select.single = UI_ITEM_SELECT;
-    ui_date_time_set_config(&ui_date_time, ui_config);
+    ui_date_time_menu_set_config(&ui_date_time_menu, ui_config);
 
     /*Start timer for cursor inactivity*/
     time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
@@ -948,7 +947,7 @@ static void ui_update_date_time(ui_handle_t handle)
     ui_config->time.min = dt_info.minutes;
 
     time_config_increase_min(&ui_config->time.min);
-    ui_date_time_set_config(&ui_date_time, ui_config);
+    ui_date_time_menu_set_config(&ui_date_time_menu, ui_config);
 }
 
 static void ui_update_thermostat(ui_handle_t handle)
@@ -1232,7 +1231,7 @@ static void ui_main_menu_update_item_selection(ui_handle_t handle, ui_select_t s
     {
         ui_date_time_config_t *config = &handle->iface.ui.dt_menu;
         config->select.main = select;
-        ui_date_time_set_config(&ui_date_time, config);
+        ui_date_time_menu_set_config(&ui_date_time_menu, config);
     }
     break;
 
@@ -1255,7 +1254,7 @@ static void date_time_config_left_right_key_pressed(ui_handle_t handle)
     ui_date_time_config_t *ui_config = &handle->iface.ui.dt_menu;
 
     ui_config->select.single = UI_ITEM_DESELECT;
-    ui_date_time_set_config(&ui_date_time, ui_config);
+    ui_date_time_menu_set_config(&ui_date_time_menu, ui_config);
 
     if(handle->event.btn ==  EVT_EXT_BTN_LEFT_PRESSED)
     {
@@ -1275,7 +1274,7 @@ static void date_time_config_left_right_key_pressed(ui_handle_t handle)
     
     ui_config->set = handle->iface.cursor.item;
     ui_config->select.single = UI_ITEM_SELECT;
-    ui_date_time_set_config(&ui_date_time, ui_config);
+    ui_date_time_menu_set_config(&ui_date_time_menu, ui_config);
     
     ui_fsm_dbg("date time item update [%d]\r\n", handle->iface.cursor.item);
 }
@@ -1335,7 +1334,7 @@ static void date_time_config_up_down_key_pressed(ui_handle_t handle)
         break;
     }
 
-    ui_date_time_set_config(&ui_date_time, config);
+    ui_date_time_menu_set_config(&ui_date_time_menu, config);
 }
 
 

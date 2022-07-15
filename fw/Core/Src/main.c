@@ -11,6 +11,7 @@
 #include "event_manager_fsm.h"
 #include "target_version.h"
 #include "string.h"
+#include "ui_draw.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,7 +45,7 @@ int main(void)
 
   /*Init navigation button control */
   btn_debounce_init(&navigation_btn);
-  drawer_switch_init(&drawer_switches);
+//  drawer_switch_init(&drawer_switches);
 
   /*Init Event Manager*/
   event_manager_handle_t evm_fsm = event_manager_fsm_get();
@@ -75,12 +76,12 @@ int main(void)
   power_fsm_init(power_fsm);
 
   /*System clock Speed */
-  printf("System CLK speed [%ld]Hz\r\n", HAL_RCC_GetHCLKFreq());
+  printf("System CLK speed [%d]Hz\r\n", HAL_RCC_GetHCLKFreq());
 
   /* flash test */
-  char data_in[] = "This is a message that i want to put into flash device";
-  uint8_t data_in_len = strlen(data_in) / sizeof(uint32_t);
-  printf("data len in words = [%d]\r\n", data_in_len);
+//  char data_in[] = "This is a message that i want to put into flash device";
+//  uint8_t data_in_len = strlen(data_in) / sizeof(uint32_t);
+//  printf("data len in words = [%d]\r\n", data_in_len);
 
 //  flash_memory_write(data_in, data_in_len);
 //

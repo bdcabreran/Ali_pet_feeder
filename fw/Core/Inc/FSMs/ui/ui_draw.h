@@ -435,7 +435,7 @@ extern ui_drawers_t    ui_drawers;
 extern ui_thermostat_t ui_thermostat;
 extern ui_petcall_t    ui_petcall;
 
-extern ui_date_time_menu_t    ui_date_time;
+extern ui_date_time_menu_t    ui_date_time_menu;
 extern ui_feeder_menu_t       ui_feeder_menu;
 extern ui_thermostat_menu_t   ui_therm_menu;
 extern ui_petcall_menu_t      ui_petcall_menu;
@@ -458,9 +458,9 @@ void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show);
 void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_t *config);
 
 /* Date Time Config Menu Functions */
-void ui_date_time_init(ui_date_time_menu_t *menu);
-void ui_date_time_show(ui_date_time_menu_t *menu, bool show);
-void ui_date_time_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *config);
+void ui_date_time_menu_init(ui_date_time_menu_t *menu);
+void ui_date_time_menu_show(ui_date_time_menu_t *menu, bool show);
+void ui_date_time_menu_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *config);
 
 /* Thermostat icon Functions */
 void ui_thermostat_init(ui_thermostat_t *therm);

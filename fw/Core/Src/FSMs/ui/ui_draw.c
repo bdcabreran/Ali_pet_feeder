@@ -13,7 +13,7 @@ ui_battery_t           ui_battery;
 ui_drawers_t           ui_drawers;
 ui_thermostat_t        ui_thermostat;
 ui_petcall_t           ui_petcall;
-ui_date_time_menu_t    ui_date_time;
+ui_date_time_menu_t    ui_date_time_menu;
 ui_feeder_menu_t       ui_feeder_menu;
 ui_thermostat_menu_t   ui_therm_menu;
 ui_petcall_menu_t      ui_petcall_menu;
@@ -464,7 +464,7 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_t *confi
 
 
 //////////////////////////////////// Date Time Config Menu Related Functions ///////////////////////////////////////
-void ui_date_time_init(ui_date_time_menu_t *menu)
+void ui_date_time_menu_init(ui_date_time_menu_t *menu)
 {
     menu->win.main.x = 17;
     menu->win.main.y = 116;
@@ -481,7 +481,7 @@ void ui_date_time_init(ui_date_time_menu_t *menu)
     menu->date.month.y = menu->win.main.y + 61;
 }
 
-void ui_date_time_show(ui_date_time_menu_t *menu, bool show)
+void ui_date_time_menu_show(ui_date_time_menu_t *menu, bool show)
 {
     if(show)
     {
@@ -499,7 +499,7 @@ void ui_date_time_show(ui_date_time_menu_t *menu, bool show)
     }
 }
 
-void ui_date_time_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *config)
+void ui_date_time_menu_set_config(ui_date_time_menu_t *menu, ui_date_time_config_t *config)
 {
     char str[5];
     uint16_t single_color_sel = LCD_DEFAULT_TEXTCOLOR;
@@ -842,7 +842,7 @@ void ui_petcall_init(ui_petcall_t *menu)
     //commented line to save flash memory
     menu->icon.mic.ptr = thermostat;
     menu->icon.mic.ptr = &recording_icon;
-    menu->icon.mic.x = menu->win.main.x + 1;
+    menu->icon.mic.x = menu->win.main.x + 9;
     menu->icon.mic.y = menu->win.main.y + 9; 
 
 }
@@ -851,10 +851,8 @@ void ui_petcall_show(ui_petcall_t *menu, bool show)
 {
     if(show)
     {
-        // ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
         ui_window_t text = {.x = menu->win.main.x + 15 , .y = menu->win.main.y + 20};
-        ui_display_string(&text, "MIC", &Font16, LCD_DEFAULT_TEXTCOLOR);
-        // ui_draw_icon(&menu->icon.mic);
+        ui_draw_icon(&menu->icon.mic);
     }
     else
     {
