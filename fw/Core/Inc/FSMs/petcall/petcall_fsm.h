@@ -12,8 +12,8 @@
 #ifndef PETCALL_H
 #define PETCALL_H
 
-#include "event_manager_fsm.h"
-
+#include <stdint.h>
+#include "event_queue.h"
 
 typedef enum
 {
@@ -85,7 +85,6 @@ void petcall_fsm_init(petcall_handle_t handle);
 void petcall_fsm_run(petcall_handle_t handle);
 void petcall_fsm_write_event(petcall_handle_t handle, event_t *event);
 void petcall_fsm_time_update(petcall_handle_t handle);
-
 
 
 #endif

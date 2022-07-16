@@ -222,7 +222,7 @@ typedef struct
         ui_select_t single;
     }select;
 
-}ui_feeder_config_t;
+}ui_feeder_config_info_t;
 
 //------------- UI Date Time Main ----------------//
 
@@ -325,7 +325,7 @@ typedef struct
     ui_thermostat_config_list_t set;
     struct
     {
-        uint8_t val;
+        int val;
         temperature_unit_t unit;
         temperature_ctrl_st_t status;
     }temp;
@@ -455,7 +455,7 @@ void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawers_config_t *config);
 /* Feeder Config Menu functions */
 void ui_feeder_menu_init(ui_feeder_menu_t *menu);
 void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show);
-void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_t *config);
+void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_info_t *config);
 
 /* Date Time Config Menu Functions */
 void ui_date_time_menu_init(ui_date_time_menu_t *menu);

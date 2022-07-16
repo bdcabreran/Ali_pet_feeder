@@ -45,7 +45,9 @@ int main(void)
 
   /*Init navigation button control */
   btn_debounce_init(&navigation_btn);
-//  drawer_switch_init(&drawer_switches);
+
+  /*Init drawer switches control */
+  drawer_switch_init(&drawer_switches);
 
   /*Init Event Manager*/
   event_manager_handle_t evm_fsm = event_manager_fsm_get();
@@ -96,7 +98,7 @@ int main(void)
   while (1)
   {
     /* run FSMs : */
-//    ui_fsm_run(ui_fsm);
+    ui_fsm_run(ui_fsm);
     temp_ctrl_fsm_run(temp_fsm);
     event_manager_fsm_run(evm_fsm);
     feeder_fsm_run(feeder_fsm);                                          

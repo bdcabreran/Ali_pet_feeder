@@ -37,13 +37,17 @@ typedef enum
     TEMP_CTRL_DISABLE,
     TEMP_CTRL_LAST
 }temperature_ctrl_st_t;
+#define IS_VALID_TEMP_CTRL_ST(ctrl_st) (ctrl_st > TEMP_CTRL_INVALID && ctrl_st < TEMP_CTRL_LAST)
 
 typedef enum
 {
+    TEMP_UNITS_INVALID,
     TEMP_UNITS_CELSIUS,
     TEMP_UNITS_FAHRENHEIT,
-    TEMP_UNITSn,
+    TEMP_UNITS_LAST,
 }temperature_unit_t;
+#define IS_VALID_TEMP_UNIT_ST(unit) (unit > TEMP_UNITS_INVALID && unit < TEMP_UNITS_LAST)
+
 
 /**
  * @brief Internal Events 
@@ -64,27 +68,27 @@ typedef struct
 {
     struct
     {
-        uint8_t temp;
+        int temp;
         temperature_ctrl_st_t status;
         temperature_unit_t unit;
     }control;
 
     struct
     {
-        uint8_t temp;
+        int temp;
     }sensed;
-}thermostat_info_t;
+}thermostat_config_info_t;
 
 typedef struct
 {
-    thermostat_info_t config;
+    thermostat_config_info_t config;
 }temp_ctrl_ev_ext_data_t;
 
 typedef struct temp_ctrl_fsm_t* temp_ctrl_handle_t;
 
 
 temp_ctrl_handle_t temp_ctrl_fsm_get(void);
-thermostat_info_t *temp_ctrl_get_info(void);
+thermostat_config_info_t *temp_ctrl_fsm_get_info(void);
 void temp_ctrl_fsm_init(temp_ctrl_handle_t handle);
 void temp_ctrl_fsm_run(temp_ctrl_handle_t handle);
 void temp_ctrl_fsm_time_update(temp_ctrl_handle_t handle);

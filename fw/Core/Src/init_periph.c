@@ -297,7 +297,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : POWER_CONTROL_Pin */
   GPIO_InitStruct.Pin = POWER_CONTROL_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(POWER_CONTROL_GPIO_Port, &GPIO_InitStruct);
 
@@ -441,4 +441,7 @@ void init_peripherals(void)
 
   /* Initialize Battery */
   battery_init();
+
+  /*Init Temperature Sensor */
+  Ds18b20_Init();
 }

@@ -76,7 +76,7 @@ typedef struct
         ui_battery_config_t          battery;
         ui_petcall_config_t          petcall;
         ui_thermostat_config_t       therm;
-        ui_feeder_config_t           feeder_menu[DRAWERn];
+        ui_feeder_config_info_t           feeder_menu[DRAWERn];
         ui_date_time_config_t        dt_menu;
         ui_petcall_menu_config_t     petcall_menu;
         ui_thermostat_menu_config_t  therm_menu;
@@ -478,7 +478,7 @@ static void entry_action_feeder_config(ui_handle_t handle)
     ui_date_time_menu_show(&ui_date_time_menu, false);
     ui_feeder_menu_show(&ui_feeder_menu, true);
 
-    ui_feeder_config_t *config = &handle->iface.ui.feeder_menu[handle->iface.ui.drawers.drawer.no];
+    ui_feeder_config_info_t *config = &handle->iface.ui.feeder_menu[handle->iface.ui.drawers.drawer.no];
 
     /*load previous configuration */
     for (int i = FEEDER_CNF_OPEN_TIME_HOUR; i < FEEDER_CNFn; i++)
@@ -496,7 +496,7 @@ static void entry_action_feeder_config(ui_handle_t handle)
     config->meal = FEEDER_MEAL_BREAKFAST;
     config->set = handle->iface.cursor.item;
     config->select.single = UI_ITEM_SELECT;
-    config->date.daily_st = FEEDER_DAILY_MEAL_DISABLE;
+    config->date.daily_st = FEEDER_DAILY_MEAL_ST_DISABLE;
 
     ui_feeder_menu_set_config(&ui_feeder_menu, config);
 
@@ -952,8 +952,8 @@ static void ui_update_date_time(ui_handle_t handle)
 
 static void ui_update_thermostat(ui_handle_t handle)
 {
-    //thermostat_info_t *info = temp_ctrl_get_info();
-    static thermostat_info_t info = {.sensed.temp = 25, .control.unit = TEMP_UNITS_CELSIUS};
+    //thermostat_config_info_t *info = temp_ctrl_fsm_get_info();
+    static thermostat_config_info_t info = {.sensed.temp = 25, .control.unit = TEMP_UNITS_CELSIUS};
     ui_thermostat_config_t *ui_config = &handle->iface.ui.therm;
     ui_config->set = THERM_ICON_SET_SENSED_TEMP;
     ui_config->temp.val =  (info.sensed.temp++)%99;
@@ -1055,7 +1055,7 @@ static void feeder_config_right_left_key_pressed(ui_handle_t handle)
 {
     drawer_no_t drawer_no = handle->iface.ui.drawers.drawer.no;
 
-    ui_feeder_config_t *config = &handle->iface.ui.feeder_menu[drawer_no];
+    ui_feeder_config_info_t *config = &handle->iface.ui.feeder_menu[drawer_no];
     config->select.single = UI_ITEM_DESELECT;
     ui_feeder_menu_set_config(&ui_feeder_menu, config);
 
@@ -1102,7 +1102,7 @@ static void feeder_config_right_left_key_pressed(ui_handle_t handle)
 static void feeder_config_up_down_pressed(ui_handle_t handle)
 {
     uint8_t drawer_no = handle->iface.ui.drawers.drawer.no;
-    ui_feeder_config_t *config = &handle->iface.ui.feeder_menu[drawer_no];
+    ui_feeder_config_info_t *config = &handle->iface.ui.feeder_menu[drawer_no];
     bool up_pressed = false;
 
     if (handle->event.btn == EVT_EXT_BTN_UP_PRESSED)
@@ -1416,6 +1416,22 @@ static void therm_menu_enter_key_pressed(ui_handle_t handle)
     ui_thermostat_menu_show(&ui_therm_menu, false);
     ui_notification_msg_show(&ui_notification, true);
     ui_notification_msg_set(&ui_notification, "Saving Therm Config.");
+
+    /* Send Configuration to Temperature Control  FSM */
+    ui_thermostat_menu_config_t *config = &handle->iface.ui.therm_menu;
+
+    event_t event;
+    event.info.name = EVT_EXT_SET_TEMP_CONFIG;
+    event.info.fsm.src = UI_FSM;
+    event.info.fsm.dst = TEMP_CTRL_FSM;
+    event.info.data_len = sizeof(temp_ctrl_ev_ext_data_t);
+
+    temp_ctrl_ev_ext_data_t *data = (temp_ctrl_ev_ext_data_t *)&event.data;
+    data->config.control.status = config->temp.status;
+    data->config.control.temp = config->temp.val;
+    data->config.control.unit = config->temp.unit;
+    
+    event_manager_write(event_manager_fsm_get(), &event);
 }
 
 
@@ -1607,4 +1623,10 @@ static void date_config_increase_month(uint8_t *moth)
         (*moth)--;
     else
         (*moth) = 12;
+}
+
+
+static void save_user_config_in_flash(void)
+{
+
 }
