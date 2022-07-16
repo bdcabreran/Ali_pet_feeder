@@ -44,6 +44,7 @@ static void ui_draw_window(ui_window_t *win, uint16_t color, bool show)
         BSP_LCD_SetTextColor(color);
         BSP_LCD_DrawRect(win->x, win->y, win->w, win->h);
         BSP_LCD_SetTextColor(LCD_DEFAULT_TEXTCOLOR);
+
     }
     else
     {

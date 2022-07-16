@@ -511,7 +511,36 @@ void BSP_LCD_DrawRect(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Hei
   BSP_LCD_DrawVLine(Xpos, Ypos, Height);
   BSP_LCD_DrawVLine((Xpos + Width - 1), Ypos, Height);
 }
-                            
+
+void BSP_LCD_DrawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t r)
+{
+
+	// smarter version
+	BSP_LCD_DrawHLine(x + r, y, w - 2 * r);			// Top
+	BSP_LCD_DrawHLine(x + r, y + h - 1, w - 2 * r);	// Bottom
+	BSP_LCD_DrawVLine(x, y + r, h - 2 * r);			// Left
+	BSP_LCD_DrawVLine(x + w - 1, y + r, h - 2 * r);	// Right
+
+	// draw four corners
+	BSP_LCD_DrawCircle(x + r, y + r, r);
+	BSP_LCD_DrawCircle(x + w - r - 1, y + r, r);
+	BSP_LCD_DrawCircle(x + w - r - 1, y + h - r - 1, r);
+	BSP_LCD_DrawCircle(x + r, y + h - r - 1, r);
+}
+
+// Fill a rounded rectangle
+//=============================================================================================
+void BSP_LCD_FillRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t r)
+{
+	// smarter version
+	BSP_LCD_FillRect(x + r, y, w - 2 * r, h);
+
+	// draw four corners
+	BSP_LCD_FillCircle(x + w - r - 1, y + r, r);
+	BSP_LCD_FillCircle(x + r, y + r, r);
+}
+
+
 /**
   * @brief  Draws a circle.
   * @param  Xpos: X position

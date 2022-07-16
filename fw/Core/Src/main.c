@@ -52,8 +52,8 @@ int main(void)
   event_manager_fsm_init(evm_fsm);
 
   /*Init UI */
-  ui_handle_t ui_fsm = ui_fsm_get();
-  ui_fsm_init(ui_fsm);
+//  ui_handle_t ui_fsm = ui_fsm_get();
+//  ui_fsm_init(ui_fsm);
 
   /*Init Temperature Control */
   temp_ctrl_handle_t temp_fsm = temp_ctrl_fsm_get();
@@ -77,6 +77,9 @@ int main(void)
 
   /*System clock Speed */
   printf("System CLK speed [%d]Hz\r\n", HAL_RCC_GetHCLKFreq());
+  BSP_LCD_DrawRoundRect(10,10,80,80,10);
+  BSP_LCD_FillRoundRect(10,10,80,80,10);
+
 
   /* flash test */
 //  char data_in[] = "This is a message that i want to put into flash device";
@@ -88,13 +91,6 @@ int main(void)
 //  char data_out[100];
 //  flash_memory_read(data_out, data_in_len);
 //  uint8_t data_out_len = strlen(data_out) / sizeof(uint32_t);
-  
-  __HAL_RCC_CRC_CLK_ENABLE();
-
-  GUI_Init();
-
-  GUI_Initialized = 1;
-  MainTask();
 
   /* Infinite loop */
   while (1)

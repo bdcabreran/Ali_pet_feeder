@@ -172,6 +172,9 @@ void     BSP_LCD_DrawHLine(uint16_t Xpos, uint16_t Ypos, uint16_t Length);
 void     BSP_LCD_DrawVLine(uint16_t Xpos, uint16_t Ypos, uint16_t Length);
 void     BSP_LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
 void     BSP_LCD_DrawRect(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height);
+void     BSP_LCD_DrawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t r);
+void     BSP_LCD_FillRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t r);
+
 void     BSP_LCD_DrawCircle(uint16_t Xpos, uint16_t Ypos, uint16_t Radius);
 void     BSP_LCD_DrawPolygon(pPoint Points, uint16_t PointCount);
 void     BSP_LCD_DrawEllipse(uint16_t Xpos, uint16_t Ypos, uint16_t XRadius, uint16_t YRadius);
