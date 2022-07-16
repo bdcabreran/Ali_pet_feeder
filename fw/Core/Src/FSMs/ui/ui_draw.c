@@ -363,12 +363,12 @@ void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show)
             // Open time
             ui_display_string(&menu->meal_td[i].time.open.hour, "--:", &Font16, LCD_DEFAULT_TEXTCOLOR);
             ui_display_string(&menu->meal_td[i].time.open.min , "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
-            ui_display_string(&menu->meal_td[i].time.open.am_fm, (char*)am_fm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].time.open.am_fm, (char*)am_pm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
 
             // Close time 
             ui_display_string(&menu->meal_td[i].time.close.hour, "--:", &Font16, LCD_DEFAULT_TEXTCOLOR);
             ui_display_string(&menu->meal_td[i].time.close.min , "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
-            ui_display_string(&menu->meal_td[i].time.close.am_fm, (char*)am_fm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].time.close.am_fm, (char*)am_pm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
 
             // Day Month
             ui_display_string(&menu->meal_td[i].date.day, "--/", &Font16, LCD_DEFAULT_TEXTCOLOR);
@@ -396,44 +396,44 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_info_t *
     switch (config->set)
     {
         case FEEDER_CNF_OPEN_TIME_HOUR: {
-            sprintf(str, "%.2d", config->time.open.hour);
+            sprintf(str, "%.2d", config->feeder.config[config->meal].time.open.hour);
             ui_display_string(&menu->meal_td[config->meal].time.open.hour, str, font, color);
         } break;
 
         case FEEDER_CNF_OPEN_TIME_MIN: {
-            sprintf(str, "%.2d", config->time.open.minute);
+            sprintf(str, "%.2d", config->feeder.config[config->meal].time.open.minute);
             ui_display_string(&menu->meal_td[config->meal].time.open.min, str, font, color);
         } break;
 
         case FEEDER_CNF_OPEN_TIME_AM_FM: {
             ui_display_string(&menu->meal_td[config->meal].time.open.am_fm,
-                              (char*)am_fm_str[config->time.open.am_fm], font, color);
+                              (char*)am_pm_str[ config->feeder.config[config->meal].time.open.am_pm], font, color);
         } break;
 
         case FEEDER_CNF_CLOSE_TIME_HOUR: {
-            sprintf(str, "%.2d", config->time.close.hour);
+            sprintf(str, "%.2d", config->feeder.config[config->meal].time.close.hour);
             ui_display_string(&menu->meal_td[config->meal].time.close.hour, str, font, color);
         } break;
 
         case FEEDER_CNF_CLOSE_TIME_MIN: { 
-            sprintf(str, "%.2d", config->time.close.minute);
+            sprintf(str, "%.2d", config->feeder.config[config->meal].time.close.minute);
             ui_display_string(&menu->meal_td[config->meal].time.close.min, str, font, color);
         } break;
 
         case FEEDER_CNF_CLOSE_TIME_AM_FM:
         {
             ui_display_string(&menu->meal_td[config->meal].time.close.am_fm,
-                              (char*)am_fm_str[config->time.close.am_fm], font, color);
+                              (char*)am_pm_str[config->feeder.config[config->meal].time.open.am_pm], font, color);
         } break;
 
         case FEEDER_CNF_DATE_DAY: {
-            sprintf(str, "%.2d", config->date.day);
+            sprintf(str, "%.2d", config->feeder.config[config->meal].date.day);
             ui_display_string(&menu->meal_td[config->meal].date.day, str, font, color);
         }
         break;
 
         case FEEDER_CNF_DATE_MONTH: {
-            sprintf(str, "%.2d", config->date.month);
+            sprintf(str, "%.2d", config->feeder.config[config->meal].date.month);
             ui_display_string(&menu->meal_td[config->meal].date.month, str, font, color);
         }
         break;
@@ -444,7 +444,7 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_info_t *
             ui_window_t win = {.x = menu->win.daily.x + 1, .y = menu->win.daily.y + 1, \
                                 .h = menu->win.daily.h - 2, .w = menu->win.daily.w - 2};
 
-            if(config->date.daily_st == FEEDER_DAILY_MEAL_ST_ENABLE)
+            if(config->feeder.daily_st == FEEDER_DAILY_MEAL_ST_ENABLE)
             {
                 ui_fill_window(&win, LCD_COLOR_GREEN);
             }

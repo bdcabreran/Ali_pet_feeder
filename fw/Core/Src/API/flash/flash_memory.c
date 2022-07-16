@@ -16,8 +16,8 @@
 #define FLASH_SECTOR_USER_DATA 	(127) 
 #define FLASH_SECTOR_SIZE       (0x400)
 
-/*addr = 0x08007C00*/
-#define FLASH_ADDRESS_USER_DATA (FLASH_BASE + FLASH_SECTOR_SIZE * FLASH_SECTOR_USER_DATA)
+/*addr = 0x801FC00*/
+#define FLASH_ADDRESS_USER_DATA ((uint32_t)FLASH_BASE + (FLASH_PAGE_SIZE * FLASH_SECTOR_USER_DATA))
 
 uint32_t flash_memory_write(uint32_t *data, uint16_t numberofwords)
 {
@@ -42,21 +42,40 @@ uint32_t GetPage(uint32_t page_number)
   return -1;
 }
 
+static uint32_t flash_erase_page(uint32_t page_address)
+{
+	FLASH_EraseInitTypeDef flash_erase;
+    uint32_t page_status;
+    flash_erase.TypeErase = FLASH_TYPEERASE_PAGES;
+    flash_erase.PageAddress = FLASH_ADDRESS_USER_DATA;
+    flash_erase.NbPages = 1;
+
+    // __disable_irq();  
+	HAL_FLASH_Unlock();
+	if (HAL_FLASHEx_Erase(&flash_erase, &page_status) != HAL_OK)
+		Error_Handler();
+	HAL_FLASH_Lock();
+	// __enable_irq();
+}
+
 uint32_t flash_write_data(uint32_t StartSectorAddress, uint32_t *Data, uint16_t numberofwords)
 {
-
 	int word_index = 0;
-
+	uint32_t start_addr = StartSectorAddress;
+	flash_erase_page(StartSectorAddress);
+	
 	HAL_FLASH_Unlock();
-
-	FLASH_PageErase(StartSectorAddress);
 
 	while (word_index < numberofwords)
 	{
-		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, StartSectorAddress, Data[word_index]) == HAL_OK)
+		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, start_addr, (uint32_t)Data[word_index]) == HAL_OK)
 		{
-			StartSectorAddress += 4; // use StartPageAddress += 2 for half word and 8 for double word
+			start_addr += 4; // use StartPageAddress += 2 for half word and 8 for double word
 			word_index++;
+		}
+		else
+		{
+			Error_Handler();
 		}
 	}
 

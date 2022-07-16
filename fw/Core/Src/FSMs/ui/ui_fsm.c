@@ -76,7 +76,7 @@ typedef struct
         ui_battery_config_t          battery;
         ui_petcall_config_t          petcall;
         ui_thermostat_config_t       therm;
-        ui_feeder_config_info_t           feeder_menu[DRAWERn];
+        ui_feeder_config_info_t      feeder_menu;
         ui_date_time_config_t        dt_menu;
         ui_petcall_menu_config_t     petcall_menu;
         ui_thermostat_menu_config_t  therm_menu;
@@ -478,26 +478,31 @@ static void entry_action_feeder_config(ui_handle_t handle)
     ui_date_time_menu_show(&ui_date_time_menu, false);
     ui_feeder_menu_show(&ui_feeder_menu, true);
 
-    ui_feeder_config_info_t *config = &handle->iface.ui.feeder_menu[handle->iface.ui.drawers.drawer.no];
+    /*get drawer information from feeder FSM */
+    ui_feeder_config_info_t *config = &handle->iface.ui.feeder_menu;
+    feeder_config_info_t  *info = feeder_fsm_get_info();
+    feeder_drawer_data_t *drawer_data = &info->drawer_no[handle->iface.ui.drawers.drawer.no];
 
-    /*load previous configuration */
-    for (int i = FEEDER_CNF_OPEN_TIME_HOUR; i < FEEDER_CNFn; i++)
+    /*load configuration for drawer of interest*/
+    memcpy((uint8_t*)&config->feeder, (uint8_t *)drawer_data, sizeof(feeder_drawer_data_t));
+ 
+    for(int config_idx = FEEDER_CNF_OPEN_TIME_HOUR; config_idx < FEEDER_CNFn; config_idx++)
     {
-        for (size_t j = FEEDER_MEAL_BREAKFAST; j < FEEDER_MEALn; j++)
+        config->set = config_idx;
+        config->select.single = UI_ITEM_DESELECT;
+
+        for (int meal_idx = FEEDER_MEAL_BREAKFAST; meal_idx < FEEDER_MEALn; meal_idx++)
         {
-            config->set = i;
-            config->meal = j;
-            config->select.single = UI_ITEM_DESELECT;
+            config->meal = meal_idx;
             ui_feeder_menu_set_config(&ui_feeder_menu, config);        
         }
-    }
-    
+    }  
+
+    /*Select first meal in selected drawer */
     handle->iface.cursor.item = FEEDER_CNF_OPEN_TIME_HOUR;
     config->meal = FEEDER_MEAL_BREAKFAST;
     config->set = handle->iface.cursor.item;
     config->select.single = UI_ITEM_SELECT;
-    config->date.daily_st = FEEDER_DAILY_MEAL_ST_DISABLE;
-
     ui_feeder_menu_set_config(&ui_feeder_menu, config);
 
     /*wait up to 5s for user input*/
@@ -573,21 +578,23 @@ static void enter_seq_therm_config(ui_handle_t handle)
 static void entry_action_therm_config(ui_handle_t handle)
 {
     ui_thermostat_menu_config_t *ui_config = &handle->iface.ui.therm_menu;
+    thermostat_config_info_t *info = temp_ctrl_fsm_get_info();
 
     /*Select First Item in Date Time Menu */
     ui_date_time_menu_show(&ui_date_time_menu, false);
     ui_thermostat_menu_show(&ui_therm_menu, true);
 
     /*Load initial configuration*/
-    ui_config->temp.unit = TEMP_UNITS_CELSIUS;      /*!< TODO : read from flash */
-    ui_config->temp.status = TEMP_CTRL_ENABLE;      /*!< TODO : read from flash */
+    ui_config->temp.unit = info->control.unit;     
+    ui_config->temp.status = info->control.status;     
+    ui_config->temp.val = info->control.temp;
     ui_config->select.single = UI_ITEM_DESELECT;
-    ui_config->set = THERM_SET_TEMPERATURE;
-    ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
-    ui_config->set = THERM_SET_UNIT;
-    ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
-    ui_config->set = THERM_ENABLE_DISABLE;
-    ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
+
+    for(uint8_t config_idx = THERM_SET_TEMPERATURE; config_idx <  THERM_LAST; config_idx++)
+    {
+        ui_config->set = config_idx;
+        ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
+    }
 
     /*Select first element in list */
     handle->iface.cursor.item = THERM_SET_TEMPERATURE;
@@ -1049,13 +1056,25 @@ static void feeder_config_enter_key_pressed(ui_handle_t handle)
     ui_feeder_menu_show(&ui_feeder_menu, false);
     ui_notification_msg_show(&ui_notification, true);
     ui_notification_msg_set(&ui_notification, "Saving Feeder Config.");
+
+    /* Save information to Feeder FSM */
+    event_t event;
+    event.info.name = EVT_EXT_feeder_CONFIG_FEEDING_TIME;
+    event.info.fsm.src = UI_FSM;
+    event.info.fsm.dst = FEEDER_FSM;
+    event.info.data_len = sizeof(feeder_ev_ext_data_t);
+    feeder_ev_ext_data_t *data = (feeder_ev_ext_data_t *)&event.data;
+    data->config_feeding_time.drawer_no = handle->iface.ui.drawers.drawer.no;
+    data->config_feeding_time.config = &handle->iface.ui.feeder_menu.feeder;
+
+    event_manager_write(event_manager_fsm_get(), &event);
 }
+
 
 static void feeder_config_right_left_key_pressed(ui_handle_t handle)
 {
     drawer_no_t drawer_no = handle->iface.ui.drawers.drawer.no;
-
-    ui_feeder_config_info_t *config = &handle->iface.ui.feeder_menu[drawer_no];
+    ui_feeder_config_info_t *config = &handle->iface.ui.feeder_menu;
     config->select.single = UI_ITEM_DESELECT;
     ui_feeder_menu_set_config(&ui_feeder_menu, config);
 
@@ -1102,7 +1121,7 @@ static void feeder_config_right_left_key_pressed(ui_handle_t handle)
 static void feeder_config_up_down_pressed(ui_handle_t handle)
 {
     uint8_t drawer_no = handle->iface.ui.drawers.drawer.no;
-    ui_feeder_config_info_t *config = &handle->iface.ui.feeder_menu[drawer_no];
+    ui_feeder_config_info_t *config = &handle->iface.ui.feeder_menu;
     bool up_pressed = false;
 
     if (handle->event.btn == EVT_EXT_BTN_UP_PRESSED)
@@ -1116,72 +1135,82 @@ static void feeder_config_up_down_pressed(ui_handle_t handle)
     case FEEDER_CNF_OPEN_TIME_HOUR:
     {
         if (up_pressed)
-            time_config_increase_hour(&config->time.open.hour);
+            time_config_increase_hour(&config->feeder.config[config->meal].time.open.hour);
         else
-            time_config_decrease_hour(&config->time.open.hour);
+            time_config_decrease_hour(&config->feeder.config[config->meal].time.open.hour);
     }
     break;
 
     case FEEDER_CNF_OPEN_TIME_MIN:
     {
         if (up_pressed)
-            time_config_increase_min(&config->time.open.minute);
+            time_config_increase_min(&config->feeder.config[config->meal].time.open.minute);
         else
-            time_config_decrease_min(&config->time.open.minute);
+            time_config_decrease_min(&config->feeder.config[config->meal].time.open.minute);
     }
     break;
 
     case FEEDER_CNF_OPEN_TIME_AM_FM:
     {
-        config->time.open.am_fm = !config->time.open.am_fm;
+        if(config->feeder.config[config->meal].time.open.am_pm == TIME_AM)
+            config->feeder.config[config->meal].time.open.am_pm = TIME_PM;
+        else
+            config->feeder.config[config->meal].time.open.am_pm = TIME_AM;
     }
     break;
 
     case FEEDER_CNF_CLOSE_TIME_HOUR:
     {
         if (up_pressed)
-            time_config_increase_hour(&config->time.close.hour);
+            time_config_increase_hour(&config->feeder.config[config->meal].time.close.hour);
         else
-            time_config_decrease_hour(&config->time.close.hour);
+            time_config_decrease_hour(&config->feeder.config[config->meal].time.close.hour);
     }
     break;
 
     case FEEDER_CNF_CLOSE_TIME_MIN:
     {
         if (up_pressed)
-            time_config_increase_min(&config->time.close.minute);
+            time_config_increase_min(&config->feeder.config[config->meal].time.close.minute);
         else
-            time_config_decrease_min(&config->time.close.minute);
+            time_config_decrease_min(&config->feeder.config[config->meal].time.close.minute);
     }
     break;
 
     case FEEDER_CNF_CLOSE_TIME_AM_FM:
     {
-        config->time.close.am_fm = !config->time.close.am_fm;
+        if(config->feeder.config[config->meal].time.close.am_pm == TIME_AM)
+            config->feeder.config[config->meal].time.close.am_pm = TIME_PM;
+        else
+            config->feeder.config[config->meal].time.close.am_pm = TIME_AM;
     }
     break;
 
     case FEEDER_CNF_DATE_DAY:
     {
         if (up_pressed)
-            date_config_increase_day(&config->date.day);
+            date_config_increase_day(&config->feeder.config[config->meal].date.day);
         else
-            date_config_decrease_day(&config->date.day);
+            date_config_increase_day(&config->feeder.config[config->meal].date.day);
     }
     break;
 
     case FEEDER_CNF_DATE_MONTH:
     {
         if (up_pressed)
-            date_config_increase_month(&config->date.month);
+            date_config_increase_month(&config->feeder.config[config->meal].date.month);
         else
-            date_config_decrease_month(&config->date.month);
+            date_config_decrease_month(&config->feeder.config[config->meal].date.month);
     }
     break;
 
     case FEEDER_CNF_DATE_DAILY:
     {
-        config->date.daily_st = !config->date.daily_st;
+        if(config->feeder.daily_st == FEEDER_DAILY_MEAL_ST_DISABLE)
+            config->feeder.daily_st = FEEDER_DAILY_MEAL_ST_ENABLE;
+        else
+            config->feeder.daily_st = FEEDER_DAILY_MEAL_ST_DISABLE;
+
     }
     break;
 
@@ -1371,7 +1400,6 @@ static void therm_menu_right_left_key_pressed(ui_handle_t handle)
                 config->temp.status = TEMP_CTRL_ENABLE;
             else
                 config->temp.status = TEMP_CTRL_DISABLE;
-            
         } break;
 
     default: break;
@@ -1564,7 +1592,7 @@ static void temperature_decrease(uint8_t *temp)
 
 static void time_config_increase_hour(uint8_t *hour)
 {
-    if ((*hour) < 99)
+    if ((*hour) < 12)
         (*hour)++;
     else
         (*hour) = 0;

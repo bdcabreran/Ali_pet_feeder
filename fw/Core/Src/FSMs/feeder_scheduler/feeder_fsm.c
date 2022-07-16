@@ -23,7 +23,7 @@
 	} while (0)
 #endif
 
-const char *am_fm_str[3] = {"NA","AM", "PM"}; 
+const char *am_pm_str[3] = {"NA","AM", "PM"}; 
 
 
 
@@ -167,8 +167,9 @@ void feeder_fsm_write_event(feeder_handle_t handle, event_t *event)
     {
         feeder_ev_ext_data_t *data = (feeder_ev_ext_data_t *)&event->data.buff;
         handle->event.external.name = event->info.name;
-        handle->event.external.data.config_feeding_time.drawer_no = data->config_feeding_time.drawer_no;
         handle->event.external.data.config_feeding_time.config = data->config_feeding_time.config;
+        handle->event.external.data.config_feeding_time.drawer_no = data->config_feeding_time.drawer_no;
+
     }
 }
 
@@ -179,20 +180,27 @@ static void enter_seq_feeding_time_config(feeder_handle_t handle)
     fsm_set_next_state(handle, ST_feeder_FEEDING_TIME_CONFIG);
     entry_action_feeding_time_config(handle);
 }
-static void feeding_time_config_on_react(feeder_handle_t handle)
-{
-    enter_seq_watcher(handle);
-}
 static void entry_action_feeding_time_config(feeder_handle_t handle)
 {
     drawer_no_t drawer_no = handle->event.external.data.config_feeding_time.drawer_no;
-    feeder_drawer_data_t *drawer_cfg = &handle->iface.feeder.drawer.no_1;
+    feeder_drawer_data_t *config_ext = handle->event.external.data.config_feeding_time.config; // extern config
+    feeder_drawer_data_t *config_int = &handle->iface.feeder.drawer_no[drawer_no];             // current config
 
-    for (uint8_t drawer_cnt = 0; drawer_cnt < drawer_no; drawer_cnt++)
-        drawer_cfg++;
-
-    /*store new information */
-    memcpy((uint8_t *)drawer_cfg, (uint8_t *)handle->event.external.data.config_feeding_time.config, sizeof(feeder_drawer_data_t));
+    /*Compare if there was any changes*/
+    if (memcmp((uint8_t *)config_int, (uint8_t *)config_ext, sizeof(feeder_drawer_data_t)) == 0)
+    {
+        feeder_dbg("no changes detected in feeder configuration\r\n");
+    }
+    else
+    {
+        feeder_dbg("saving new configuration\r\n");
+        memcpy((uint8_t *)config_int, (uint8_t *)config_ext, sizeof(feeder_drawer_data_t));
+        user_config_set();
+    }
+}
+static void feeding_time_config_on_react(feeder_handle_t handle)
+{
+    enter_seq_watcher(handle);
 }
 
 ////////////////////////////////// State Function Definition ////////////////////////////////////
@@ -218,7 +226,7 @@ static void entry_action_date_time_config(feeder_handle_t handle)
     date_time.month = handle->event.external.data.config_rtc.date.month;
     date_time.hours = handle->event.external.data.config_rtc.time.hour;
     date_time.minutes = handle->event.external.data.config_rtc.time.minute;
-    date_time.am_fm = handle->event.external.data.config_rtc.time.am_fm;
+    date_time.am_pm = handle->event.external.data.config_rtc.time.am_pm;
     date_time.hour_24h_format = false;
 
     rtc_set_time(date_time); 
@@ -248,7 +256,7 @@ static bool date_match(date_info_t *date1, date_info_t *date2)
 
 static bool time_match(time_info_t *time1, time_info_t *time2)
 {
-    if (time1->hour == time2->hour && time1->minute == time2->minute && time1->am_fm == time2->am_fm)
+    if (time1->hour == time2->hour && time1->minute == time2->minute && time1->am_pm == time2->am_pm)
         return true;
     else
         return false;
@@ -256,18 +264,19 @@ static bool time_match(time_info_t *time1, time_info_t *time2)
 
 static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
 {
-    /*Get Date Time     from RTC */
+    /*Get Date Time from RTC */
+    date_time_t date_time;
+    rtc_get_time(&date_time);
 
-     
-    date_info_t rtc_date = rtc_get_date_info(handle);
-    time_info_t rtc_time = rtc_get_time_info(handle);
+    date_info_t rtc_date = {.day = date_time.day, .month = date_time.month};
+    time_info_t rtc_time = {.minute = date_time.minutes, .hour = date_time.hours, .am_pm = date_time.am_pm};
 
-    feeder_drawer_data_t *drawer = &handle->iface.feeder.drawer.no_1;
     feeder_meal_data_t *meal_data;
 
     for (int drawer_idx = 0; drawer_idx < DRAWERn; drawer_idx++)
     {
         drawer_ctrl_info_t *drawer_info = drawer_ctrl_fsm_get_info(drawer_idx);
+        feeder_drawer_data_t *feeder_drawer = &handle->iface.feeder.drawer_no[drawer_idx];
 
         if (drawer_info->request_type == DRAWER_REQUEST_TYPE_MANUAL)
         {
@@ -279,9 +288,9 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
         for (int meal_idx = 0; meal_idx < FEEDER_MEALn; meal_idx++)
         {
             /*check if date matches*/
-            meal_data = &drawer->config[meal_idx];
+            meal_data = &feeder_drawer->config[meal_idx];
 
-            if (drawer->daily_st == FEEDER_DAILY_MEAL_ST_DISABLE)
+            if (feeder_drawer->daily_st == FEEDER_DAILY_MEAL_ST_DISABLE)
             {
                 if (date_match(&meal_data->date, &rtc_date) == false)
                 {
@@ -297,7 +306,7 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
                 {
                     feeder_dbg("Open Request : Date { day : [%d], month [%d] }, Tine { hour [%d], min [%d], am_fm [%s]}\r\n",
                                meal_data->date.day, meal_data->date.month, meal_data->time.close.hour, meal_data->time.close.minute,
-                               am_fm_str[meal_data->time.close.am_fm]);
+                               am_pm_str[meal_data->time.close.am_pm]);
                     // write_request_to_drawer_to_open(open drawer );
                 }
             }
@@ -309,12 +318,11 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
                 {
                     feeder_dbg("Close Request : Date { day : [%d], month [%d] }, Tine { hour [%d], min [%d], am_fm [%s]}\r\n",
                                meal_data->date.day, meal_data->date.month, meal_data->time.close.hour, meal_data->time.close.minute,
-                               am_fm_str[meal_data->time.close.am_fm]);
+                               am_pm_str[meal_data->time.close.am_pm]);
                     // write_request_to_drawer_to_open(close drawer );
                 }
             }
         }
-        drawer++;
     }
 }
 
@@ -340,10 +348,10 @@ static void watcher_on_react(feeder_handle_t handle)
 /////////////////////////////////// Miscellaneous Function Definition   ///////////////////////////////////////////
 static bool is_valid_feeder_config(feeder_config_info_t *info)
 {
-    feeder_drawer_data_t *drawer_data = &info->drawer.no_1;
 
-    for (size_t drawer_no = 0; drawer_no < DRAWERn; drawer_no++)
+    for (size_t drawer_idx = 0; drawer_idx < DRAWERn; drawer_idx++)
     {
+        feeder_drawer_data_t *drawer_data = &info->drawer_no[drawer_idx];
         if (!IS_VALID_FEEDER_DAILY_ST(drawer_data->daily_st))
             return false;
 
@@ -358,7 +366,6 @@ static bool is_valid_feeder_config(feeder_config_info_t *info)
             if (!IS_VALID_FEEDER_HOUR(drawer_data->config[meal].time.open.hour))
                 return false;
         }
-        drawer_data++;
     }
 
     return true;
@@ -382,10 +389,9 @@ static bool get_user_configuration_from_flash(feeder_handle_t handle)
         {
             feeder_dbg("Invalid feeder configuration from flash, initializing configuration by default..\r\n");
 
-            feeder_drawer_data_t *drawer_data = &handle->iface.feeder.drawer.no_1;
-
-            for (size_t drawer_no = 0; drawer_no < DRAWERn; drawer_no++)
+            for (size_t drawer_idx = 0; drawer_idx < DRAWERn; drawer_idx++)
             {
+                feeder_drawer_data_t *drawer_data = &handle->iface.feeder.drawer_no[drawer_idx];
                 drawer_data->daily_st = FEEDER_DAILY_MEAL_ST_DISABLE;
 
                 for (size_t meal = 0; meal < FEEDER_MEALn; meal++)
@@ -394,12 +400,11 @@ static bool get_user_configuration_from_flash(feeder_handle_t handle)
                     drawer_data->config[meal].date.month = 0;
                     drawer_data->config[meal].time.close.hour = 0;
                     drawer_data->config[meal].time.close.minute = 0;
-                    drawer_data->config[meal].time.close.am_fm = TIME_PM;
+                    drawer_data->config[meal].time.close.am_pm = TIME_PM;
                     drawer_data->config[meal].time.open.hour = 0;
                     drawer_data->config[meal].time.open.minute = 0;
-                    drawer_data->config[meal].time.open.am_fm = TIME_PM;
+                    drawer_data->config[meal].time.open.am_pm = TIME_PM;
                 }
-                drawer_data++;
             }
 
             user_config_set();

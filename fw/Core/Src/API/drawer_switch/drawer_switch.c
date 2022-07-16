@@ -114,19 +114,19 @@ void switch_state_update(drawer_switches_t *ds)
         if(dws_ptr->behind.pressed == false && dws_ptr->front.pressed == true)
         {
             dws_ptr->st = DRAWER_SWITCH_ST_OPEN;
-            printf("drawer [%d] OPEN\r\n", i + 1);
+            // printf("drawer [%d] OPEN\r\n", i + 1);
         }
 
         if(dws_ptr->behind.pressed == true && dws_ptr->front.pressed == false)
         {
             dws_ptr->st = DRAWER_SWITCH_ST_CLOSE;
-            printf("drawer [%d] CLOSED\r\n", i + 1);
+            // printf("drawer [%d] CLOSED\r\n", i + 1);
         }
 
         if(dws_ptr->behind.pressed == true && dws_ptr->front.pressed == true)
         {
             dws_ptr->st = DRAWER_SWITCH_ST_INVALID;
-            printf("drawer switch HIGH, movement in progress..\r\n");
+            // printf("drawer switch HIGH, movement in progress..\r\n");
         }
 
         dws_ptr++;

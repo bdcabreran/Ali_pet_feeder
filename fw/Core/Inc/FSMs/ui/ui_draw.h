@@ -190,32 +190,7 @@ typedef struct
 {
     feeder_meal_t meal;
     feeder_meal_config_t set;
-
-    struct
-    {
-        struct
-        {
-            uint8_t hour;
-            uint8_t minute;
-            time_am_fm_t am_fm;
-        } open;
-
-        struct
-        {
-            uint8_t hour;
-            uint8_t minute;
-            time_am_fm_t am_fm;
-        } close;
-
-    } time;
-
-    struct
-    {
-        uint8_t day;
-        uint8_t month;
-        feeder_daily_st_t daily_st;
-    } date;
-
+    feeder_drawer_data_t feeder;
     struct
     {
         ui_select_t main;
@@ -247,7 +222,7 @@ typedef struct
         {
             uint8_t hour;
             uint8_t min;
-            time_am_fm_t am_fm;
+            time_am_pm_t am_fm;
         } time;
 
         struct

@@ -56,7 +56,7 @@ void rtc_print_time(void)
 	printf("day\t: [%d]\r\n", date_time.day);
 	printf("hour\t: [%d]\r\n", date_time.hours);
 	printf("minute\t: [%d]\r\n", date_time.minutes);
-	printf("Time\t: [%s]\r\n", date_time.am_fm == 1 ? "am" : "fm");
+	printf("Time\t: [%s]\r\n", date_time.am_pm == 1 ? "am" : "pm");
 }
 
 #ifdef RTC_MOCK

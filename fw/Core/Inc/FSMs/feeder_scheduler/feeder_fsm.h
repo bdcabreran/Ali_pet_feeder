@@ -16,6 +16,7 @@
 #include "event_queue.h"
 
 #define FEEDER_UPDATE_TIME_MS   (60000) //1 min 
+#define DRAWER_CNT              (4)
 
 typedef enum
 {
@@ -57,7 +58,7 @@ typedef enum
     TIME_AM,
     TIME_PM,
     TIME_LAST,
-}time_am_fm_t;
+}time_am_pm_t;
 
 typedef enum
 {
@@ -73,7 +74,7 @@ typedef struct
 {
     uint8_t hour;
     uint8_t minute;
-    time_am_fm_t am_fm;
+    time_am_pm_t am_pm;
 } time_info_t;
 
 typedef struct
@@ -106,16 +107,8 @@ typedef struct
 
 typedef struct
 {
-    struct
-    {
-        feeder_drawer_data_t no_1;
-        feeder_drawer_data_t no_2;
-        feeder_drawer_data_t no_3;
-        feeder_drawer_data_t no_4;
-    }drawer;
-
+    feeder_drawer_data_t drawer_no[DRAWER_CNT];
 }feeder_config_info_t;
-
 
 typedef enum
 {
@@ -147,7 +140,7 @@ typedef struct
     feeder_ev_ext_data_t data;
 }feeder_ev_ext_t;
 
-extern const char *am_fm_str[3]; 
+extern const char *am_pm_str[3]; 
 
 typedef struct feeder_fsm_t* feeder_handle_t;
 

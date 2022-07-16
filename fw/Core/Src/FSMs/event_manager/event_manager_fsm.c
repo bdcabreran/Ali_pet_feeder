@@ -170,7 +170,6 @@ static void entry_action_notify_event(event_manager_handle_t handle)
         case FEEDER_FSM:
         {
             feeder_fsm_write_event(feeder_fsm_get(), &handle->iface.event);
-
         }break;
     
         case DRAWER_FSM:

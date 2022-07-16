@@ -16,7 +16,7 @@
 #include "rct_api.h"
 #include "rtc_1307.h"
 
-/*Choose SPI To Use, if set to 0, SPI1 will be used  */
+#define USE_DS18B20  (0)
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -442,6 +442,8 @@ void init_peripherals(void)
   /* Initialize Battery */
   battery_init();
 
+  #if USE_DS18B20
   /*Init Temperature Sensor */
   Ds18b20_Init();
+  #endif
 }

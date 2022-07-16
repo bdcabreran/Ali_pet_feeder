@@ -39,8 +39,8 @@ static void event_print_info(event_t *evt)
     evt_queue_dbg("FSM EVT : [0x%X]\r\n", evt->name);
     evt_queue_dbg("FSM Payload Len : [%d]\r\n", evt->info.data_len);
 
-    if(evt->info.data_len)
-        print_buffer('X', (uint8_t*)evt->data.buff, evt->info.data_len);
+    // if(evt->info.data_len)
+    //     print_buffer('X', (uint8_t*)evt->data.buff, evt->info.data_len);
 }
 
 void event_queue_init(event_queue_t *queue, uint8_t *buff, uint8_t buff_len)

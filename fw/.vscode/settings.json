@@ -27,7 +27,9 @@
         "drawer_switch.h": "c",
         "target_version.h": "c",
         "flash_memory.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "new": "c",
+        "cmath": "c"
     },
     "cSpell.words": [
         "inact",
