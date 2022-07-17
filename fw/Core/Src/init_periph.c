@@ -16,7 +16,7 @@
 #include "rct_api.h"
 #include "rtc_1307.h"
 
-#define USE_DS18B20  (0)
+#define USE_DS18B20  (1)
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -214,17 +214,9 @@ static void MX_TIM1_Init(void)
 
 static void MX_TIM3_Init(void)
 {
-
-  /* USER CODE BEGIN TIM3_Init 0 */
-
-  /* USER CODE END TIM3_Init 0 */
-
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
-  /* USER CODE BEGIN TIM3_Init 1 */
-
-  /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 71;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -246,9 +238,6 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN TIM3_Init 2 */
-
-  /* USER CODE END TIM3_Init 2 */
 
 }
 
@@ -444,6 +433,7 @@ void init_peripherals(void)
 
   #if USE_DS18B20
   /*Init Temperature Sensor */
+  MX_TIM3_Init();
   Ds18b20_Init();
   #endif
 }

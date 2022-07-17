@@ -272,6 +272,7 @@ static void entry_action_main_menu(ui_handle_t handle)
     // show date time 
     ui_date_time_menu_show(&ui_date_time_menu, true);
     ui_update_battery(handle);
+    ui_update_thermostat(handle);
     ui_update_date_time(handle);
 
     /* Set cursor to first item */
@@ -959,12 +960,11 @@ static void ui_update_date_time(ui_handle_t handle)
 
 static void ui_update_thermostat(ui_handle_t handle)
 {
-    //thermostat_config_info_t *info = temp_ctrl_fsm_get_info();
-    static thermostat_config_info_t info = {.sensed.temp = 25, .control.unit = TEMP_UNITS_CELSIUS};
+    thermostat_config_info_t *info = temp_ctrl_fsm_get_info();
     ui_thermostat_config_t *ui_config = &handle->iface.ui.therm;
     ui_config->set = THERM_ICON_SET_SENSED_TEMP;
-    ui_config->temp.val =  (info.sensed.temp++)%99;
-    ui_config->temp.unit =  info.control.unit;
+    ui_config->temp.val =  info->sensed.temp;
+    ui_config->temp.unit =  info->control.unit;
     ui_thermostat_set_config(&ui_thermostat, ui_config);
 }
 
@@ -1389,9 +1389,17 @@ static void therm_menu_right_left_key_pressed(ui_handle_t handle)
 
         case THERM_SET_UNIT: {
             if (config->temp.unit == TEMP_UNITS_CELSIUS)
+            {
+                /*convert from celsius to fahrenheit */
+                config->temp.val = (int)((config->temp.val * 9 / 5) + 32);
                 config->temp.unit = TEMP_UNITS_FAHRENHEIT;
+            }
             else
+            {
+                /*convert from fahrenheit to celsius */
+                config->temp.val = (int)((config->temp.val - 32) * 5/9);
                 config->temp.unit = TEMP_UNITS_CELSIUS;
+            }
         } break;
 
         case THERM_ENABLE_DISABLE: {

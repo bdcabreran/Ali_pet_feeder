@@ -158,10 +158,8 @@ static void sensing_temp_on_react(temp_ctrl_handle_t handle)
                 temp_ctrl_dbg("Temp out of range, control is disabled\r\n");
             }
         }
-        else
-        {
-            time_event_start(&handle->event.time.sampling_period, TEMP_SAMPLING_PERIOD_MS);
-        }
+
+        time_event_start(&handle->event.time.sampling_period, TEMP_SAMPLING_PERIOD_MS);
     }
 
 }
@@ -203,14 +201,14 @@ static void control_temp_on_react(temp_ctrl_handle_t handle)
     if(handle->event.internal.name == EVT_INT_TEMP_TOO_COLD)
     {
         turn_off_cooler();
-        temp_ctrl_dbg("temperature too high, turn on cooler \r\n");
+        temp_ctrl_dbg("temperature too low, turn off cooler \r\n");
         handle->event.internal.name = EVT_INT_TEMP_CTRL_INVALID;
-
     }
+    
     else if(handle->event.internal.name == EVT_INT_TEMP_TOO_HOT)
     {
         turn_on_cooler();
-        temp_ctrl_dbg("temperature too high, turn off cooler \r\n");
+        temp_ctrl_dbg("temperature too high, turn on cooler \r\n");
         handle->event.internal.name = EVT_INT_TEMP_CTRL_INVALID;
     }
 
@@ -221,8 +219,8 @@ static void control_temp_on_react(temp_ctrl_handle_t handle)
 
         if(is_temperature_out_of_range(handle) == false)
         {
-            enter_seq_sensing_temp(handle);
             time_event_stop(&handle->event.time.sampling_period);
+            enter_seq_sensing_temp(handle);
         }
         else
         {
@@ -267,6 +265,7 @@ void temp_ctrl_fsm_init(temp_ctrl_handle_t handle)
 {
     /*Read information from flash and make sure the values are valid */
     get_user_configuration_from_flash(handle);
+    measure_temperature(handle);
     turn_off_cooler();
     enter_seq_sensing_temp(handle);
 }
@@ -295,6 +294,7 @@ void temp_ctrl_fsm_write_event(temp_ctrl_handle_t handle, event_t *event)
             info->control.temp = data->config.control.temp;
             info->control.status = data->config.control.status;
             info->control.unit = data->config.control.unit;
+
             printf_dbg_error("Setting up new configuration\r\n");
             user_config_set();
         }

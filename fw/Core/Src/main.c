@@ -54,8 +54,8 @@ int main(void)
   event_manager_fsm_init(evm_fsm);
 
   /*Init UI */
- ui_handle_t ui_fsm = ui_fsm_get();
- ui_fsm_init(ui_fsm);
+  ui_handle_t ui_fsm = ui_fsm_get();
+  ui_fsm_init(ui_fsm);
 
   /*Init Temperature Control */
   temp_ctrl_handle_t temp_fsm = temp_ctrl_fsm_get();

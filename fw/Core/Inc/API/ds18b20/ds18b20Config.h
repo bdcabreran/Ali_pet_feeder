@@ -10,7 +10,7 @@
 
 #define	_DS18B20_CONVERT_TIMEOUT_MS					500		
 
-#define MOCK_SENSOR_DS18B20    // uncomment to use the real sensor
+// #define MOCK_SENSOR_DS18B20    // uncomment to use the real sensor
 
 #define	_DS18B20_TIMER											htim3						
 //###################################################################################
