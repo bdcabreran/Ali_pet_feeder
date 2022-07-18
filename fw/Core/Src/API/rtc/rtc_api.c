@@ -53,7 +53,7 @@ void rtc_print_time(void)
 	rtc_get_time(&date_time);
 	printf("RTC debug information : \r\n");
 	printf("month\t: [%d]\r\n", date_time.month);
-	printf("day\t: [%d]\r\n", date_time.day);
+	printf("day\t: [%d]\r\n", date_time.dayOfMonth);
 	printf("hour\t: [%d]\r\n", date_time.hours);
 	printf("minute\t: [%d]\r\n", date_time.minutes);
 	printf("Time\t: [%s]\r\n", date_time.am_pm == 1 ? "am" : "pm");

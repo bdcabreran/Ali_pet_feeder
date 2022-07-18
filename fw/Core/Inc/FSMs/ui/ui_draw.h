@@ -215,22 +215,8 @@ typedef struct
 
 typedef struct
 {
-    date_time_config_t set;
-    struct
-    {
-        struct
-        {
-            uint8_t hour;
-            uint8_t min;
-            time_am_pm_t am_fm;
-        } time;
-
-        struct
-        {
-            uint8_t day;
-            uint8_t month;
-        }date;
-    };
+    date_time_config_item_t set;
+    date_time_config_t dt_config;
 
     struct{
         ui_select_t main;

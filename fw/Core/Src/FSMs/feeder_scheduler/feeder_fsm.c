@@ -24,7 +24,13 @@
 #endif
 
 const char *am_pm_str[3] = {"NA","AM", "PM"}; 
-
+const char *meal_name[FEEDER_MEALn] = {
+    "FEEDER_MEAL_BREAKFAST",
+    "FEEDER_MEAL_LUNCH",
+    "FEEDER_MEAL_SNACK_2",
+    "FEEDER_MEAL_DINNER",
+    "FEEDER_MEAL_SNACK_3",
+};
 
 
 /**
@@ -158,14 +164,23 @@ void feeder_fsm_time_update(feeder_handle_t handle)
 
 void feeder_fsm_write_event(feeder_handle_t handle, event_t *event)
 {
+    feeder_ev_ext_data_t *data = (feeder_ev_ext_data_t *)&event->data.buff;
+
     if(event->info.name == EVT_EXT_feeder_CONFIG_DATE_TIME)
     {
-        handle->event.external.name = event->info.name;
-        memcpy((uint8_t *)&handle->event.external.data.config_rtc, (uint8_t*)event->data.buff, sizeof(feeder_ev_ext_data_t));
+        /*Check if there is any change respect to the previous configuration*/
+        if(memcmp((uint8_t *)&handle->event.external.data.config_rtc, (uint8_t*)&data->config_rtc) == 0)
+        {
+            feeder_dbg("no changes detected in date time configuration\r\n");
+        }
+        else
+        {
+            handle->event.external.name = event->info.name;
+            memcpy((uint8_t *)&handle->event.external.data.config_rtc, (uint8_t*)event->data.buff, sizeof(feeder_ev_ext_data_t));
+        }
     }
     else if(event->info.name == EVT_EXT_feeder_CONFIG_FEEDING_TIME)
     {
-        feeder_ev_ext_data_t *data = (feeder_ev_ext_data_t *)&event->data.buff;
         handle->event.external.name = event->info.name;
         handle->event.external.data.config_feeding_time.config = data->config_feeding_time.config;
         handle->event.external.data.config_feeding_time.drawer_no = data->config_feeding_time.drawer_no;
@@ -217,12 +232,12 @@ static void date_time_config_on_react(feeder_handle_t handle)
 
 static void entry_action_date_time_config(feeder_handle_t handle)
 {
-    feeder_dbg("saving time to RTC \r\n");
+    feeder_dbg("saving date time configuration to RTC \r\n");
 
     handle->iface.dt_config_done = true;
 
     date_time_t date_time;
-    date_time.day = handle->event.external.data.config_rtc.date.day;
+    date_time.dayOfMonth = handle->event.external.data.config_rtc.date.day;
     date_time.month = handle->event.external.data.config_rtc.date.month;
     date_time.hours = handle->event.external.data.config_rtc.time.hour;
     date_time.minutes = handle->event.external.data.config_rtc.time.minute;
@@ -268,8 +283,11 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
     date_time_t date_time;
     rtc_get_time(&date_time);
 
-    date_info_t rtc_date = {.day = date_time.day, .month = date_time.month};
+    date_info_t rtc_date = {.day = date_time.dayOfMonth, .month = date_time.month};
     time_info_t rtc_time = {.minute = date_time.minutes, .hour = date_time.hours, .am_pm = date_time.am_pm};
+
+    feeder_dbg("RTC Info : Date { DD/MM : %.2d/%.2d }, Time { hh:mm %.2d:%.2d %s }\r\n",
+                rtc_date.day, rtc_date.month, rtc_time.hour, rtc_time.minute, am_pm_str[rtc_time.am_pm]);
 
     feeder_meal_data_t *meal_data;
 
@@ -294,7 +312,7 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
             {
                 if (date_match(&meal_data->date, &rtc_date) == false)
                 {
-                    feeder_dbg("date mismatch, skip meal [%d]\r\n", meal_idx);
+                    feeder_dbg("drawer no [%d], date mismatch, skip meal [ %s ]\r\n", drawer_idx + 1, meal_name[meal_idx]);
                     continue;
                 }
             }
@@ -302,24 +320,31 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
             /* check if open time matches */
             if (time_match(&meal_data->time.open, &rtc_time))
             {
-                if (drawer_info->status.curr == DRAWER_ST_CLOSE && drawer_info->status.next == DRAWER_ST_INVALID)
-                {
-                    feeder_dbg("Open Request : Date { day : [%d], month [%d] }, Tine { hour [%d], min [%d], am_fm [%s]}\r\n",
-                               meal_data->date.day, meal_data->date.month, meal_data->time.close.hour, meal_data->time.close.minute,
-                               am_pm_str[meal_data->time.close.am_pm]);
+
+                feeder_dbg("Open drawer no%d - Date { DD/MM : %.2d/%.2d } Time { hh:mm %.2d:%.2d %s } Meal {%s}\r\n",
+                           drawer_idx + 1, meal_data->date.day, meal_data->date.month, meal_data->time.open.hour, meal_data->time.open.minute,
+                           am_pm_str[meal_data->time.close.am_pm], meal_name[meal_idx]);
+
+                if (drawer_info->status.curr == DRAWER_ST_CLOSE && drawer_info->status.next == DRAWER_ST_INVALID) {
                     // write_request_to_drawer_to_open(open drawer );
+                }
+                else {
+                    feeder_dbg("WARNING : drawer no [%d] already opened\r\n", drawer_idx + 1);
                 }
             }
 
             /* check if close time matches */
             if (time_match(&meal_data->time.close, &rtc_time))
             {
-                if (drawer_info->status.curr == DRAWER_ST_OPEN && drawer_info->status.next == DRAWER_ST_INVALID)
-                {
-                    feeder_dbg("Close Request : Date { day : [%d], month [%d] }, Tine { hour [%d], min [%d], am_fm [%s]}\r\n",
-                               meal_data->date.day, meal_data->date.month, meal_data->time.close.hour, meal_data->time.close.minute,
-                               am_pm_str[meal_data->time.close.am_pm]);
+                feeder_dbg("Close drawer no%d - Date { DD/MM : %.2d/%.2d } Time { hh:mm %.2d:%.2d %s } Meal {%s}\r\n",
+                           drawer_idx + 1, meal_data->date.day, meal_data->date.month, meal_data->time.close.hour, meal_data->time.close.minute,
+                           am_pm_str[meal_data->time.close.am_pm], meal_name[meal_idx]);
+
+                if (drawer_info->status.curr == DRAWER_ST_OPEN && drawer_info->status.next == DRAWER_ST_INVALID) {
                     // write_request_to_drawer_to_open(close drawer );
+                }
+                else {
+                    feeder_dbg("WARNING : drawer no [%d] already closed\r\n", drawer_idx + 1);
                 }
             }
         }

@@ -78,11 +78,23 @@ void ds1307_stop(void) {
 void ds1307_get_time(date_time_t *date_time) {
 	date_time->seconds     = bcdToDec(readRegister(REG_SECONDS) & 0x7f);
 	date_time->minutes     = bcdToDec(readRegister(REG_MINUTES));
-	date_time->hours       = bcdToDec(readRegister(REG_HOURS) & 0x3f);// Need to change this if 12 hour am/pm
+	//date_time->hours       = bcdToDec(readRegister(REG_HOURS) & 0x3f);// Need to change this if 12 hour am/pm
+	date_time->hours       = bcdToDec(readRegister(REG_HOURS) & 0xf);
 	date_time->dayOfWeek  = bcdToDec(readRegister(REG_DAY));
 	date_time->dayOfMonth = bcdToDec(readRegister(REG_DATE));
+	date_time->day        = bcdToDec(readRegister(REG_DAY));
 	date_time->month      = bcdToDec(readRegister(REG_MONTH));
 	date_time->year       = bcdToDec(readRegister(REG_YEAR));
+	date_time->am_pm      = bcdToDec(readRegister(REG_HOURS) & (1 << 5));
+
+	// high means pm
+	if(date_time->am_pm) {
+		date_time->am_pm = RTC_TIME_PM;
+	}
+	else {
+		date_time->am_pm = RTC_TIME_AM;
+	}
+
 }
 
 void ds1307_set_time(date_time_t date_time) {
@@ -90,7 +102,25 @@ void ds1307_set_time(date_time_t date_time) {
 	writeRegister(REG_SECONDS, 0x00);
 	writeRegister(REG_SECONDS, decToBcd(date_time.seconds));// 0 to bit 7 starts the clock
 	writeRegister(REG_MINUTES, decToBcd(date_time.minutes));
-	writeRegister(REG_HOURS  , decToBcd(date_time.hours));  // If you want 12 hour am/pm you need to set bit 6
+
+	if(date_time.hour_24h_format == false) {
+		uint8_t am_pm_reg = decToBcd(date_time.hours);
+		am_pm_reg|= (1 << 6); // If you want 12 hour am/pm you need to set bit 6
+		// set am/pm in bit 5
+		if(date_time.am_pm == RTC_TIME_PM)
+		{
+			am_pm_reg|= (1 << 5);
+		}
+		else
+		{
+			am_pm_reg &= ~(1 << 5) ;
+		}
+		writeRegister(REG_HOURS  , am_pm_reg);  
+	}
+	else {
+		writeRegister(REG_HOURS  , decToBcd(date_time.hours)); 
+	}
+
 	writeRegister(REG_DAY    , decToBcd(date_time.dayOfWeek));
 	writeRegister(REG_DATE   , decToBcd(date_time.dayOfMonth));
 	writeRegister(REG_MONTH  , decToBcd(date_time.month));

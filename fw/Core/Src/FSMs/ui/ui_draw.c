@@ -517,22 +517,22 @@ void ui_date_time_menu_set_config(ui_date_time_menu_t *menu, ui_date_time_config
     switch (config->set)
     {
     case DATE_TIME_CNF_HOUR: {
-            sprintf(str, "%.2d", config->time.hour);
+            sprintf(str, "%.2d", config->dt_config.time.hour);
             ui_display_digits(&menu->time.hour, str, single_color_sel);
     } break;
 
     case DATE_TIME_CNF_MIN: {
-            sprintf(str, "%.2d", config->time.min);
+            sprintf(str, "%.2d", config->dt_config.time.minute);
             ui_display_digits(&menu->time.min, str, single_color_sel);
     } break;
 
     case DATE_TIME_CNF_DAY: {
-            sprintf(str, "%.2d", config->date.day);
+            sprintf(str, "%.2d", config->dt_config.date.day);
             ui_display_string(&menu->date.day, str, &Font24, single_color_sel);
     } break;
 
     case DATE_TIME_CNF_MONTH: {
-            sprintf(str, "%.2d", config->date.month);
+            sprintf(str, "%.2d", config->dt_config.date.month);
             ui_display_string(&menu->date.month, str, &Font24, single_color_sel);
     } break;
 

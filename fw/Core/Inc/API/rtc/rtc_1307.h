@@ -37,6 +37,12 @@ typedef enum days_of_the_week_enum {
  	DAY_SUN= 7
 }days_of_the_week_t;
 
+typedef enum
+{
+	RTC_TIME_AM = 1,
+	RTC_TIME_PM = 2,
+}rtc_am_pm_t;
+
 
 
 uint8_t readRegister(uint8_t addr);

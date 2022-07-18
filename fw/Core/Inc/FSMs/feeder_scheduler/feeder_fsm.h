@@ -15,7 +15,7 @@
 #include <strings.h>
 #include "event_queue.h"
 
-#define FEEDER_UPDATE_TIME_MS   (60000) //1 min 
+#define FEEDER_UPDATE_TIME_MS   (35000) //35s 
 #define DRAWER_CNT              (4)
 
 typedef enum
@@ -68,7 +68,7 @@ typedef enum
     DATE_TIME_CNF_DAY,
     DATE_TIME_CNF_MONTH,
     DATE_TIME_CNF_LAST
-}date_time_config_t;
+}date_time_config_item_t;
 
 typedef struct
 {
@@ -122,11 +122,11 @@ typedef struct
 {
     time_info_t time;
     date_info_t date;
-}feeder_date_time_config_t;
+}date_time_config_t;
 
 typedef struct
 {    
-    feeder_date_time_config_t config_rtc;
+    date_time_config_t config_rtc;
     struct
     {
         uint8_t drawer_no;

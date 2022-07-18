@@ -941,21 +941,19 @@ static void ui_update_battery(ui_handle_t handle)
 static void ui_update_date_time(ui_handle_t handle)
 {
     date_time_t dt_info;
-    // rtc_get_time(&dt_info);
-    dt_info.day = 1;
-    dt_info.month = 12;
-    dt_info.hours = 11;
-    dt_info.minutes = 30;
+    rtc_get_time(&dt_info);
 
 	ui_date_time_config_t *ui_config = &handle->iface.ui.dt_menu;
-    ui_config->set = DATE_TIME_CNF_MIN;
-    ui_config->date.day = dt_info.day;
-    ui_config->date.month = dt_info.month;
-    ui_config->time.hour = dt_info.hours;
-    ui_config->time.min = dt_info.minutes;
+    ui_config->dt_config.date.day = dt_info.dayOfMonth;
+    ui_config->dt_config.date.month = dt_info.month;
+    ui_config->dt_config.time.hour = dt_info.hours;
+    ui_config->dt_config.time.minute = dt_info.minutes;
 
-    time_config_increase_min(&ui_config->time.min);
-    ui_date_time_menu_set_config(&ui_date_time_menu, ui_config);
+    for (int config_idx = DATE_TIME_CNF_HOUR; config_idx < DATE_TIME_CNF_LAST; config_idx++)
+    {
+        ui_config->set = config_idx;
+        ui_date_time_menu_set_config(&ui_date_time_menu, ui_config);
+    }
 }
 
 static void ui_update_thermostat(ui_handle_t handle)
@@ -1275,6 +1273,21 @@ static void date_time_config_enter_key_pressed(ui_handle_t handle)
     ui_feeder_menu_show(&ui_feeder_menu, false);
     ui_notification_msg_show(&ui_notification, true);
     ui_notification_msg_set(&ui_notification, "Saving Date Time Config.");
+
+    /* Save Data to Feeder RTC */
+    ui_date_time_config_t *ui_config = &handle->iface.ui.dt_menu;
+    event_t event;
+    event.info.name = EVT_EXT_feeder_CONFIG_DATE_TIME;
+    event.info.fsm.src = UI_FSM;
+    event.info.fsm.dst = FEEDER_FSM;
+    event.info.data_len = sizeof(feeder_ev_ext_data_t);
+    feeder_ev_ext_data_t *data = (feeder_ev_ext_data_t *)&event.data.buff;
+
+    ui_config->dt_config.time.am_pm = TIME_AM;
+
+    memcpy((uint8_t*)&data->config_rtc, (uint8_t*)&ui_config->dt_config, sizeof(date_time_config_t));
+
+    event_manager_write(event_manager_fsm_get(), &event);
 }
 
 static void date_time_config_left_right_key_pressed(ui_handle_t handle)
@@ -1326,36 +1339,36 @@ static void date_time_config_up_down_key_pressed(ui_handle_t handle)
     case DATE_TIME_CNF_HOUR:
     {
         if (up_pressed)
-            time_config_increase_hour(&config->time.hour);
+            time_config_increase_hour(&config->dt_config.time.hour);
         else
-            time_config_decrease_hour(&config->time.hour);
+            time_config_decrease_hour(&config->dt_config.time.hour);
     }
     break;
 
     case DATE_TIME_CNF_MIN:
     {
         if (up_pressed)
-            time_config_increase_min(&config->time.min);
+            time_config_increase_min(&config->dt_config.time.minute);
         else
-            time_config_decrease_min(&config->time.min);
+            time_config_decrease_min(&config->dt_config.time.minute);
     }
     break;
 
     case DATE_TIME_CNF_DAY:
     {
         if (up_pressed)
-            date_config_increase_day(&config->date.day);
+            date_config_increase_day(&config->dt_config.date.day);
         else
-            date_config_decrease_day(&config->date.day);
+            date_config_decrease_day(&config->dt_config.date.day);
     }
     break;
 
     case DATE_TIME_CNF_MONTH:
     {
         if (up_pressed)
-            date_config_increase_month(&config->date.month);
+            date_config_increase_month(&config->dt_config.date.month);
         else
-            date_config_decrease_month(&config->date.month);
+            date_config_decrease_month(&config->dt_config.date.month);
     }
     break;
 

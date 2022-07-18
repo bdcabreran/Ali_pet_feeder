@@ -29,7 +29,8 @@
         "flash_memory.h": "c",
         "stdio.h": "c",
         "new": "c",
-        "cmath": "c"
+        "cmath": "c",
+        "rtc_1307.h": "c"
     },
     "cSpell.words": [
         "inact",
