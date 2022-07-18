@@ -78,8 +78,8 @@ void ds1307_stop(void) {
 void ds1307_get_time(date_time_t *date_time) {
 	date_time->seconds     = bcdToDec(readRegister(REG_SECONDS) & 0x7f);
 	date_time->minutes     = bcdToDec(readRegister(REG_MINUTES));
-	//date_time->hours       = bcdToDec(readRegister(REG_HOURS) & 0x3f);// Need to change this if 12 hour am/pm
-	date_time->hours       = bcdToDec(readRegister(REG_HOURS) & 0xf);
+	// date_time->hours       = bcdToDec(readRegister(REG_HOURS) & 0x3f);// Need to change this if 12 hour am/pm
+	date_time->hours       = bcdToDec(readRegister(REG_HOURS) & 0x1F);
 	date_time->dayOfWeek  = bcdToDec(readRegister(REG_DAY));
 	date_time->dayOfMonth = bcdToDec(readRegister(REG_DATE));
 	date_time->day        = bcdToDec(readRegister(REG_DAY));
