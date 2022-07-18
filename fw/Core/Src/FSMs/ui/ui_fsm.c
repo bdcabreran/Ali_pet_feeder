@@ -1624,7 +1624,7 @@ static void time_config_increase_hour(uint8_t *hour)
     if ((*hour) < 12)
         (*hour)++;
     else
-        (*hour) = 0;
+        (*hour) = 1;
 }
 
 static void time_config_decrease_hour(uint8_t *hour)

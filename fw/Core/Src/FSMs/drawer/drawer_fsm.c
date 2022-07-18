@@ -110,7 +110,10 @@ void drawer_ctrl_fsm_init(drawer_ctrl_handle_t handle)
     handle->iface.active_drawer = DRAWER_NO_1;
 
     for (drawer_no_t drawer_no = DRAWER_NO_1; drawer_no < DRAWERn; drawer_no++)
+    {
         handle->iface.drawers[drawer_no].request_type = DRAWER_REQUEST_TYPE_INVALID;
+        handle->iface.drawers[drawer_no].status.next = DRAWER_ST_CLOSE;
+    }
 
     /*default entry sequence */
     enter_seq_watcher(handle);
@@ -137,8 +140,6 @@ void drawer_ctrl_fsm_write_event(drawer_ctrl_handle_t handle, event_t *event)
 }
 
 
-
-
 //------------------ Static State Function Definition ---------------------------------------//
 
 static void enter_seq_watcher(drawer_ctrl_handle_t handle)
@@ -150,8 +151,6 @@ static void enter_seq_watcher(drawer_ctrl_handle_t handle)
 
 static void entry_action_watcher(drawer_ctrl_handle_t handle)
 {   
-    /* update currents state of drawers */
-    drawer_ctrl_update_status(handle);
 }
 
 static void watcher_on_react(drawer_ctrl_handle_t handle)
@@ -161,16 +160,19 @@ static void watcher_on_react(drawer_ctrl_handle_t handle)
     {
         drawer_no_t drawer_no = handle->event.external.data.drawer_no;
         drawer_st_t curr_st = handle->iface.drawers[drawer_no].status.curr;
+        handle->iface.drawers[drawer_no].request_type = handle->event.external.data.request_type; 
 
         if(curr_st == DRAWER_ST_OPEN || curr_st == DRAWER_ST_OPENING)
         {
             drawer_dbg("drawer [%d] already open or opening [%d]...\r\n", drawer_no + 1, curr_st);
-            handle->iface.drawers[drawer_no].request_type = handle->event.external.data.request_type; 
-            enter_seq_watcher(handle);
-            return;
+        }
+        else
+        {
+            drawer_dbg("drawer [%d] set to open...\r\n", drawer_no + 1);
+            handle->iface.drawers[drawer_no].status.next = DRAWER_ST_OPEN;
         }
 
-        handle->iface.drawers[drawer_no].status.next = DRAWER_ST_OPEN;
+        handle->event.external.name = EVT_EXT_DRAWER_CTRL_INVALID;
     }
     else if (handle->event.external.name == EVT_EXT_DRAWER_CTRL_CLOSE)
     {
@@ -180,12 +182,14 @@ static void watcher_on_react(drawer_ctrl_handle_t handle)
         if(curr_st == DRAWER_ST_CLOSE || curr_st == DRAWER_ST_CLOSING)
         {
             drawer_dbg("drawer [%d] already close or closing [%d]...\r\n", drawer_no + 1, curr_st);
-            handle->iface.drawers[drawer_no].request_type = handle->event.external.data.request_type; 
-            enter_seq_watcher(handle);
-            return;
+        }
+        else
+        {
+            drawer_dbg("drawer [%d] set to close...\r\n", drawer_no + 1);
+            handle->iface.drawers[drawer_no].status.next = DRAWER_ST_CLOSE;
         }
 
-        handle->iface.drawers[drawer_no].status.next = DRAWER_ST_CLOSE;
+        handle->event.external.name = EVT_EXT_DRAWER_CTRL_INVALID;
     }
 
     /* always run */
@@ -195,50 +199,61 @@ static void watcher_on_react(drawer_ctrl_handle_t handle)
 static void during_action_watcher(drawer_ctrl_handle_t handle)
 {
     drawer_ctrl_update_status(handle);
-    drawer_ctrl_drive_motors(handle);
 }
 
 // ----------------- Miscellaneous Functions Definition  --------------------------------------------------//
-
 
 static void drawer_ctrl_update_status(drawer_ctrl_handle_t handle)
 {
     for(drawer_no_t drawer_no = DRAWER_NO_1; drawer_no < DRAWERn; drawer_no++)
     {
-        if((is_drawer_close(drawer_no) ==  true) && (is_drawer_open(drawer_no) == false))
+        /*Update Current state of drawer*/
+        if ((is_drawer_close(drawer_no) == true) && (is_drawer_open(drawer_no) == false))
         {
-            // drawer_dbg("drawer no [%d] is closed\r\n", drawer_no + 1);
-            handle->iface.drawers[drawer_no].request_type = DRAWER_REQUEST_TYPE_PROGRAMMED;
             handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_CLOSE;
-            handle->iface.drawers[drawer_no].status.next = DRAWER_ST_INVALID;
         }
-        
-        if((is_drawer_close(drawer_no) ==  false) && (is_drawer_open(drawer_no) == true))
+        if ((is_drawer_close(drawer_no) == false) && (is_drawer_open(drawer_no) == true))
         {
-            // drawer_dbg("drawer no [%d] is open\r\n", drawer_no + 1);
             handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_OPEN;
-            handle->iface.drawers[drawer_no].status.next = DRAWER_ST_INVALID;
         }
 
-        if((is_drawer_close(drawer_no) ==  false) && (is_drawer_open(drawer_no) == true))
+        /*check if there is a pending operation ongoing */
+        if(handle->iface.drawers[drawer_no].status.next != DRAWER_ST_INVALID)
         {
-            if(handle->iface.drawers[drawer_no].status.next == DRAWER_ST_CLOSE)
+            if(handle->iface.drawers[drawer_no].status.next = DRAWER_ST_CLOSE)
             {
-                // drawer_dbg("drawer no [%d] closing ... \r\n", drawer_no + 1);
-                handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_CLOSING;
+                // wait until drawer is closed 
+                if(handle->iface.drawers[drawer_no].status.curr == DRAWER_ST_CLOSE)
+                {
+                    handle->iface.drawers[drawer_no].status.next = DRAWER_ST_INVALID;
+                    // go to default once it is closed
+                     handle->iface.drawers[drawer_no].request_type = DRAWER_REQUEST_TYPE_PROGRAMMED; 
+                    drawer_dbg("drawer no [%d] closed\r\n", drawer_no + 1);
+                    drawer_motor_stop(drawer_no);
+                }
+                else
+                {
+                    drawer_dbg("closing drawer no [%d]\r\n", drawer_no + 1);
+                    handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_CLOSING;
+                    drawer_motor_close(drawer_no);
+                }
             }
 
-            else if(handle->iface.drawers[drawer_no].status.next == DRAWER_ST_OPEN)
+            else if(handle->iface.drawers[drawer_no].status.next = DRAWER_ST_OPEN)
             {
-                // drawer_dbg("drawer no [%d] opening ... \r\n", drawer_no + 1);
-                handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_OPENING;
-            }
-
-            else if(handle->iface.drawers[drawer_no].status.next == DRAWER_ST_INVALID)
-            {
-                // drawer_dbg("drawer no [%d] ERROR, invalid next state\r\n", drawer_no + 1);
-                // drawer_dbg("drawer no [%d] Force closing ... \r\n", drawer_no + 1);
-                handle->iface.drawers[drawer_no].status.next = DRAWER_ST_CLOSE; 
+                // wait until drawer is opened 
+                if(handle->iface.drawers[drawer_no].status.curr == DRAWER_ST_OPEN)
+                {
+                    handle->iface.drawers[drawer_no].status.next = DRAWER_ST_INVALID;
+                    drawer_dbg("drawer no [%d] open\r\n", drawer_no + 1);
+                    drawer_motor_stop(drawer_no);
+                }
+                else
+                {
+                    drawer_dbg("opening drawer no [%d]\r\n", drawer_no + 1);
+                    handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_OPENING;
+                    drawer_motor_open(drawer_no);
+                }
             }
         }
     }
@@ -257,28 +272,4 @@ static void drawer_motor_close(drawer_no_t no)
 static void drawer_motor_stop(drawer_no_t no)
 {
     // drawer_dbg("Motor Stop,  drawer no [%d]\r\n", no + 1);
-}
-
-static void drawer_ctrl_drive_motors(drawer_ctrl_handle_t handle)
-{
-    /*check if there are new request for Drawers*/
-    for(drawer_no_t drawer_no = DRAWER_NO_1; drawer_no < DRAWERn; drawer_no++)
-    {
-        if(handle->iface.drawers[drawer_no].status.next != DRAWER_ST_INVALID)
-        {
-            drawer_dbg("drawer no [%d] Start Motor \r\n");
-            if(handle->iface.drawers[drawer_no].status.next == DRAWER_ST_CLOSE)
-            {
-                drawer_motor_close(drawer_no);
-            }
-            else if(handle->iface.drawers[drawer_no].status.next == DRAWER_ST_OPEN)
-            {
-                drawer_motor_open(drawer_no);
-            }
-        }
-        else
-        {
-            drawer_motor_stop(drawer_no);
-        }
-    }
 }

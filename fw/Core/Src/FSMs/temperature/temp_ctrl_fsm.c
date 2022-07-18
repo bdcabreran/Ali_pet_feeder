@@ -289,14 +289,23 @@ void temp_ctrl_fsm_write_event(temp_ctrl_handle_t handle, event_t *event)
     if(event->info.name == EVT_EXT_SET_TEMP_CONFIG)
     {
         if(is_valid_therm_config(&data->config))
-        {
-            handle->event.external.name = event->info.name;
-            info->control.temp = data->config.control.temp;
-            info->control.status = data->config.control.status;
-            info->control.unit = data->config.control.unit;
-
-            printf_dbg_error("Setting up new configuration\r\n");
-            user_config_set();
+        {   
+            /*check if configuration values changed */
+            if ( info->control.temp == data->config.control.temp &&
+                info->control.status == data->config.control.status &&
+                info->control.unit == data->config.control.unit)
+            {
+                temp_ctrl_dbg("no changes detected in thermostat configuration\r\n");
+            }
+            else
+            {
+                handle->event.external.name = event->info.name;
+                info->control.temp = data->config.control.temp;
+                info->control.status = data->config.control.status;
+                info->control.unit = data->config.control.unit;
+                temp_ctrl_dbg("Saving new configuration\r\n");
+                user_config_set();
+            }
         }
         else
         {

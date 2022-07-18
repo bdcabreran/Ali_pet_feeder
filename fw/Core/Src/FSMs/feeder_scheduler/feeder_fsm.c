@@ -277,6 +277,20 @@ static bool time_match(time_info_t *time1, time_info_t *time2)
         return false;
 }
 
+static void send_drawer_request(drawer_ctrl_ev_ext_name_t evt_name, drawer_no_t no)
+{
+    event_t event;
+    event.info.name = evt_name;
+    event.info.fsm.src = FEEDER_FSM;
+    event.info.fsm.dst = DRAWER_FSM;
+    event.info.data_len = sizeof(drawer_ctrl_ev_ext_data_t);
+    drawer_ctrl_ev_ext_data_t *data = (drawer_ctrl_ev_ext_data_t *)&event.data.buff;
+    data->drawer_no = no;
+    data->request_type = DRAWER_REQUEST_TYPE_PROGRAMMED;
+    event_manager_write(event_manager_fsm_get(), &event);
+}
+
+
 static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
 {
     /*Get Date Time from RTC */
@@ -326,7 +340,7 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
                            am_pm_str[meal_data->time.close.am_pm], meal_name[meal_idx]);
 
                 if (drawer_info->status.curr == DRAWER_ST_CLOSE && drawer_info->status.next == DRAWER_ST_INVALID) {
-                    // write_request_to_drawer_to_open(open drawer );
+                    send_drawer_request(EVT_EXT_DRAWER_CTRL_OPEN, drawer_idx);
                 }
                 else {
                     feeder_dbg("WARNING : drawer no [%d] already opened\r\n", drawer_idx + 1);
@@ -341,7 +355,7 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
                            am_pm_str[meal_data->time.close.am_pm], meal_name[meal_idx]);
 
                 if (drawer_info->status.curr == DRAWER_ST_OPEN && drawer_info->status.next == DRAWER_ST_INVALID) {
-                    // write_request_to_drawer_to_open(close drawer );
+                    send_drawer_request(EVT_EXT_DRAWER_CTRL_CLOSE, drawer_idx);
                 }
                 else {
                     feeder_dbg("WARNING : drawer no [%d] already closed\r\n", drawer_idx + 1);

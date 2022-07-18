@@ -17,6 +17,10 @@
 #include "time_event.h"
 #include "init_periph.h"
 
+#ifndef DRAWER_NO
+#define DRAWER_NO  (4)
+#endif
+
 typedef enum
 {
     DRAWER_SWITCH_ST_INVALID,
@@ -28,7 +32,6 @@ typedef enum
 typedef struct
 {
     gpio_port_pin_t gpio;
-    time_event_t    debounce;
     bool            pressed;
 }switch_t;
 
@@ -41,10 +44,7 @@ typedef struct
 
 typedef struct 
 {
-    drawer_switch_t d1;
-    drawer_switch_t d2;
-    drawer_switch_t d3;
-    drawer_switch_t d4;
+    drawer_switch_t d_sw[DRAWER_NO];
 }drawer_switches_t;
 
 
