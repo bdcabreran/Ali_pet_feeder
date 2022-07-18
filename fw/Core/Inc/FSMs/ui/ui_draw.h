@@ -53,7 +53,7 @@ typedef struct
 {
     ui_window_t hour;
     ui_window_t min;
-    ui_window_t am_fm;
+    ui_window_t am_pm;
 }ui_time_t;
 
 typedef struct 

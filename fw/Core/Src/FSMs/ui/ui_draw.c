@@ -314,16 +314,16 @@ void ui_feeder_menu_init(ui_feeder_menu_t *menu)
         menu->meal_td[i].time.open.hour.y    = menu->win.main.y + (i+1)*(33);
         menu->meal_td[i].time.open.min.x     = menu->win.main.x + (10 + 102 + 30);
         menu->meal_td[i].time.open.min.y     = menu->win.main.y + (i+1)*(33);
-        menu->meal_td[i].time.open.am_fm.x   = menu->win.main.x + (10 + 102 + 50);
-        menu->meal_td[i].time.open.am_fm.y   = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.open.am_pm.x   = menu->win.main.x + (10 + 102 + 50);
+        menu->meal_td[i].time.open.am_pm.y   = menu->win.main.y + (i+1)*(33);
 
         // close hour
         menu->meal_td[i].time.close.hour.x   = menu->win.main.x + (10 + 209);
         menu->meal_td[i].time.close.hour.y   = menu->win.main.y + (i+1)*(33);
         menu->meal_td[i].time.close.min.x    = menu->win.main.x + (10 + 209 + 30);
         menu->meal_td[i].time.close.min.y    = menu->win.main.y + (i+1)*(33);
-        menu->meal_td[i].time.close.am_fm.x  = menu->win.main.x + (10 + 209 + 50);
-        menu->meal_td[i].time.close.am_fm.y  = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.close.am_pm.x  = menu->win.main.x + (10 + 209 + 50);
+        menu->meal_td[i].time.close.am_pm.y  = menu->win.main.y + (i+1)*(33);
 
         // date 
         menu->meal_td[i].date.day.x        = menu->win.main.x + (10 + 316);
@@ -363,12 +363,12 @@ void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show)
             // Open time
             ui_display_string(&menu->meal_td[i].time.open.hour, "--:", &Font16, LCD_DEFAULT_TEXTCOLOR);
             ui_display_string(&menu->meal_td[i].time.open.min , "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
-            ui_display_string(&menu->meal_td[i].time.open.am_fm, (char*)am_pm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].time.open.am_pm, (char*)am_pm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
 
             // Close time 
             ui_display_string(&menu->meal_td[i].time.close.hour, "--:", &Font16, LCD_DEFAULT_TEXTCOLOR);
             ui_display_string(&menu->meal_td[i].time.close.min , "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
-            ui_display_string(&menu->meal_td[i].time.close.am_fm, (char*)am_pm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].time.close.am_pm, (char*)am_pm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
 
             // Day Month
             ui_display_string(&menu->meal_td[i].date.day, "--/", &Font16, LCD_DEFAULT_TEXTCOLOR);
@@ -406,7 +406,7 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_info_t *
         } break;
 
         case FEEDER_CNF_OPEN_TIME_AM_FM: {
-            ui_display_string(&menu->meal_td[config->meal].time.open.am_fm,
+            ui_display_string(&menu->meal_td[config->meal].time.open.am_pm,
                               (char*)am_pm_str[ config->feeder.config[config->meal].time.open.am_pm], font, color);
         } break;
 
@@ -422,7 +422,7 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_info_t *
 
         case FEEDER_CNF_CLOSE_TIME_AM_FM:
         {
-            ui_display_string(&menu->meal_td[config->meal].time.close.am_fm,
+            ui_display_string(&menu->meal_td[config->meal].time.close.am_pm,
                               (char*)am_pm_str[config->feeder.config[config->meal].time.open.am_pm], font, color);
         } break;
 
@@ -476,10 +476,12 @@ void ui_date_time_menu_init(ui_date_time_menu_t *menu)
     menu->time.hour.y  = menu->win.main.y + 29;
     menu->time.min.x   = menu->win.main.x + 191;
     menu->time.min.y   = menu->win.main.y + 29;
+    menu->time.am_pm.x   = menu->win.main.x + 290;
+    menu->time.am_pm.y   = menu->win.main.y + 70;
     menu->date.day.x   = menu->win.main.x + 340;
-    menu->date.day.y   = menu->win.main.y + 61;
+    menu->date.day.y   = menu->win.main.y + 50;
     menu->date.month.x = menu->win.main.x + 389;
-    menu->date.month.y = menu->win.main.y + 61;
+    menu->date.month.y = menu->win.main.y + 50;
 }
 
 void ui_date_time_menu_show(ui_date_time_menu_t *menu, bool show)
@@ -488,7 +490,7 @@ void ui_date_time_menu_show(ui_date_time_menu_t *menu, bool show)
     {
         ui_display_digits(&menu->time.hour, "12:", LCD_DEFAULT_TEXTCOLOR);
         ui_display_digits(&menu->time.min, "00", LCD_DEFAULT_TEXTCOLOR);
-
+        ui_display_string(&menu->time.am_pm, "PM",&Font24, LCD_DEFAULT_TEXTCOLOR);
         ui_display_string(&menu->date.day, "01/", &Font24, LCD_DEFAULT_TEXTCOLOR);
         ui_display_string(&menu->date.month, "12", &Font24, LCD_DEFAULT_TEXTCOLOR);
 
@@ -524,6 +526,11 @@ void ui_date_time_menu_set_config(ui_date_time_menu_t *menu, ui_date_time_config
     case DATE_TIME_CNF_MIN: {
             sprintf(str, "%.2d", config->dt_config.time.minute);
             ui_display_digits(&menu->time.min, str, single_color_sel);
+    } break;
+
+    case DATE_TIME_CNF_AM_PM : {
+            sprintf(str, "%s", am_pm_str[config->dt_config.time.am_pm]);
+            ui_display_string(&menu->time.am_pm, str, &Font24, single_color_sel);
     } break;
 
     case DATE_TIME_CNF_DAY: {
