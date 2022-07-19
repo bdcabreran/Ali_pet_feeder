@@ -71,6 +71,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pet_feeder/Drivers/STemWin/Config/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pet_feeder/Core/Inc/FSMs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pet_feeder/Core/Inc/API/cooler}&quot;"/>
+									<listOptionValue builtIn="false" value="../Core/Inc/API/motor_ctrl"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1414022680" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>

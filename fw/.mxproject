@@ -9,6 +9,7 @@ CDefines=USE_HAL_DRIVER;STM32F103xB;USE_HAL_DRIVER;USE_HAL_DRIVER;
 [PreviousGenFiles]
 AdvancedFolderStructure=true
 HeaderFileListSize=3
+<<<<<<< HEAD
 HeaderFiles#0=F:/G/Ali_pet_feeder/fw/Core/Inc/stm32f1xx_it.h
 HeaderFiles#1=F:/G/Ali_pet_feeder/fw/Core/Inc/stm32f1xx_hal_conf.h
 HeaderFiles#2=F:/G/Ali_pet_feeder/fw/Core/Inc/main.h
@@ -21,5 +22,19 @@ SourceFiles#1=F:/G/Ali_pet_feeder/fw/Core/Src/stm32f1xx_hal_msp.c
 SourceFiles#2=F:/G/Ali_pet_feeder/fw/Core/Src/main.c
 SourceFolderListSize=1
 SourcePath#0=F:/G/Ali_pet_feeder/fw/Core/Src
+=======
+HeaderFiles#0=C:/Users/57311/Documents/GitHub/pet-feeder/fw/Core/Inc/stm32f1xx_it.h
+HeaderFiles#1=C:/Users/57311/Documents/GitHub/pet-feeder/fw/Core/Inc/stm32f1xx_hal_conf.h
+HeaderFiles#2=C:/Users/57311/Documents/GitHub/pet-feeder/fw/Core/Inc/main.h
+HeaderFolderListSize=1
+HeaderPath#0=C:/Users/57311/Documents/GitHub/pet-feeder/fw/Core/Inc
+HeaderFiles=;
+SourceFileListSize=3
+SourceFiles#0=C:/Users/57311/Documents/GitHub/pet-feeder/fw/Core/Src/stm32f1xx_it.c
+SourceFiles#1=C:/Users/57311/Documents/GitHub/pet-feeder/fw/Core/Src/stm32f1xx_hal_msp.c
+SourceFiles#2=C:/Users/57311/Documents/GitHub/pet-feeder/fw/Core/Src/main.c
+SourceFolderListSize=1
+SourcePath#0=C:/Users/57311/Documents/GitHub/pet-feeder/fw/Core/Src
+>>>>>>> d5e1fa225afe16526c9c90af0dacbe16696f4ee3
 SourceFiles=;
 

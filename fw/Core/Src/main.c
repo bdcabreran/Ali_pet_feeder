@@ -1,7 +1,18 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
   ******************************************************************************
   */
 
@@ -13,10 +24,11 @@
 #include "string.h"
 #include "ui_draw.h"
 
-
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+
 
 static void print_startup_msg(void)
 {
@@ -39,7 +51,7 @@ int main(void)
 {
   /*Init peripherals */
   init_peripherals();
-
+ 
   /*startup info */
   print_startup_msg();
 
@@ -55,7 +67,7 @@ int main(void)
 
   /*Init UI */
   ui_handle_t ui_fsm = ui_fsm_get();
-  ui_fsm_init(ui_fsm);
+  ui_fsm_init(ui_fsm);  
 
   /*Init Temperature Control */
   temp_ctrl_handle_t temp_fsm = temp_ctrl_fsm_get();
@@ -97,6 +109,8 @@ int main(void)
   }
 }
 
+
+
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None
@@ -109,18 +123,3 @@ void Error_Handler(void)
   {
   }
 }
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-}
-#endif /* USE_FULL_ASSERT */

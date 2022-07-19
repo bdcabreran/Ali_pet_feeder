@@ -115,7 +115,7 @@ void SysTick_Handler(void)
 {
   HAL_SYSTICK_Callback();
   HAL_IncTick();
-  OS_TimeMS++;
+  // OS_TimeMS++;
 }
 
 /******************************************************************************/
@@ -142,4 +142,3 @@ void DMA1_Channel5_IRQHandler(void)
   HAL_DMA_IRQHandler(&hdma_spi2_tx);
 }
 #endif
-
