@@ -15,6 +15,7 @@
 #include "itm_dbg.h"
 #include "rct_api.h"
 #include "rtc_1307.h"
+#include "motor_ctrl.h"
 
 #define USE_DS18B20  (1)
 
@@ -22,7 +23,6 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 I2C_HandleTypeDef hi2c1;
-TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3; // for ds18b sensor (temperature)
 
 
@@ -181,35 +181,6 @@ static void MX_SPI2_Init(void)
   }
 }
 #endif
-
-
-
-/**
-  * @brief TIM1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM1_Init(void)
-{
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-  htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 0;
-  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 65535;
-  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim1.Init.RepetitionCounter = 0;
-  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_OnePulse_Init(&htim1, TIM_OPMODE_SINGLE) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-}
 
 
 static void MX_TIM3_Init(void)
@@ -411,7 +382,6 @@ void init_peripherals(void)
   MX_GPIO_Init();
   MX_ADC1_Init();
   MX_DMA_Init();
-  MX_TIM1_Init();
   MX_I2C1_Init();
 
   #ifdef USE_UART2_PRINTF
@@ -430,6 +400,9 @@ void init_peripherals(void)
 
   /* Initialize Battery */
   battery_init();
+
+  /* Initialize Motors */
+  dc_motor_init();
 
   #if USE_DS18B20
   /*Init Temperature Sensor */

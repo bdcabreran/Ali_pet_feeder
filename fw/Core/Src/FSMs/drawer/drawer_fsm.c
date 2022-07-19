@@ -1,5 +1,6 @@
 #include "drawer_fsm.h"
 #include "printf_dbg.h"
+#include "motor_ctrl.h"
 
 /**@brief Enable/Disable debug messages */
 #define DRAWERS_FSM_DBG 1
@@ -258,7 +259,7 @@ static void drawer_ctrl_update_status(drawer_ctrl_handle_t handle)
         }
     }
 
-    // debug 
+    // debug, print status every 2s
     static uint32_t millis_cnt = 0;
     if (HAL_GetTick() - millis_cnt > 2000)
     {
@@ -275,31 +276,18 @@ static void drawer_ctrl_update_status(drawer_ctrl_handle_t handle)
 
 static void drawer_motor_open(drawer_no_t no)
 {
-    // drawer_dbg("Motor Open,  drawer no [%d]\r\n", no + 1);
+    drawer_dbg("Motor Forward,  drawer no [%d]\r\n", no + 1);
+    dc_motor_move_forward(no, MOTOR_CTRL_SPEED_MEDIUM);
 }
 
 static void drawer_motor_close(drawer_no_t no)
 {
-    // drawer_dbg("Motor Close,  drawer no [%d]\r\n", no + 1);
+    drawer_dbg("Motor Backward,  drawer no [%d]\r\n", no + 1);
+    dc_motor_move_backward(no, MOTOR_CTRL_SPEED_MEDIUM);
 }
 
 static void drawer_motor_stop(drawer_no_t no)
 {
-    // drawer_dbg("Motor Stop,  drawer no [%d]\r\n", no + 1);
+    drawer_dbg("Motor Stop,  drawer no [%d]\r\n", no + 1);
+    dc_motor_stop(no);
 }
-
-
-//void PWM_control
-
-
-/*  
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // Init channel 1 PWM
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2); // Init channel 2 PWM
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3); // Init channel 3 PWM
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4); // Init channel 4 PWM
-  
-  TIM2->CCR1 = 30000; // Tiemr channel 1 output value
-  TIM2->CCR2 = 30000; // Tiemr channel 2 output value
-  TIM2->CCR3 = 30000; // Tiemr channel 3 output value
-  TIM2->CCR4 = 30000; // Tiemr channel 4 output value
-*/
