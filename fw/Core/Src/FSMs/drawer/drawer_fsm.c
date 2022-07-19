@@ -75,7 +75,6 @@ static void during_action_watcher(drawer_ctrl_handle_t handle);
 
 
 // ----------------- Miscellaneous Functions Declarations --------------------------------------------------//
-static void drawer_ctrl_drive_motors(drawer_ctrl_handle_t handle);
 static void drawer_motor_open(drawer_no_t no);
 static void drawer_motor_close(drawer_no_t no);
 static void drawer_motor_stop(drawer_no_t no);
@@ -212,15 +211,16 @@ static void drawer_ctrl_update_status(drawer_ctrl_handle_t handle)
         {
             handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_CLOSE;
         }
-        if ((is_drawer_close(drawer_no) == false) && (is_drawer_open(drawer_no) == true))
+        else if ((is_drawer_close(drawer_no) == false) && (is_drawer_open(drawer_no) == true))
         {
             handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_OPEN;
         }
 
+
         /*check if there is a pending operation ongoing */
         if(handle->iface.drawers[drawer_no].status.next != DRAWER_ST_INVALID)
         {
-            if(handle->iface.drawers[drawer_no].status.next = DRAWER_ST_CLOSE)
+            if(handle->iface.drawers[drawer_no].status.next == DRAWER_ST_CLOSE)
             {
                 // wait until drawer is closed 
                 if(handle->iface.drawers[drawer_no].status.curr == DRAWER_ST_CLOSE)
@@ -228,33 +228,47 @@ static void drawer_ctrl_update_status(drawer_ctrl_handle_t handle)
                     handle->iface.drawers[drawer_no].status.next = DRAWER_ST_INVALID;
                     // go to default once it is closed
                      handle->iface.drawers[drawer_no].request_type = DRAWER_REQUEST_TYPE_PROGRAMMED; 
-                    drawer_dbg("drawer no [%d] closed\r\n", drawer_no + 1);
+                    drawer_dbg("drawer no [%d] is closed\r\n", drawer_no + 1);
                     drawer_motor_stop(drawer_no);
                 }
                 else
                 {
-                    drawer_dbg("closing drawer no [%d]\r\n", drawer_no + 1);
+                    // drawer_dbg("closing drawer no [%d]\r\n", drawer_no + 1);
                     handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_CLOSING;
                     drawer_motor_close(drawer_no);
                 }
             }
 
-            else if(handle->iface.drawers[drawer_no].status.next = DRAWER_ST_OPEN)
+            else if(handle->iface.drawers[drawer_no].status.next == DRAWER_ST_OPEN)
             {
                 // wait until drawer is opened 
                 if(handle->iface.drawers[drawer_no].status.curr == DRAWER_ST_OPEN)
                 {
                     handle->iface.drawers[drawer_no].status.next = DRAWER_ST_INVALID;
-                    drawer_dbg("drawer no [%d] open\r\n", drawer_no + 1);
+                    drawer_dbg("drawer no [%d] is open\r\n", drawer_no + 1);
                     drawer_motor_stop(drawer_no);
                 }
                 else
                 {
-                    drawer_dbg("opening drawer no [%d]\r\n", drawer_no + 1);
+                    // drawer_dbg("opening drawer no [%d]\r\n", drawer_no + 1);
                     handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_OPENING;
                     drawer_motor_open(drawer_no);
                 }
             }
+        }
+    }
+
+    // debug 
+    static uint32_t millis_cnt = 0;
+    if (HAL_GetTick() - millis_cnt > 2000)
+    {
+        millis_cnt = HAL_GetTick();
+        for (drawer_no_t drawer_no = DRAWER_NO_1; drawer_no < DRAWERn; drawer_no++)
+        {
+            if(handle->iface.drawers[drawer_no].status.curr == DRAWER_ST_OPENING)
+               drawer_dbg("opening drawer no [%d]\r\n", drawer_no + 1);
+            else if(handle->iface.drawers[drawer_no].status.curr == DRAWER_ST_CLOSING)
+               drawer_dbg("closing drawer no [%d]\r\n", drawer_no + 1);
         }
     }
 }

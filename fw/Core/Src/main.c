@@ -65,13 +65,13 @@ int main(void)
   feeder_handle_t feeder_fsm = feeder_fsm_get();
   feeder_fsm_init(feeder_fsm);
 
+  /*Init Petcall */
+//  petcall_handle_t petcall_fsm = petcall_fsm_get();
+//  petcall_fsm_init(petcall_fsm);
+
   /*Init Drawer Controller */
   drawer_ctrl_handle_t drawer_fsm = drawer_ctrl_fsm_get();
   drawer_ctrl_fsm_init(drawer_fsm);
-
-  /*Init Petcall */
-  petcall_handle_t petcall_fsm = petcall_fsm_get();
-  petcall_fsm_init(petcall_fsm);
 
   /*Init Power Ctrl*/
   power_handle_t power_fsm = power_fsm_get();
@@ -89,7 +89,7 @@ int main(void)
     event_manager_fsm_run(evm_fsm);
     feeder_fsm_run(feeder_fsm);                                          
     drawer_ctrl_fsm_run(drawer_fsm);
-    petcall_fsm_run(petcall_fsm);
+//    petcall_fsm_run(petcall_fsm);
     power_fsm_run(power_fsm);
 
     /* update FSMs */

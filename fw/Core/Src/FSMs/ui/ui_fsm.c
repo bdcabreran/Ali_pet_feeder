@@ -904,7 +904,7 @@ static void notify_manual_drawer_operation(ui_handle_t handle)
 
     if (info->status.curr == DRAWER_ST_CLOSE || info->status.curr == DRAWER_ST_CLOSING)
     {
-        sprintf(str, "Opening Drawer no %d\r\n", drawer_cfg->drawer.no + 1);
+        sprintf(str, "Opening Drawer no %d", drawer_cfg->drawer.no + 1);
         ui_fsm_dbg("%s\r\n", str);
         event.info.name = EVT_EXT_DRAWER_CTRL_OPEN;
         event_data->drawer_no = drawer_cfg->drawer.no;
@@ -913,7 +913,7 @@ static void notify_manual_drawer_operation(ui_handle_t handle)
 
     else if (info->status.curr == DRAWER_ST_OPEN || info->status.curr == DRAWER_ST_OPENING)
     {
-        sprintf(str, "Closing Drawer no %d\r\n", drawer_cfg->drawer.no + 1);
+        sprintf(str, "Closing Drawer no %d", drawer_cfg->drawer.no + 1);
         ui_fsm_dbg("%s\r\n", str);
         event.info.name = EVT_EXT_DRAWER_CTRL_CLOSE;
         event_data->drawer_no = drawer_cfg->drawer.no;

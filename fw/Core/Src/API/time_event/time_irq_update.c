@@ -39,7 +39,7 @@ void time_events_poll_update(void)
         ui_fsm_time_update(ui_fsm_get());
         temp_ctrl_fsm_time_update(temp_ctrl_fsm_get());
         feeder_fsm_time_update(feeder_fsm_get());
-        petcall_fsm_time_update(petcall_fsm_get());
+//        petcall_fsm_time_update(petcall_fsm_get());
         power_fsm_time_update(power_fsm_get());
         
         time_event_set_pending_update(false); 
