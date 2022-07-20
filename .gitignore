@@ -23,7 +23,6 @@ Debug/*
 
 # Libraries
 *.lib
-*.a
 *.la
 *.lo
 

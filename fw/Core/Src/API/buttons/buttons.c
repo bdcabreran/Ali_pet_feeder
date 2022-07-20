@@ -2,10 +2,34 @@
 #include "printf_dbg.h"
 #include "event_manager_fsm.h"
 
+
+/**@brief Enable/Disable debug messages */
+#define BUTTONS_DEBUG 0
+#define BUTTONS_TAG "buttons dbg : "
+
+/**@brief uart debug function for server comm operations  */
+#if BUTTONS_DEBUG
+#define btn_dbg(format, ...)         \
+    do                                           \
+    {											\
+    	printf_dbg_color(E_MAG, BUTTONS_TAG); \
+        printf_dbg(format,##__VA_ARGS__ );       \
+    } while (0)
+#else
+#define btn_dbg(format, ...) \
+	do                                       \
+	{ /* Do nothing */                       \
+	} while (0)
+#endif
+
+
+
 navigation_btn_t navigation_btn;
 
 void btn_debounce_init(navigation_btn_t *btn)
 {
+    btn_dbg("initializing navigation btn\r\n");
+    
     btn->down.gpio.port = DOWN_GPIO_Port;
     btn->down.gpio.pin  = DOWN_Pin;
     btn->up.gpio.port = UP_GPIO_Port;
@@ -37,12 +61,12 @@ static btn_ev_ext_t btn_key_enter_combination(navigation_btn_t *btn)
             if(time_event_is_active(&btn->enter.debounce))
                 time_event_stop(&btn->enter.debounce);
 
-            printf("btn down + enter pressed\r\n");
+            btn_dbg("btn down + enter pressed\r\n");
             return EVT_EXT_BTN_DOWN_AND_ENTER_PRESSED;
         }
         else
         {
-            printf("btn down pressed\r\n");
+            btn_dbg("btn down pressed\r\n");
             return EVT_EXT_BTN_DOWN_PRESSED;
         }
     }
@@ -54,12 +78,12 @@ static btn_ev_ext_t btn_key_enter_combination(navigation_btn_t *btn)
             if (time_event_is_active(&btn->enter.debounce))
                 time_event_stop(&btn->enter.debounce);
 
-            printf("btn up + enter pressed\r\n");
+            btn_dbg("btn up + enter pressed\r\n");
             return EVT_EXT_BTN_UP_AND_ENTER_PRESSED;
         }
         else
         {
-            printf("btn up pressed\r\n");
+            btn_dbg("btn up pressed\r\n");
             return EVT_EXT_BTN_UP_PRESSED;
         }
     }
@@ -71,12 +95,12 @@ static btn_ev_ext_t btn_key_enter_combination(navigation_btn_t *btn)
             if (time_event_is_active(&btn->enter.debounce))
                 time_event_stop(&btn->enter.debounce);
             
-            printf("btn left + enter pressed\r\n");
+            btn_dbg("btn left + enter pressed\r\n");
             return EVT_EXT_BTN_LEFT_AND_ENTER_PRESSED;
         }
         else 
         {
-            printf("btn left pressed\r\n");
+            btn_dbg("btn left pressed\r\n");
             return EVT_EXT_BTN_LEFT_PRESSED;
         }
     }
@@ -88,12 +112,12 @@ static btn_ev_ext_t btn_key_enter_combination(navigation_btn_t *btn)
             if (time_event_is_active(&btn->enter.debounce))
                 time_event_stop(&btn->enter.debounce);
             
-            printf("btn right + enter pressed\r\n");
+            btn_dbg("btn right + enter pressed\r\n");
             return EVT_EXT_BTN_RIGHT_AND_ENTER_PRESSED;
         }
         else
         {
-            printf("btn right pressed\r\n");
+            btn_dbg("btn right pressed\r\n");
             return EVT_EXT_BTN_RIGHT_PRESSED;
         }
     }
@@ -110,7 +134,7 @@ static btn_ev_ext_t btn_enter_key_combination(navigation_btn_t *btn)
         {
             if (time_event_is_active(&btn->down.debounce))
                 time_event_stop(&btn->down.debounce);
-            printf("btn enter + down pressed\r\n");
+            btn_dbg("btn enter + down pressed\r\n");
             return EVT_EXT_BTN_DOWN_AND_ENTER_PRESSED;
         }
 
@@ -118,7 +142,7 @@ static btn_ev_ext_t btn_enter_key_combination(navigation_btn_t *btn)
         {
             if (time_event_is_active(&btn->up.debounce))
                 time_event_stop(&btn->up.debounce);
-            printf("btn enter + up pressed\r\n");
+            btn_dbg("btn enter + up pressed\r\n");
             return EVT_EXT_BTN_UP_AND_ENTER_PRESSED;
         }
 
@@ -126,7 +150,7 @@ static btn_ev_ext_t btn_enter_key_combination(navigation_btn_t *btn)
         {
             if (time_event_is_active(&btn->left.debounce))
                 time_event_stop(&btn->left.debounce);
-            printf("btn enter + left pressed\r\n");
+            btn_dbg("btn enter + left pressed\r\n");
             return EVT_EXT_BTN_LEFT_AND_ENTER_PRESSED;
         }
 
@@ -134,12 +158,12 @@ static btn_ev_ext_t btn_enter_key_combination(navigation_btn_t *btn)
         {
             if (time_event_is_active(&btn->right.debounce))
                 time_event_stop(&btn->right.debounce);
-            printf("btn enter + right pressed\r\n");
+            btn_dbg("btn enter + right pressed\r\n");
             return EVT_EXT_BTN_RIGHT_AND_ENTER_PRESSED;
         }
         else
         {
-            printf("btn enter pressed\r\n");
+            btn_dbg("btn enter pressed\r\n");
             return EVT_EXT_BTN_ENTER_PRESSED;
         }
     }
