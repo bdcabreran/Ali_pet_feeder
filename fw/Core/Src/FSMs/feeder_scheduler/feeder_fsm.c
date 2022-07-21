@@ -26,6 +26,7 @@
 const char *am_pm_str[3] = {"NA","AM", "PM"}; 
 const char *meal_name[FEEDER_MEALn] = {
     "FEEDER_MEAL_BREAKFAST",
+    "FEEDER_MEAL_SNACK_1",
     "FEEDER_MEAL_LUNCH",
     "FEEDER_MEAL_SNACK_2",
     "FEEDER_MEAL_DINNER",
