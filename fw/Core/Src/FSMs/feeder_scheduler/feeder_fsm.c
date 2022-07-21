@@ -387,7 +387,6 @@ static void watcher_on_react(feeder_handle_t handle)
 /////////////////////////////////// Miscellaneous Function Definition   ///////////////////////////////////////////
 static bool is_valid_feeder_config(feeder_config_info_t *info)
 {
-
     for (size_t drawer_idx = 0; drawer_idx < DRAWERn; drawer_idx++)
     {
         feeder_drawer_data_t *drawer_data = &info->drawer_no[drawer_idx];
@@ -412,6 +411,8 @@ static bool is_valid_feeder_config(feeder_config_info_t *info)
 
 static bool get_user_configuration_from_flash(feeder_handle_t handle)
 {
+    feeder_dbg("checking if there is available info in flash...\r\n");
+
     user_config_t *user_config = user_config_get();
     feeder_config_info_t *flash_config = &user_config->feeder_info;
     feeder_config_info_t *ram_config = &handle->iface.feeder;

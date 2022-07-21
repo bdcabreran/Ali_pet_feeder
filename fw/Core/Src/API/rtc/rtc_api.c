@@ -51,14 +51,9 @@ void rtc_print_time(void)
 {
 	date_time_t date_time;
 	rtc_get_time(&date_time);
-	printf("RTC debug information : \r\n");
-	printf("month\t: [%d]\r\n", date_time.month);
-	printf("day\t: [%d]\r\n", date_time.dayOfMonth);
-	printf("hour\t: [%d]\r\n", date_time.hours);
-	printf("minute\t: [%d]\r\n", date_time.minutes);
-	printf("Time\t: [%s]\r\n", date_time.am_pm == 1 ? "am" : "pm");
+	 printf("RTC Info : Date { DD/MM : %.2d/%.2d }, Time { hh:mm %.2d:%.2d %s }\r\n", \
+	 date_time.dayOfMonth, date_time.month, date_time.hours, date_time.minutes, date_time.am_pm == RTC_TIME_AM ? "am" : "pm");
 }
-
 #ifdef RTC_MOCK
 void rtc_init_mock(void){
 

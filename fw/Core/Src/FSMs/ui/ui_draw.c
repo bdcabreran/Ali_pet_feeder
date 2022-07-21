@@ -488,11 +488,11 @@ void ui_date_time_menu_show(ui_date_time_menu_t *menu, bool show)
 {
     if(show)
     {
-        ui_display_digits(&menu->time.hour, "12:", LCD_DEFAULT_TEXTCOLOR);
+        ui_display_digits(&menu->time.hour, "00:", LCD_DEFAULT_TEXTCOLOR);
         ui_display_digits(&menu->time.min, "00", LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->time.am_pm, "PM",&Font24, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->date.day, "01/", &Font24, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->date.month, "12", &Font24, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->time.am_pm, "NA",&Font24, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->date.day, "00/", &Font24, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->date.month, "00", &Font24, LCD_DEFAULT_TEXTCOLOR);
 
         ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
     }

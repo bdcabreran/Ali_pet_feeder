@@ -40,25 +40,23 @@ void init_peripherals(void);
 
 #define BAT_DETEC_Pin GPIO_PIN_0
 #define BAT_DETEC_GPIO_Port GPIOC
+
+/* Cooler */
 #define POWER_CONTROL_Pin GPIO_PIN_1
 #define POWER_CONTROL_GPIO_Port GPIOC
-#define RECORDING_STOP_Pin GPIO_PIN_2
-#define RECORDING_STOP_GPIO_Port GPIOC
-#define PLAY_Pin GPIO_PIN_3
-#define PLAY_GPIO_Port GPIOC
-#define FWD_1_Pin GPIO_PIN_0
-#define FWD_1_GPIO_Port GPIOA
-#define BWD_1_Pin GPIO_PIN_1
-#define BWD_1_GPIO_Port GPIOA
-#define FWD_2_Pin GPIO_PIN_2
-#define FWD_2_GPIO_Port GPIOA
-#define BWD_2_Pin GPIO_PIN_3
-#define BWD_2_GPIO_Port GPIOA
-#define SHUTDOWN_Pin GPIO_PIN_4
-#define SHUTDOWN_GPIO_Port GPIOA
 
+/* Temperature Sensor 1-wire */
 #define PA6_TEMPERATURE_Pin GPIO_PIN_6
 #define PA6_TEMPERATURE_GPIO_Port GPIOA
+
+#define RECORDING_STOP_Pin GPIO_PIN_2
+#define RECORDING_STOP_GPIO_Port GPIOC
+
+#define PLAY_Pin GPIO_PIN_3
+#define PLAY_GPIO_Port GPIOC
+
+#define SHUTDOWN_Pin GPIO_PIN_4
+#define SHUTDOWN_GPIO_Port GPIOA
 
 #define LCD_RESET_Pin GPIO_PIN_10
 #define LCD_RESET_GPIO_Port GPIOB
@@ -74,20 +72,14 @@ void init_peripherals(void);
 #define LCD_MOSI_GPIO_Port GPIOB
 #define LCD_LED_Pin GPIO_PIN_6
 #define LCD_LED_GPIO_Port GPIOC
+
+/* Drawer Switches */
 #define S1_Pin GPIO_PIN_7
 #define S1_GPIO_Port GPIOC
 #define S2_Pin GPIO_PIN_8
 #define S2_GPIO_Port GPIOC
 #define S3_Pin GPIO_PIN_9
 #define S3_GPIO_Port GPIOC
-#define FWD_3_Pin GPIO_PIN_8
-#define FWD_3_GPIO_Port GPIOA
-#define BWD_3_Pin GPIO_PIN_9
-#define BWD_3_GPIO_Port GPIOA
-#define FWD_4_Pin GPIO_PIN_10
-#define FWD_4_GPIO_Port GPIOA
-#define BWD_4_Pin GPIO_PIN_11
-#define BWD_4_GPIO_Port GPIOA
 #define S4_Pin GPIO_PIN_12
 #define S4_GPIO_Port GPIOA
 #define S5_Pin GPIO_PIN_15
@@ -98,10 +90,31 @@ void init_peripherals(void);
 #define S7_GPIO_Port GPIOC
 #define S8_Pin GPIO_PIN_12
 #define S8_GPIO_Port GPIOC
+
+/*DC Motor Drivers */
+#define FWD_1_Pin GPIO_PIN_0
+#define FWD_1_GPIO_Port GPIOA
+#define BWD_1_Pin GPIO_PIN_1
+#define BWD_1_GPIO_Port GPIOA
+#define FWD_2_Pin GPIO_PIN_2
+#define FWD_2_GPIO_Port GPIOA
+#define BWD_2_Pin GPIO_PIN_3
+#define BWD_2_GPIO_Port GPIOA
+#define FWD_3_Pin GPIO_PIN_8
+#define FWD_3_GPIO_Port GPIOA
+#define BWD_3_Pin GPIO_PIN_9
+#define BWD_3_GPIO_Port GPIOA
+#define FWD_4_Pin GPIO_PIN_10
+#define FWD_4_GPIO_Port GPIOA
+#define BWD_4_Pin GPIO_PIN_11
+#define BWD_4_GPIO_Port GPIOA
+
+/*RTC - I2C */
 #define RTC_SCL_Pin GPIO_PIN_6
 #define RTC_SCL_GPIO_Port GPIOB
 #define RTC_SDA_Pin GPIO_PIN_7
 #define RTC_SDA_GPIO_Port GPIOB
+
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3

@@ -16,10 +16,11 @@
 #include "stdbool.h"
 
 /* Update This values Accordingly */
-#define TEMP_SAMPLING_PERIOD_MS               (60000) //(5000)  //5s for debug, 1min for field 
+// #define TEMP_SAMPLING_PERIOD_MS               (5000)  //5s for debug
+#define TEMP_SAMPLING_PERIOD_MS               (60000) // 1min for field 
 #define TEMP_CTRL_DEFAULT_CELSIUS_VALUE       (20)
 #define TEMP_CTRL_DEFAULT_FAHRENHEIT_VALUE    (68)
-#define TEMP_CTRL_HYSTERESIS_VALUE_CELSIUS    (4) /*3 degrees */ 
+#define TEMP_CTRL_HYSTERESIS_VALUE_CELSIUS    (4) /*4 degrees */ 
 #define TEMP_CTRL_HYSTERESIS_VALUE_FAHRENHEIT (9) /*9 degrees */
 
 #define IS_TEMP_CELSIUS_TOO_COLD(ctrl, sensed) (sensed < (ctrl - TEMP_CTRL_HYSTERESIS_VALUE_CELSIUS))

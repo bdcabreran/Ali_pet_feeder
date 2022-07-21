@@ -217,7 +217,6 @@ static void drawer_ctrl_update_status(drawer_ctrl_handle_t handle)
             handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_OPEN;
         }
 
-
         /*check if there is a pending operation ongoing */
         if(handle->iface.drawers[drawer_no].status.next != DRAWER_ST_INVALID)
         {
@@ -229,14 +228,17 @@ static void drawer_ctrl_update_status(drawer_ctrl_handle_t handle)
                     handle->iface.drawers[drawer_no].status.next = DRAWER_ST_INVALID;
                     // go to default once it is closed
                      handle->iface.drawers[drawer_no].request_type = DRAWER_REQUEST_TYPE_PROGRAMMED; 
-                    drawer_dbg("drawer no [%d] is closed\r\n", drawer_no + 1);
+                    drawer_dbg("drawer no [%d] is closed, motor stop\r\n", drawer_no + 1);
                     drawer_motor_stop(drawer_no);
                 }
                 else
                 {
-                    // drawer_dbg("closing drawer no [%d]\r\n", drawer_no + 1);
-                    handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_CLOSING;
-                    drawer_motor_close(drawer_no);
+                    if(handle->iface.drawers[drawer_no].status.curr != DRAWER_ST_CLOSING)
+                    {
+                        // drawer_dbg("closing drawer no [%d], motor backward \r\n", drawer_no + 1);
+                        handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_CLOSING;
+                        drawer_motor_close(drawer_no);
+                    }
                 }
             }
 
@@ -246,20 +248,23 @@ static void drawer_ctrl_update_status(drawer_ctrl_handle_t handle)
                 if(handle->iface.drawers[drawer_no].status.curr == DRAWER_ST_OPEN)
                 {
                     handle->iface.drawers[drawer_no].status.next = DRAWER_ST_INVALID;
-                    drawer_dbg("drawer no [%d] is open\r\n", drawer_no + 1);
+                    drawer_dbg("drawer no [%d] is open, motor stop\r\n", drawer_no + 1);
                     drawer_motor_stop(drawer_no);
                 }
                 else
                 {
-                    // drawer_dbg("opening drawer no [%d]\r\n", drawer_no + 1);
-                    handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_OPENING;
-                    drawer_motor_open(drawer_no);
+                    if(handle->iface.drawers[drawer_no].status.curr != DRAWER_ST_OPENING)
+                    {
+                        // drawer_dbg("opening drawer no [%d], motor forward\r\n", drawer_no + 1);
+                        drawer_motor_open(drawer_no);
+                        handle->iface.drawers[drawer_no].status.curr = DRAWER_ST_OPENING;
+                    }
                 }
             }
         }
     }
 
-    // debug, print status every 2s
+    //debug, print status every 2s
     static uint32_t millis_cnt = 0;
     if (HAL_GetTick() - millis_cnt > 2000)
     {
@@ -267,27 +272,29 @@ static void drawer_ctrl_update_status(drawer_ctrl_handle_t handle)
         for (drawer_no_t drawer_no = DRAWER_NO_1; drawer_no < DRAWERn; drawer_no++)
         {
             if(handle->iface.drawers[drawer_no].status.curr == DRAWER_ST_OPENING)
-               drawer_dbg("opening drawer no [%d]\r\n", drawer_no + 1);
+            {
+                drawer_dbg("opening drawer no [%d], motor forward \r\n", drawer_no + 1);
+
+            }
             else if(handle->iface.drawers[drawer_no].status.curr == DRAWER_ST_CLOSING)
-               drawer_dbg("closing drawer no [%d]\r\n", drawer_no + 1);
+            {   
+                drawer_dbg("closing drawer no [%d], motor backward \r\n", drawer_no + 1);
+            }
         }
     }
 }
 
 static void drawer_motor_open(drawer_no_t no)
 {
-    drawer_dbg("Motor Forward,  drawer no [%d]\r\n", no + 1);
     dc_motor_move_forward(no, MOTOR_CTRL_SPEED_MEDIUM);
 }
 
 static void drawer_motor_close(drawer_no_t no)
 {
-    drawer_dbg("Motor Backward,  drawer no [%d]\r\n", no + 1);
     dc_motor_move_backward(no, MOTOR_CTRL_SPEED_MEDIUM);
 }
 
 static void drawer_motor_stop(drawer_no_t no)
 {
-    drawer_dbg("Motor Stop,  drawer no [%d]\r\n", no + 1);
     dc_motor_stop(no);
 }

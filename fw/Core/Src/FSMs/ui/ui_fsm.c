@@ -6,7 +6,7 @@
 #include "rct_api.h"
 
 /**@brief Enable/Disable debug messages */
-#define UI_FSM_DEBUG 1
+#define UI_FSM_DEBUG 0
 #define UI_FSM_TAG "ui : "
 
 /**@brief uart debug function for server comm operations  */

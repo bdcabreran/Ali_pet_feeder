@@ -228,6 +228,30 @@ static void MX_DMA_Init(void)
   HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 }
 
+static void drawer_switch_gpio_init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  /*Configure GPIO pins :  S1_Pin S2_Pin S3_Pin S8_Pin S6_Pin S7_Pin */
+  GPIO_InitStruct.Pin = S1_Pin|S2_Pin|S3_Pin|S8_Pin|S6_Pin|S7_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins :  S4_Pin */
+  GPIO_InitStruct.Pin =  S4_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : S5_Pin */
+  GPIO_InitStruct.Pin = S5_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(S5_GPIO_Port, &GPIO_InitStruct);
+
+}
+
 /**
   * @brief GPIO Initialization Function
   * @param None
@@ -261,14 +285,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(POWER_CONTROL_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : RECORDING_STOP_Pin PLAY_Pin  
-                           S1_Pin S2_Pin S3_Pin S8_Pin */
-  GPIO_InitStruct.Pin = RECORDING_STOP_Pin|PLAY_Pin
-                          |S1_Pin|S2_Pin|S3_Pin|S8_Pin;
+  /*Configure GPIO pins : RECORDING_STOP_Pin PLAY_Pin */
+  GPIO_InitStruct.Pin = RECORDING_STOP_Pin|PLAY_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
 
   /*Configure GPIO pins : FWD_1_Pin BWD_1_Pin FWD_2_Pin BWD_2_Pin
                            SHUTDOWN_Pin PA6_TEMPERATURE_Pin FWD_3_Pin BWD_3_Pin
@@ -281,11 +302,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins :  S4_Pin */
-  GPIO_InitStruct.Pin =  S4_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LCD_RESET_Pin LCD_DC_Pin LCD_CS_Pin */
   GPIO_InitStruct.Pin = LCD_RESET_Pin|LCD_DC_Pin|LCD_CS_Pin;
@@ -294,17 +310,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LCD_LED_Pin S6_Pin S7_Pin */
-  GPIO_InitStruct.Pin = LCD_LED_Pin|S6_Pin|S7_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : S5_Pin */
-  GPIO_InitStruct.Pin = S5_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(S5_GPIO_Port, &GPIO_InitStruct);
+  /*Drawer Switches */
+  drawer_switch_gpio_init();
 
 //////////////////////////////////////////////////////////////////////////////////////////
   /*Navigation Buttons IRQ enable */

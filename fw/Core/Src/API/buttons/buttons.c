@@ -4,7 +4,7 @@
 
 
 /**@brief Enable/Disable debug messages */
-#define BUTTONS_DEBUG 0
+#define BUTTONS_DEBUG 1
 #define BUTTONS_TAG "buttons dbg : "
 
 /**@brief uart debug function for server comm operations  */
@@ -29,7 +29,7 @@ navigation_btn_t navigation_btn;
 void btn_debounce_init(navigation_btn_t *btn)
 {
     btn_dbg("initializing navigation btn\r\n");
-    
+
     btn->down.gpio.port = DOWN_GPIO_Port;
     btn->down.gpio.pin  = DOWN_Pin;
     btn->up.gpio.port = UP_GPIO_Port;
