@@ -113,11 +113,6 @@ void drawer_ctrl_fsm_init(drawer_ctrl_handle_t handle)
     {
         handle->iface.drawers[drawer_no].request_type = DRAWER_REQUEST_TYPE_INVALID;
         handle->iface.drawers[drawer_no].status.next = DRAWER_ST_CLOSE;
-        // dbg
-        if(drawer_no == DRAWER_NO_2)
-        {
-            handle->iface.drawers[drawer_no].status.next = DRAWER_ST_INVALID;
-        }
     }
 
     /*default entry sequence */
