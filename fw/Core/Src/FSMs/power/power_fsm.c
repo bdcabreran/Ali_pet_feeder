@@ -282,7 +282,7 @@ static uint8_t pwr_api_get_voltage_percent(void)
 
 static void pwr_api_enter_enter_low_power_mode(void)
 {
-    pwr_fsm_dbg("entering low power mode ...\r\n");
+    pwr_fsm_dbg("enter low power mode ...\r\n");
     /*1. Reduce Clock Speed */
 
     /*2. Disable Temperature Control */
@@ -292,7 +292,7 @@ static void pwr_api_enter_enter_low_power_mode(void)
 
 static void pwr_api_enter_exit_low_power_mode(void)
 {
-    pwr_fsm_dbg("exciting low power mode ...\r\n");
+    pwr_fsm_dbg("exit low power mode ...\r\n");
     /*1. Restore Clock Speed */
 
     /*2. Enable Temperature Control */
