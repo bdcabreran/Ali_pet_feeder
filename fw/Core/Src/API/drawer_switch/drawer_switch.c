@@ -50,16 +50,23 @@ void switch_state_update(drawer_switches_t *ds)
 
         /* check if front switch is pressed */
         if (HAL_GPIO_ReadPin(ds_ptr->front.gpio.port, ds_ptr->front.gpio.pin) == GPIO_PIN_RESET)
+        {
             ds_ptr->front.pressed = true;
+        }
         else
+        {
             ds_ptr->front.pressed = false;
-
-
+        }
+        
         /*check if behind switch is pressed */
         if (HAL_GPIO_ReadPin(ds_ptr->behind.gpio.port, ds_ptr->behind.gpio.pin) == GPIO_PIN_RESET)
+        {
             ds_ptr->behind.pressed = true;
+        }
         else
+        {
             ds_ptr->behind.pressed = false;
+        }
     
         /*update switch status*/
         if(ds_ptr->behind.pressed == false && ds_ptr->front.pressed == true)

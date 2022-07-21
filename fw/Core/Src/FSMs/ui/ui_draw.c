@@ -423,7 +423,7 @@ void ui_feeder_menu_set_config(ui_feeder_menu_t *menu, ui_feeder_config_info_t *
         case FEEDER_CNF_CLOSE_TIME_AM_FM:
         {
             ui_display_string(&menu->meal_td[config->meal].time.close.am_pm,
-                              (char*)am_pm_str[config->feeder.config[config->meal].time.open.am_pm], font, color);
+                              (char*)am_pm_str[config->feeder.config[config->meal].time.close.am_pm], font, color);
         } break;
 
         case FEEDER_CNF_DATE_DAY: {

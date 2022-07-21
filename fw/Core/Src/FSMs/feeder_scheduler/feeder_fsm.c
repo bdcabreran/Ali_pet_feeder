@@ -336,7 +336,7 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
             if (time_match(&meal_data->time.open, &rtc_time))
             {
 
-                feeder_dbg("Open drawer no%d - Date { DD/MM : %.2d/%.2d } Time { hh:mm %.2d:%.2d %s } Meal {%s}\r\n",
+                feeder_dbg("Open drawer no [%d] - Date { DD/MM : %.2d/%.2d } Time { hh:mm %.2d:%.2d %s } Meal {%s}\r\n",
                            drawer_idx + 1, meal_data->date.day, meal_data->date.month, meal_data->time.open.hour, meal_data->time.open.minute,
                            am_pm_str[meal_data->time.close.am_pm], meal_name[meal_idx]);
 
@@ -351,7 +351,7 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
             /* check if close time matches */
             if (time_match(&meal_data->time.close, &rtc_time))
             {
-                feeder_dbg("Close drawer no%d - Date { DD/MM : %.2d/%.2d } Time { hh:mm %.2d:%.2d %s } Meal {%s}\r\n",
+                feeder_dbg("Close drawer no [%d] - Date { DD/MM : %.2d/%.2d } Time { hh:mm %.2d:%.2d %s } Meal {%s}\r\n",
                            drawer_idx + 1, meal_data->date.day, meal_data->date.month, meal_data->time.close.hour, meal_data->time.close.minute,
                            am_pm_str[meal_data->time.close.am_pm], meal_name[meal_idx]);
 
