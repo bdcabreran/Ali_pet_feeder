@@ -931,10 +931,12 @@ static void notify_manual_drawer_operation(ui_handle_t handle)
 static void ui_update_battery(ui_handle_t handle)
 {
     // ui_fsm_dbg("update battery status \r\n");
+
+    power_fsm_info_t *info = power_fsm_get_info();
     ui_battery_config_t *ui_config = &handle->iface.ui.battery;
     static uint8_t batt_dummy_val = 0;
     ui_config->set    = BATT_ST_CHARGING;
-    ui_config->charge = (batt_dummy_val++ % 100);
+    ui_config->charge = info->battery.charge_percent;
     ui_battery_set_config(&ui_battery, ui_config);
 }
 

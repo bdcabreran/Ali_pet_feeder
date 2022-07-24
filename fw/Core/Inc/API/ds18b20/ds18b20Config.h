@@ -12,7 +12,7 @@
 
 // #define MOCK_SENSOR_DS18B20    // uncomment to use the real sensor
 
-#define	_DS18B20_TIMER											htim3						
+#define	_DS18B20_TIMER											htim4						
 //###################################################################################
 
 #endif

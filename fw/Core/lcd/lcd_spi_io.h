@@ -40,7 +40,7 @@
    - BL: A..K, 0..15 (if not used -> X, 0)
    - BL_ON: the logical level of the active state */
 #define LCD_BL            C, 6  /* If not used leave it that way */
-#define LCD_BLON          0
+#define LCD_BLON          1
 
 /* When data direction change (OUT->IN) there is a display that requires extra clock
    example ST7735: 1, ILI9341: 0 */

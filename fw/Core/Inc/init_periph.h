@@ -17,6 +17,7 @@ extern DMA_HandleTypeDef  hdma_spi2_tx;
 extern TIM_HandleTypeDef  htim1;
 extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef  htim2;
+extern TIM_HandleTypeDef  htim3; 
 
 // comment if no used
 // #define USE_UART2_PRINTF
@@ -38,6 +39,7 @@ void init_peripherals(void);
 #define LEFT_Pin            GPIO_PIN_5
 #define LEFT_GPIO_Port      GPIOA
 
+/*Battery ADC */
 #define BAT_DETEC_Pin GPIO_PIN_0
 #define BAT_DETEC_GPIO_Port GPIOC
 

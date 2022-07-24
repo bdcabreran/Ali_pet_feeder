@@ -187,6 +187,7 @@ void     BSP_LCD_FillTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2
 
 void     BSP_LCD_DisplayOff(void);
 void     BSP_LCD_DisplayOn(void);
+void     BSP_LCD_SetBrightness(uint8_t level);
 
 uint16_t BSP_LCD_ReadID(void);
 uint16_t BSP_LCD_ReadPixel(uint16_t Xpos, uint16_t Ypos);

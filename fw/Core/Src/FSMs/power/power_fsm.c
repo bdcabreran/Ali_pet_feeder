@@ -2,11 +2,12 @@
 #include "printf_dbg.h"
 #include "battery.h"
 
-#define BATT_CHARGE_READ_VAL_PERIOD_MS      (20*1000) // 20s
-#define BATT_LEVEL_PERCENT_TO_EXIT_LOW_POWER_MODE   (50)
+#define BATT_CHARGE_READ_VAL_PERIOD_MS      (2*1000) // 20s
+#define BATT_LEVEL_PERCENT_TO_EXIT_LOW_POWER_MODE   (25)
+#define BATT_LEVEL_PERCENT_TO_ENTER_LOW_POWER_MODE   (20)
 
 /**@brief Enable/Disable debug messages */
-#define PWR_FSM_DEBUG 0
+#define PWR_FSM_DEBUG 1
 #define PWR_FSM_TAG "pwr : "
 
 /**@brief uart debug function for server comm operations  */
@@ -23,6 +24,16 @@
 	{ /* Do nothing */                       \
 	} while (0)
 #endif
+
+
+const char *batt_status[BATT_ST_LAST] = 
+{
+    "BATT_ST_INVALID",
+    "BATT NO_DETECTED",
+    "BATT LOW_BATTERY",
+    "BATT CHARGING",
+    "BATT DISCHARGING"
+};
 
 typedef enum 
 {
@@ -144,7 +155,7 @@ static void fsm_set_next_state(power_handle_t handle, power_fsm_state_t next_st)
 /* static state function definition */
 static void enter_seq_idle(power_handle_t handle)
 {
-    pwr_fsm_dbg("enter seq/t [ IDLE ]\r\n");
+    pwr_fsm_dbg("enter seq\t [ IDLE ]\r\n");
     fsm_set_next_state(handle, PWR_FSM_ST_IDLE);
     entry_action_idle(handle);
 }
@@ -155,15 +166,13 @@ static void entry_action_idle(power_handle_t handle)
     handle->iface.info.battery.voltage =  pwr_api_get_voltage();
     handle->iface.info.battery.charge_percent  =  pwr_api_get_voltage_percent();
 
-    switch (handle->iface.info.battery.status)
+    pwr_fsm_dbg("batt info : voltage %d mV , percent %d%%, status %s \r\n",
+                handle->iface.info.battery.voltage, handle->iface.info.battery.charge_percent,
+                batt_status[handle->iface.info.battery.status]);
+
+    if(handle->iface.info.battery.charge_percent <= BATT_LEVEL_PERCENT_TO_ENTER_LOW_POWER_MODE)
     {
-        case BATT_ST_NO_DETECTED: { pwr_fsm_dbg("warning : BATT NOT DETECTED!!!!\r\n"); } break;
-        case BATT_ST_CHARGING:    { pwr_fsm_dbg("BATT CHARGING... \r\n"); } break;
-        case BATT_ST_DISCHARGING: { pwr_fsm_dbg("BATT DISCHARGING... \r\n"); } break;
-        case BATT_ST_LOW_BATTERY: { pwr_fsm_dbg("warning : LOW BATTERY...\r\n");
-                                    handle->event.internal.name = EV_INT_LOW_POWER_MODE_ENTER; } break;
-    default:
-        break;
+        handle->event.internal.name = EV_INT_LOW_POWER_MODE_ENTER; 
     }
 
     /*start time for batt charge reading */
@@ -191,6 +200,7 @@ static void idle_on_react(power_handle_t handle)
 
 static void enter_seq_low_power(power_handle_t handle)
 {
+    pwr_fsm_dbg("enter seq\t [ LOW POWER ]\r\n");
     fsm_set_next_state(handle, PWR_FSM_ST_LOW_POWER);
     entry_action_low_power(handle);
 }
@@ -201,15 +211,9 @@ static void entry_action_low_power(power_handle_t handle)
     handle->iface.info.battery.voltage =  pwr_api_get_voltage();
     handle->iface.info.battery.charge_percent  =  pwr_api_get_voltage_percent();
 
-    switch (handle->iface.info.battery.status)
-    {
-        case BATT_ST_NO_DETECTED: { pwr_fsm_dbg("warning : BATT NOT DETECTED!!!!\r\n"); } break;
-        case BATT_ST_CHARGING:    { pwr_fsm_dbg("BATT CHARGING... \r\n"); } break;
-        case BATT_ST_DISCHARGING: { pwr_fsm_dbg("BATT DISCHARGING... \r\n"); } break;
-        case BATT_ST_LOW_BATTERY: { pwr_fsm_dbg("warning : LOW BATTERY...\r\n"); } break;
-    default:
-        break;
-    }
+    pwr_fsm_dbg("batt info : voltage %d mV , percent %d%%, status %s \r\n",
+                handle->iface.info.battery.voltage, handle->iface.info.battery.charge_percent,
+                batt_status[handle->iface.info.battery.status]);
 
     if(handle->iface.info.battery.charge_percent > BATT_LEVEL_PERCENT_TO_EXIT_LOW_POWER_MODE)
     {
@@ -235,7 +239,7 @@ static void low_power_on_react(power_handle_t handle)
 
     if (time_event_is_raised(&handle->event.time.update_info) == true)
     {
-        enter_seq_idle(handle);
+        enter_seq_low_power(handle);
     }
 }
 
@@ -263,7 +267,7 @@ static battery_st_t pwr_api_get_status(void)
     }
 
     // !< TODO: find the value read by the ADC when no battery is connected and update here. 
-    else if(!batt_percent) {
+    if(!batt_mv_curr) {
         batt_st = BATT_ST_NO_DETECTED;
     }
 
@@ -287,7 +291,9 @@ static void pwr_api_enter_enter_low_power_mode(void)
 
     /*2. Disable Temperature Control */
 
-    /*3. Think about other ones*/
+    /*3. Reduce brightness */
+    BSP_LCD_SetBrightness(30);
+
 }
 
 static void pwr_api_enter_exit_low_power_mode(void)
@@ -297,7 +303,8 @@ static void pwr_api_enter_exit_low_power_mode(void)
 
     /*2. Enable Temperature Control */
 
-    /*3. Think about other ones*/
+    /*3. Restore brightness */
+    BSP_LCD_SetBrightness(90);
 }
 
 

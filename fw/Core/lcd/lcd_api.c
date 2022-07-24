@@ -86,6 +86,8 @@ EndDependencies */
 #include "lcd.h"
 #include "lcd_api.h"
 #include "../Fonts/fonts.h"
+#include "stm32f1xx_hal.h"
+extern TIM_HandleTypeDef htim3;
 
 /* @defgroup STM32_ADAFRUIT_LCD_Private_Defines */
 #define POLY_X(Z)             ((int32_t)((Points + (Z))->X))
@@ -839,6 +841,20 @@ void BSP_LCD_DisplayOn(void)
 {
   lcd_drv->DisplayOn();
 }
+
+
+/**
+  * @brief  Disables the display.
+  * @param  level : brightness level, value between 0-100
+  * @retval None
+  */
+void BSP_LCD_SetBrightness(uint8_t level)
+{
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, level);
+}
+
+
 
 /**
   * @brief  Disables the display.

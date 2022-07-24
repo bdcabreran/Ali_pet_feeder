@@ -51,13 +51,15 @@ uint16_t battery_read_voltage(void) {
 
 uint8_t battery_read_voltage_percent(void)
 {
-	return 100*(battery_read_voltage()/BATTERY_VOLTAGE_MV_FULL);
+	uint8_t charge_percent = (uint8_t)(100*battery_read_voltage()/BATTERY_VOLTAGE_MV_FULL);
+	if (charge_percent > 100)
+		charge_percent = 100;
+	return charge_percent;
 }
 
 
 void read_adc(uint32_t *adc_sample_array)
 {
-	
 	HAL_ADC_Start(&hadc1);
 	HAL_ADC_PollForConversion(&hadc1,ADC_TIMEOUT);
 	*adc_sample_array = HAL_ADC_GetValue(&hadc1);

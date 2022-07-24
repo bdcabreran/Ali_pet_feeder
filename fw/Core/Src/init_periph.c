@@ -23,7 +23,8 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 I2C_HandleTypeDef hi2c1;
-TIM_HandleTypeDef htim3; // for ds18b sensor (temperature)
+TIM_HandleTypeDef htim3; // for lcd brightness 
+TIM_HandleTypeDef htim4; // for ds18b sensor (temperature)
 
 
 /*LCD library handles initialization */
@@ -183,17 +184,64 @@ static void MX_SPI2_Init(void)
 #endif
 
 
+
+/*  1us update event for ds18b20 (temp sensor)
+  F = Timer CLK / ( Prescaler + 1 )( Period +1 )
+  F = 80MHz / (79 + 1) (65535 + 1) = 15.2Hz // temp sensor
+*/
+#define TIM4_PRESCALER (79)
+#define TIM4_PERIOD    (65535)
+
+static void MX_TIM4_Init(void)
+{
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  htim4.Instance = TIM4;
+  htim4.Init.Prescaler = TIM4_PRESCALER;
+  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim4.Init.Period = TIM4_PERIOD;
+  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+}
+
+
+/*  > 362 Hz PWM Signal for LCD backlight 
+  F = Timer CLK / ( Prescaler + 1 )( Period +1 )
+  F = 80MHz / (79 + 1) (99 + 1) = 500Hz // lcd backlight
+*/
+#define TIM3_PRESCALER (79)
+#define TIM3_PERIOD    (99)
+
 static void MX_TIM3_Init(void)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
 
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 71;
+  htim3.Init.Prescaler = TIM3_PRESCALER;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 65535;
+  htim3.Init.Period = TIM3_PERIOD;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
     Error_Handler();
@@ -203,13 +251,28 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 90;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
+  HAL_TIM_MspPostInit(&htim3);
+
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 }
 
 /**
@@ -413,7 +476,10 @@ void init_peripherals(void)
 
   #if USE_DS18B20
   /*Init Temperature Sensor */
-  MX_TIM3_Init();
+  MX_TIM4_Init();
   Ds18b20_Init();
   #endif
+
+  MX_TIM3_Init();
+
 }

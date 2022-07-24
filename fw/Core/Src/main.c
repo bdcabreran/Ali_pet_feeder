@@ -42,6 +42,7 @@ static void print_startup_msg(void)
 uint8_t GUI_Initialized = 0;
 extern void MainTask(void);
 
+static void refresh_lcd_brightness(void);
 
 /**
   * @brief  The application entry point.
@@ -51,7 +52,8 @@ int main(void)
 {
   /*Init peripherals */
   init_peripherals();
- 
+
+ #if 1
   /*startup info */
   print_startup_msg();
 
@@ -91,10 +93,12 @@ int main(void)
 
   /*System clock Speed */
   printf("System CLK speed [%d]Hz\r\n", HAL_RCC_GetHCLKFreq());
+  #endif 
 
   /* Infinite loop */
   while (1)
   {
+    #if 1
     /* run FSMs : */
     ui_fsm_run(ui_fsm);
     temp_ctrl_fsm_run(temp_fsm);
@@ -106,10 +110,9 @@ int main(void)
 
     /* update FSMs */
     time_events_poll_update();
+    #endif 
   }
 }
-
-
 
 /**
   * @brief  This function is executed in case of error occurrence.
