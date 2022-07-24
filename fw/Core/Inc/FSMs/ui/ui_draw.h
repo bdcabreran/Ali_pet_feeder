@@ -104,9 +104,9 @@ typedef enum
 {
     UI_PETCALL_CNF_INVALID,
     UI_PETCALL_CNF_ENABLE_DISABLE,
-    UI_PETCALL_CNF_REC_START_STOP,
-    UI_PETCALL_CNF_SCORE_START_STOP,
-    UI_PETCALL_CNF_DELETE_RECORDING,
+    UI_PETCALL_CNF_REC_ACTION,
+    UI_PETCALL_CNF_SCORE_ACTION,
+    UI_PETCALL_CNF_DELETE_REC,
     UI_PETCALL_CNF_EXIT,
     UI_PETCALL_CNF_LAST,
 }ui_petcall_config_list_t;
@@ -336,24 +336,29 @@ typedef struct
 
     struct
     {
+        ui_window_t status;
         ui_window_t win;
         ui_window_t title;
     } on_off;
 
     struct
     {
+        ui_icon_t   icon;
         ui_window_t win;
         ui_window_t title;
     } mic;
 
     struct
     {
+        ui_icon_t   icon_play;
+        ui_icon_t   icon_stop;
         ui_window_t win;
         ui_window_t title;
     } play;
 
     struct
     {
+        ui_icon_t   icon;
         ui_window_t win;
         ui_window_t title;
     }erase;
@@ -369,9 +374,9 @@ typedef struct
         ui_select_t single;
     }select;
 
-    petcall_rec_file_t  delete_file;
-    petcall_recording_t rec_start_stop;
-    petcall_score_t     play_stop;
+    petcall_rec_file_t  rec_file;
+    petcall_recording_t rec_action;
+    petcall_score_t     score_action;
     petcall_st          en_dis;
 
 }ui_petcall_menu_config_t;

@@ -17,33 +17,45 @@
 
 typedef enum
 {
-    PETCALL_DISABLE,
+    PETCALL_INVALID,
     PETCALL_ENABLE,
+    PETCALL_DISABLE,
+    PETCALL_LAST,
 }petcall_st;
-
+#define IS_VALID_PETCALL_ST(st) (st > PETCALL_INVALID && st < PETCALL_LAST)
 
 typedef enum
 {
-    PETCALL_SCORE_PLAY,
-    PETCALL_SCORE_STOP
+    PETCALL_SCORE_ACTION_INVALID,
+    PETCALL_SCORE_ACTION_STOP,
+    PETCALL_SCORE_ACTION_PLAY,
+    PETCALL_SCORE_ACTION_LAST,
 }petcall_score_t;
+#define IS_VALID_PETCALL_SCORE(score) (score > PETCALL_SCORE_INVALID && score < PETCALL_SCORE_LAST)
 
 typedef enum
 {
-    PETCALL_REC_START,
-    PETCALL_REC_STOP 
+    PETCALL_REC_ACTION_INVALID,
+    PETCALL_REC_ACTION_START,
+    PETCALL_REC_ACTION_STOP, 
+    PETCALL_REC_ACTION_LAST,
 }petcall_recording_t;
+#define IS_VALID_PETCALL_REC_ACTION(rec) (rec > PETCALL_REC_INVALID && rec < PETCALL_REC_LAST)
 
 typedef enum
 {
-    PETCALL_REC_FILE_AVAILABLE,
+    PETCALL_REC_FILE_INVALID,
     PETCALL_REC_FILE_NOT_AVAILABLE,
+    PETCALL_REC_FILE_AVAILABLE,
+    PETCALL_REC_FILE_LAST,
 }petcall_rec_file_t;
+#define IS_VALID_PETCALL_REC_FILE(file) (file > PETCALL_REC_FILE_INVALID && file < PETCALL_REC_FILE_LAST)
+
 
 typedef struct
 {
-    petcall_score_t     score;
-    petcall_recording_t rec_status;
+    petcall_score_t     score_action;
+    petcall_recording_t rec_action;
     petcall_rec_file_t  rec_file;
     petcall_st          petcall_status;
 }petcall_config_info_t;

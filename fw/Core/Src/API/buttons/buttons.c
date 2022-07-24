@@ -4,7 +4,7 @@
 
 
 /**@brief Enable/Disable debug messages */
-#define BUTTONS_DEBUG 1
+#define BUTTONS_DEBUG 0
 #define BUTTONS_TAG "buttons dbg : "
 
 /**@brief uart debug function for server comm operations  */

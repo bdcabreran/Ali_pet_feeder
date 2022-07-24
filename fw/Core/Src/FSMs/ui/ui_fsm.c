@@ -683,32 +683,25 @@ static void entry_action_petcall_config(ui_handle_t handle)
     ui_date_time_menu_show(&ui_feeder_menu, false);
     ui_petcall_menu_show(&ui_petcall_menu, true);
     petcall_config_info_t *info = petcall_fsm_get_info();
-
     ui_petcall_menu_config_t *ui_config = &handle->iface.ui.petcall_menu;
 
     /*load initial configuration */
     ui_config->select.main = UI_ITEM_DESELECT;
     ui_config->select.single = UI_ITEM_DESELECT;
     ui_config->en_dis = info->petcall_status;
-    ui_config->play_stop = info->score;
-    ui_config->rec_start_stop = info->rec_status;
-    ui_config->delete_file = info->rec_file;
-    ui_config->set = UI_PETCALL_CNF_ENABLE_DISABLE; 
-    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
-    ui_config->set = UI_PETCALL_CNF_REC_START_STOP; 
-    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
-    ui_config->set = UI_PETCALL_CNF_SCORE_START_STOP; 
-    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
-    ui_config->set = UI_PETCALL_CNF_DELETE_RECORDING; 
-    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
-    ui_config->set = UI_PETCALL_CNF_EXIT; 
-    ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
+    ui_config->score_action = PETCALL_SCORE_ACTION_PLAY;
+    ui_config->rec_action = PETCALL_REC_ACTION_START;
+    ui_config->rec_file = info->rec_file;
 
-    /*load info from flash */
+    for (size_t config_idx = UI_PETCALL_CNF_ENABLE_DISABLE; config_idx < UI_PETCALL_CNF_LAST; config_idx++)
+    {
+        ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
+    }
+    
+    /*set cursor to first item in menu */
     handle->iface.cursor.item = UI_PETCALL_CNF_ENABLE_DISABLE;
     ui_config->select.main = UI_ITEM_DESELECT;
     ui_config->select.single = UI_ITEM_SELECT;
-    ui_config->en_dis = info->petcall_status;
     ui_config->set = handle->iface.cursor.item; 
     ui_petcall_menu_set_config(&ui_petcall_menu, ui_config);
 
@@ -1508,7 +1501,6 @@ static void petcall_menu_right_left_key_pressed(ui_handle_t handle)
         else
             handle->iface.cursor.item =  UI_PETCALL_CNF_EXIT;
     }
-
     else if (handle->event.btn ==  EVT_EXT_BTN_RIGHT_PRESSED)
     {
         if(handle->iface.cursor.item < UI_PETCALL_CNF_EXIT)
@@ -1537,37 +1529,54 @@ static bool petcall_menu_enter_key_pressed(ui_handle_t handle)
     switch (handle->iface.cursor.item)
     {
         case UI_PETCALL_CNF_ENABLE_DISABLE:   {
-            ui_config->en_dis = !ui_config->en_dis;
-
             if(ui_config->en_dis == PETCALL_ENABLE)
+            {
+                ui_config->en_dis = PETCALL_DISABLE;
                 event.info.name = EVT_EXT_PETCALL_ENABLE;
+            }
             else 
+            {
+                ui_config->en_dis = PETCALL_ENABLE;
                 event.info.name = EVT_EXT_PETCALL_DISABLE;       
+            }
+
+            printf("petcall status [%s]\r\n", ui_config->en_dis == PETCALL_ENABLE ? "enable" : "disable");
         } break;
 
-        case UI_PETCALL_CNF_REC_START_STOP:   {
-            ui_config->rec_start_stop = !ui_config->rec_start_stop;
+        case UI_PETCALL_CNF_REC_ACTION:   {
 
-            if (ui_config->rec_start_stop == PETCALL_REC_START)
+            if (ui_config->rec_action == PETCALL_REC_ACTION_START)
+            {
+                ui_config->rec_action = PETCALL_REC_ACTION_STOP;
                 event.info.name = EVT_EXT_PETCALL_RECORD_START;
+            }
             else
+            {
+                ui_config->rec_action = PETCALL_REC_ACTION_START;
                 event.info.name = EVT_EXT_PETCALL_RECORD_STOP;
+            }
         } break;
 
-        case UI_PETCALL_CNF_SCORE_START_STOP: {
-            ui_config->play_stop = !ui_config->play_stop;
+        case UI_PETCALL_CNF_SCORE_ACTION: {
 
-            if (ui_config->play_stop == PETCALL_SCORE_PLAY)
+            if (ui_config->score_action == PETCALL_SCORE_ACTION_PLAY)
+            {
+                ui_config->score_action = PETCALL_SCORE_ACTION_STOP;
                 event.info.name = EVT_EXT_PETCALL_SCORE_PLAY;
+            }
             else
+            {
+                ui_config->score_action = PETCALL_SCORE_ACTION_PLAY;
                 event.info.name = EVT_EXT_PETCALL_RECORD_STOP;
+            }
         } break;
 
-        case UI_PETCALL_CNF_DELETE_RECORDING: {
-            ui_config->delete_file = info->rec_file;
+        case UI_PETCALL_CNF_DELETE_REC: {
 
-            if(ui_config->delete_file = PETCALL_REC_FILE_AVAILABLE)
+            if(ui_config->rec_file = PETCALL_REC_FILE_AVAILABLE)
+            {
                 event.info.name = EVT_EXT_PETCALL_DELETE;
+            }
             
         } break;
 

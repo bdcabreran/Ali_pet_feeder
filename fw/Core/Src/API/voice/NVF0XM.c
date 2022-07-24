@@ -40,9 +40,6 @@ void NVF04_init(void) {
 		gpinit.Pin = nvf_pins[pins].pin;
 		HAL_GPIO_Init(nvf_pins[pins].gpio,&gpinit);
 	}
-	
-
-
 }
 
 void NVF04_play_recording(void) {

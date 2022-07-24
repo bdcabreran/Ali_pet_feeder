@@ -480,6 +480,9 @@ void init_peripherals(void)
   Ds18b20_Init();
   #endif
 
-  MX_TIM3_Init();
+  /*init voice controller */
+  NVF04_init();
 
+  /*Init TIM3 for LCD brighness */
+  MX_TIM3_Init();
 }

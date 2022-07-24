@@ -353,9 +353,10 @@ static bool get_user_configuration_from_flash(temp_ctrl_handle_t handle)
         if (is_valid_therm_config(flash_config))
         {
             temp_ctrl_dbg("valid configuration found, loading data from flash...\r\n");
-            temp_ctrl_dbg("Temp Ctrl Status = [%s]\r\n", flash_config->control.status == TEMP_CTRL_ENABLE ? "enable" : "disable");
-            temp_ctrl_dbg("Temp Units = [%s]\r\n", flash_config->control.unit == TEMP_UNITS_CELSIUS ? "celsius" : "fahrenheit");
-            temp_ctrl_dbg("Temp Ctrl = [%d]\r\n", flash_config->control.temp);
+            temp_ctrl_dbg("info : ctrl status [%s], units [%s], ctrl temp [%d]\r\n",
+                          flash_config->control.status == TEMP_CTRL_ENABLE ? "enable" : "disable",
+                          flash_config->control.unit == TEMP_UNITS_CELSIUS ? "celsius" : "fahrenheit",
+                          flash_config->control.temp);
 
             ram_config->control.status = flash_config->control.status;
             ram_config->control.unit = flash_config->control.unit;

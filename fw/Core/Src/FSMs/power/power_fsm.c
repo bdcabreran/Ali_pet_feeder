@@ -2,7 +2,7 @@
 #include "printf_dbg.h"
 #include "battery.h"
 
-#define BATT_CHARGE_READ_VAL_PERIOD_MS      (2*1000) // 20s
+#define BATT_CHARGE_READ_VAL_PERIOD_MS      (20*1000) // 20s
 #define BATT_LEVEL_PERCENT_TO_EXIT_LOW_POWER_MODE   (25)
 #define BATT_LEVEL_PERCENT_TO_ENTER_LOW_POWER_MODE   (20)
 

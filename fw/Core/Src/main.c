@@ -53,7 +53,6 @@ int main(void)
   /*Init peripherals */
   init_peripherals();
 
- #if 1
   /*startup info */
   print_startup_msg();
 
@@ -80,8 +79,8 @@ int main(void)
   feeder_fsm_init(feeder_fsm);
 
   /*Init Petcall */
-//  petcall_handle_t petcall_fsm = petcall_fsm_get();
-//  petcall_fsm_init(petcall_fsm);
+  petcall_handle_t petcall_fsm = petcall_fsm_get();
+  petcall_fsm_init(petcall_fsm);
 
   /*Init Drawer Controller */
   drawer_ctrl_handle_t drawer_fsm = drawer_ctrl_fsm_get();
@@ -93,24 +92,21 @@ int main(void)
 
   /*System clock Speed */
   printf("System CLK speed [%d]Hz\r\n", HAL_RCC_GetHCLKFreq());
-  #endif 
 
   /* Infinite loop */
   while (1)
   {
-    #if 1
     /* run FSMs : */
     ui_fsm_run(ui_fsm);
     temp_ctrl_fsm_run(temp_fsm);
     event_manager_fsm_run(evm_fsm);
     feeder_fsm_run(feeder_fsm);                                          
     drawer_ctrl_fsm_run(drawer_fsm);
-//    petcall_fsm_run(petcall_fsm);
+    petcall_fsm_run(petcall_fsm);
     power_fsm_run(power_fsm);
 
     /* update FSMs */
     time_events_poll_update();
-    #endif 
   }
 }
 

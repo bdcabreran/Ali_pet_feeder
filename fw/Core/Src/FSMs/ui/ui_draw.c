@@ -7,6 +7,9 @@ extern BITMAPSTRUCT batt_warning_icon[];
 extern BITMAPSTRUCT thermostat[];
 extern BITMAPSTRUCT enable_icon[];
 extern BITMAPSTRUCT recording_icon[];
+extern BITMAPSTRUCT trash_icon[];
+extern BITMAPSTRUCT play_icon[];
+extern BITMAPSTRUCT stop_icon[];
 
 /* UI elements */
 ui_battery_t           ui_battery;
@@ -892,10 +895,14 @@ void ui_petcall_menu_init(ui_petcall_menu_t *menu)
 
     menu->on_off.win.x = menu->main.win.x + 50;
     menu->on_off.win.y = menu->main.win.y + 40;
-    menu->on_off.title.x = menu->main.win.x + 40;
-    menu->on_off.title.y = menu->main.win.y + 130;
     menu->on_off.win.w = 64;
     menu->on_off.win.h = 81;
+    menu->on_off.title.x = menu->main.win.x + 40;
+    menu->on_off.title.y = menu->main.win.y + 130;
+    menu->on_off.status.x = menu->on_off.win.x + 17;
+    menu->on_off.status.y = menu->on_off.win.y + 25;
+    menu->on_off.status.w = 30;
+    menu->on_off.status.h = 30;
 
     menu->mic.win.x = menu->main.win.x + 140;
     menu->mic.win.y = menu->main.win.y + 40;
@@ -903,13 +910,22 @@ void ui_petcall_menu_init(ui_petcall_menu_t *menu)
     menu->mic.title.y = menu->main.win.y + 130;
     menu->mic.win.w = 64;
     menu->mic.win.h = 81;
+    menu->mic.icon.x = menu->mic.win.x + 9;
+    menu->mic.icon.y = menu->mic.win.y + 9;
+    menu->mic.icon.ptr = &recording_icon;
 
     menu->play.win.x = menu->main.win.x + 231;
     menu->play.win.y = menu->main.win.y + 40;
-    menu->play.title.x = menu->main.win.x + 231;
+    menu->play.title.x = menu->main.win.x + 240;
     menu->play.title.y = menu->main.win.y + 130;
     menu->play.win.w = 64;
     menu->play.win.h = 81;
+    menu->play.icon_play.x = menu->play.win.x + 10;
+    menu->play.icon_play.y = menu->play.win.y + 15;
+    menu->play.icon_play.ptr = &play_icon;
+    menu->play.icon_stop.x = menu->play.win.x + 10;
+    menu->play.icon_stop.y = menu->play.win.y + 15;
+    menu->play.icon_stop.ptr = &stop_icon;
 
     menu->erase.win.x = menu->main.win.x + 321;
     menu->erase.win.y = menu->main.win.y + 40;
@@ -917,6 +933,10 @@ void ui_petcall_menu_init(ui_petcall_menu_t *menu)
     menu->erase.title.y = menu->main.win.y + 130;
     menu->erase.win.w = 64;
     menu->erase.win.h = 81;
+    menu->erase.icon.x = menu->erase.win.x + 7;
+    menu->erase.icon.y = menu->erase.win.y + 9;
+    menu->erase.icon.ptr = &trash_icon;
+
 }
 
 void ui_petcall_menu_show(ui_petcall_menu_t *menu, bool show)
@@ -930,16 +950,20 @@ void ui_petcall_menu_show(ui_petcall_menu_t *menu, bool show)
         ui_display_string(&set_temp, title, &Font20, LCD_DEFAULT_TEXTCOLOR);
 
         /*Display icons */
-        ui_draw_window(&menu->on_off.win, LCD_DEFAULT_TEXTCOLOR, true);
-        ui_draw_window(&menu->mic.win, LCD_DEFAULT_TEXTCOLOR, true);
-        ui_draw_window(&menu->erase.win, LCD_DEFAULT_TEXTCOLOR, true);
-        ui_draw_window(&menu->play.win, LCD_DEFAULT_TEXTCOLOR, true);
+        // ui_draw_window(&menu->on_off.win, LCD_DEFAULT_TEXTCOLOR, true);
+        // ui_draw_window(&menu->mic.win, LCD_DEFAULT_TEXTCOLOR, true);
+        // ui_draw_window(&menu->erase.win, LCD_DEFAULT_TEXTCOLOR, true);
+        // ui_draw_window(&menu->play.win, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_icon(&menu->erase.icon);
+        ui_draw_window(&menu->on_off.status, LCD_DEFAULT_TEXTCOLOR, true);
+        ui_draw_icon(&menu->mic.icon);
+        ui_draw_icon(&menu->play.icon_play);
 
         /*Display text for the icons*/
-        ui_display_string(&menu->on_off.title, "on/off", &Font20, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->mic.title, "start", &Font20, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->erase.title, "erase", &Font20, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->play.title, "play", &Font20, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->on_off.title, "on/off", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->mic.title, "Record", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->play.title, "Play", &Font16, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string(&menu->erase.title, "Delete", &Font16, LCD_DEFAULT_TEXTCOLOR);
     }
     else
     {
@@ -950,7 +974,7 @@ void ui_petcall_menu_show(ui_petcall_menu_t *menu, bool show)
 
 void ui_petcall_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_t *config)
 {
-    uint16_t single_color = LCD_DEFAULT_TEXTCOLOR;
+    uint16_t single_color = LCD_DEFAULT_BACKCOLOR;
     uint16_t main_color = LCD_DEFAULT_TEXTCOLOR;
 
     if (config->select.main == UI_ITEM_SELECT)
@@ -974,54 +998,87 @@ void ui_petcall_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_
 
         if (config->en_dis == PETCALL_ENABLE)
         {
+            printf("petcall enable ui action\r\n");
             /* Draw ON icon */
+            ui_window_t win = {.x = menu->on_off.status.x + 1, .y = menu->on_off.status.y + 1, \
+            .w = menu->on_off.status.w - 2, .h = menu->on_off.status.h - 2};
+            ui_fill_window(&win, LCD_COLOR_GREEN);
         }
         else
         {
             /*Draw Off icon */
+            printf("petcall disable ui action\r\n");
+            ui_window_t win = {.x = menu->on_off.status.x + 1, .y = menu->on_off.status.y + 1, \
+            .w = menu->on_off.status.w - 2, .h = menu->on_off.status.h - 2};
+            ui_fill_window(&win, LCD_DEFAULT_BACKCOLOR);
         }
     } break;
 
-    case UI_PETCALL_CNF_REC_START_STOP: 
+    case UI_PETCALL_CNF_REC_ACTION: 
     { 
         ui_draw_window(&menu->mic.win, single_color, true);
 
-        if(config->rec_start_stop == PETCALL_REC_START)
+        if(config->rec_action == PETCALL_REC_ACTION_START)
         {
             // Draw MIC BLACK
-            ui_display_string(&menu->mic.title, "start", &Font20, LCD_DEFAULT_TEXTCOLOR); 
+            ui_display_string(&menu->mic.title, "Record", &Font16, LCD_DEFAULT_TEXTCOLOR); 
         }
         else
         {
             // Draw MIC RED
-            ui_display_string(&menu->mic.title, "stop ", &Font20, LCD_DEFAULT_TEXTCOLOR); 
+            ui_display_string(&menu->mic.title, "Record ", &Font16, LCD_DEFAULT_TEXTCOLOR); 
         }
 
     } break;
     
-    case UI_PETCALL_CNF_SCORE_START_STOP: 
+    case UI_PETCALL_CNF_SCORE_ACTION: 
     { 
         ui_draw_window(&menu->play.win, single_color, true);
 
-        if(config->play_stop == PETCALL_SCORE_PLAY)
+        if(config->score_action == PETCALL_SCORE_ACTION_PLAY)
         {
             /* Draw Play Icon */
-            ui_display_string(&menu->play.title, "play", &Font20, LCD_DEFAULT_TEXTCOLOR); 
+            ui_window_t win = {.x = menu->play.win.x + 1, .y = menu->play.win.y + 1, \
+            .w = menu->play.win.w - 2, .h = menu->play.win.h - 2};
+            ui_clear_window(&win);
+            ui_draw_icon(&menu->play.icon_play);
+            ui_display_string(&menu->play.title, "Play", &Font16, LCD_DEFAULT_TEXTCOLOR); 
         }
         else
         {   
+            ui_window_t win = {.x = menu->play.win.x + 1, .y = menu->play.win.y + 1, \
+            .w = menu->play.win.w - 2, .h = menu->play.win.h - 2};
             // Draw Stop Icon
-            ui_display_string(&menu->play.title, "stop ", &Font20, LCD_DEFAULT_TEXTCOLOR); 
+            ui_clear_window(&win);
+            ui_draw_icon(&menu->play.icon_stop);
+            ui_display_string(&menu->play.title, "Stop", &Font16, LCD_DEFAULT_TEXTCOLOR); 
         }
 
     } break;
 
-    case UI_PETCALL_CNF_DELETE_RECORDING: { 
+    case UI_PETCALL_CNF_DELETE_REC: { 
         ui_draw_window(&menu->erase.win, single_color, true);
+
+        if(config->rec_file == PETCALL_REC_FILE_AVAILABLE)
+        {
+            ui_display_string(&menu->erase.title, "Delete", &Font16, LCD_DEFAULT_TEXTCOLOR); 
+        }
+        else
+        {
+            ui_display_string(&menu->erase.title, "Delete", &Font16, LCD_DEFAULT_TEXTCOLOR); 
+        }
+
     } break;
 
     case UI_PETCALL_CNF_EXIT: {
-        ui_draw_window(&menu->main.win, single_color, true);
+        if(single_color == LCD_DEFAULT_BACKCOLOR)
+        {
+            ui_draw_window(&menu->main.win, LCD_DEFAULT_TEXTCOLOR, true);
+        }
+        else
+        {
+            ui_draw_window(&menu->main.win, single_color, true);
+        }
     } break;
     
     default:

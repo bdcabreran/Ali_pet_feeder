@@ -116,19 +116,36 @@ petcall_config_info_t *petcall_fsm_get_info(void)
     return &petcall_fsm.iface.petcall_info;
 }
 
+static uint8_t get_user_config_from_flash(petcall_handle_t handle)
+{
+    petcall_dbg("checking if there is available information in flash..\r\n");
+    user_config_t *config = user_config_get();
+    petcall_config_info_t *info_flash = &config->petcall_info;
+    petcall_config_info_t *info_ram = &handle->iface.petcall_info;
+
+    if (IS_VALID_PETCALL_ST(info_flash->petcall_status) &&
+        IS_VALID_PETCALL_REC_FILE(info_flash->rec_file))
+    {
+        info_ram->petcall_status = info_flash->petcall_status;
+        info_ram->rec_file = info_flash->rec_file;
+        petcall_dbg("valid information found, loading configuration..\r\n");
+    }
+    else
+    {
+        petcall_dbg("invalid information found, loading default configuration..\r\n");
+        info_ram->petcall_status = PETCALL_DISABLE;
+        info_ram->rec_file = PETCALL_REC_FILE_NOT_AVAILABLE;
+        info_ram->score_action = PETCALL_SCORE_ACTION_INVALID;
+        info_ram->rec_action = PETCALL_REC_ACTION_INVALID;
+        user_config_set();
+    }
+}
+
 void petcall_fsm_init(petcall_handle_t handle)
 {
-    user_config_t  *config = user_config_get();
+    /*check if there is a valid configuration in flash */
+    get_user_config_from_flash(handle);
 
-    // config->petcall_info
-
-    /*read from IC if there si a rec file available*/
-    handle->iface.petcall_info.petcall_status = PETCALL_ENABLE;
-    handle->iface.petcall_info.rec_file = PETCALL_REC_FILE_AVAILABLE;
-    handle->iface.petcall_info.rec_status = PETCALL_REC_START;
-    handle->iface.petcall_info.score = PETCALL_SCORE_PLAY;
-
-    /*read from flash petcall config */
     if (handle->iface.petcall_info.petcall_status == PETCALL_ENABLE &&
         handle->iface.petcall_info.rec_file == PETCALL_REC_FILE_AVAILABLE)
     {
@@ -158,6 +175,7 @@ void petcall_fsm_write_event(petcall_handle_t handle, event_t *event)
 {
     if(IS_PETCALL_EXT_EVT(event->info.name))
     {
+        petcall_dbg("extern event arrived [%d]\r\n", event->info.name);
         handle->event.external.name = event->info.name;
     }
 }
@@ -185,7 +203,7 @@ static void fsm_set_next_state(petcall_handle_t handle, petcall_state_t next)
 
 static void enter_seq_inactive(petcall_handle_t handle)
 {
-    petcall_dbg("enter seq\t [ inactive ]\r\n");
+    petcall_dbg("enter seq\t [ petcall disable ]\r\n");
     fsm_set_next_state(handle, ST_PETCALL_INACTIVE);
     entry_action_inactive(handle);
 }
@@ -284,7 +302,7 @@ static void play_on_react(petcall_handle_t handle)
 
 static void enter_seq_active(petcall_handle_t handle)
 {
-    petcall_dbg("enter seq\t [ active ]\r\n");
+    petcall_dbg("enter seq\t [ petcall enable ]\r\n");
     fsm_set_next_state(handle, ST_PETCALL_ACTIVE);
     entry_action_active(handle);
 }

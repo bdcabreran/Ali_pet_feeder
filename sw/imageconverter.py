@@ -97,7 +97,7 @@ for file in files :
     print(img_name)
     img = Image.open(icon_folder+in_path).convert('RGB')
     pixels = list(img.getdata())
-    pixels.reverse()
+    # pixels.reverse()
     img_size = img.size
     
     with open(out_path, 'w') as f:
