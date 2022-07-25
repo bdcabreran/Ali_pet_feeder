@@ -110,7 +110,7 @@ static void ui_display_digits(ui_window_t *win, char *text, uint16_t color)
 void ui_battery_init(ui_battery_t *batt)
 {
     /* Main window position - all other components will move according to this coordinate */
-    batt->win.main.x = 366;
+    batt->win.main.x = 355;
     batt->win.main.y = 10;
     batt->win.main.h = 81;
     batt->win.main.w = 96;
@@ -130,12 +130,12 @@ void ui_battery_init(ui_battery_t *batt)
     batt->icon.warn.x = batt->icon.batt.x + 16;
     batt->icon.warn.y = batt->icon.batt.y + 16;
 
-    batt->shape.charge.x = batt->icon.batt.x + 17;
+    batt->shape.charge.x = batt->icon.batt.x + 8;
     batt->shape.charge.y = batt->icon.batt.y + 8;
     batt->shape.charge.h = batt->icon.batt.ptr->infoHeader.biHeight - 16;
-    batt->shape.charge.w = batt->icon.batt.ptr->infoHeader.biWidth - 24;
+    batt->shape.charge.w = batt->icon.batt.ptr->infoHeader.biWidth - 26;
 
-    batt->text.x = batt->shape.charge.x + 15;
+    batt->text.x = batt->shape.charge.x + 10;
     batt->text.y = batt->shape.charge.y + 10;
 }
 
@@ -998,7 +998,6 @@ void ui_petcall_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_
 
         if (config->en_dis == PETCALL_ENABLE)
         {
-            printf("petcall enable ui action\r\n");
             /* Draw ON icon */
             ui_window_t win = {.x = menu->on_off.status.x + 1, .y = menu->on_off.status.y + 1, \
             .w = menu->on_off.status.w - 2, .h = menu->on_off.status.h - 2};
@@ -1007,7 +1006,6 @@ void ui_petcall_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_
         else
         {
             /*Draw Off icon */
-            printf("petcall disable ui action\r\n");
             ui_window_t win = {.x = menu->on_off.status.x + 1, .y = menu->on_off.status.y + 1, \
             .w = menu->on_off.status.w - 2, .h = menu->on_off.status.h - 2};
             ui_fill_window(&win, LCD_DEFAULT_BACKCOLOR);
@@ -1026,7 +1024,7 @@ void ui_petcall_menu_set_config(ui_petcall_menu_t *menu, ui_petcall_menu_config_
         else
         {
             // Draw MIC RED
-            ui_display_string(&menu->mic.title, "Record ", &Font16, LCD_DEFAULT_TEXTCOLOR); 
+            ui_display_string(&menu->mic.title, " Stop ", &Font16, LCD_DEFAULT_TEXTCOLOR); 
         }
 
     } break;

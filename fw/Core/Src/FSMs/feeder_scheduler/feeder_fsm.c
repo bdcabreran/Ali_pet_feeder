@@ -5,7 +5,7 @@
 #include "rct_api.h"
 
 /**@brief Enable/Disable debug messages */
-#define feeder_FSM_DEBUG 1
+#define feeder_FSM_DEBUG 0
 #define feeder_FSM_TAG "feeder : "
 
 /**@brief uart debug function for server comm operations  */

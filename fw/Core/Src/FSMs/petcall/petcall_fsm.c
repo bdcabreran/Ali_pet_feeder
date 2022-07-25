@@ -22,8 +22,21 @@
 #endif
 
 
-#define RECORDING_TIMEOUT_MS        (10000)
-#define PLAY_PETCALL_TIMEOUT_MS     (20000)
+#define RECORDING_TIMEOUT_MS        (8000)
+#define PLAY_PETCALL_TIMEOUT_MS     (5000)
+
+const char *petcall_ext_evt_str[EVT_EXT_PETCALL_LAST] =
+{
+    "PETCALL INVALID",
+    "PETCALL DELETE",
+    "PETCALL ENABLE",
+    "PETCALL DISABLE",
+    "PETCALL SCORE_PLAY",
+    "PETCALL SCORE_STOP",
+    "PETCALL RECORD_START",
+    "PETCALL RECORD_STOP",
+};
+
 /**
  * @brief State Machine States
  */
@@ -128,7 +141,12 @@ static uint8_t get_user_config_from_flash(petcall_handle_t handle)
     {
         info_ram->petcall_status = info_flash->petcall_status;
         info_ram->rec_file = info_flash->rec_file;
+        info_ram->score_action = PETCALL_SCORE_ACTION_INVALID;
+        info_ram->rec_action = PETCALL_REC_ACTION_INVALID;
         petcall_dbg("valid information found, loading configuration..\r\n");
+        petcall_dbg("info - status [ %s ] , rec file [ %s ]\r\n",
+                    info_ram->petcall_status == PETCALL_ENABLE ? "enable" : "disable",
+                    info_ram->rec_file == PETCALL_REC_FILE_NOT_AVAILABLE ? "not available" : "available");
     }
     else
     {
@@ -175,8 +193,20 @@ void petcall_fsm_write_event(petcall_handle_t handle, event_t *event)
 {
     if(IS_PETCALL_EXT_EVT(event->info.name))
     {
-        petcall_dbg("extern event arrived [%d]\r\n", event->info.name);
         handle->event.external.name = event->info.name;
+        petcall_dbg("event -> [ %s ]\r\n", petcall_ext_evt_str[handle->event.external.name]);
+
+        if (handle->event.external.name == EVT_EXT_PETCALL_ENABLE ||
+            handle->event.external.name == EVT_EXT_PETCALL_DISABLE)
+        {
+            if(handle->event.external.name == EVT_EXT_PETCALL_ENABLE)
+                handle->iface.petcall_info.petcall_status = PETCALL_ENABLE;
+            else
+                handle->iface.petcall_info.petcall_status = PETCALL_DISABLE;
+
+            petcall_dbg("saving new config to flash..\r\n");
+            user_config_set();
+        }
     }
 }
 
@@ -217,19 +247,12 @@ static void inactive_on_react(petcall_handle_t handle)
 {
     if(handle->event.external.name == EVT_EXT_PETCALL_ENABLE)
     {
-        /*check if there is rec file available */
-        if(handle->iface.petcall_info.rec_file == PETCALL_REC_FILE_AVAILABLE)
-            enter_seq_active(handle);
-        else {
-            petcall_dbg("there are no rec file available\r\n");
-            enter_seq_inactive(handle);
-        }
+        enter_seq_active(handle);
     }
     else if(handle->event.external.name == EVT_EXT_PETCALL_RECORD_START)
     {
         enter_seq_record(handle);
     }
-
     else if(handle->event.external.name == EVT_EXT_PETCALL_SCORE_PLAY)
     {
         enter_seq_play(handle);
@@ -248,7 +271,9 @@ static void enter_seq_record(petcall_handle_t handle)
 static void entry_action_record(petcall_handle_t handle)
 {
     if(handle->iface.petcall_info.rec_file == PETCALL_REC_FILE_AVAILABLE)
+    {
         petcall_remove_rec_file(handle);
+    }
 
     petcall_record_start(handle);
     time_event_start(&handle->event.time.rec_timeout, RECORDING_TIMEOUT_MS);
@@ -316,19 +341,12 @@ static void active_on_react(petcall_handle_t handle)
 {
     if(handle->event.external.name == EVT_EXT_PETCALL_DISABLE)
     {
-        /*check if there is rec file available */
-        if(handle->iface.petcall_info.rec_file == PETCALL_REC_FILE_AVAILABLE)
-            enter_seq_active(handle);
-        else {
-            petcall_dbg("there is no rec file available\r\n");
-            enter_seq_inactive(handle);
-        }
+        enter_seq_inactive(handle);
     }
     else if(handle->event.external.name == EVT_EXT_PETCALL_RECORD_START)
     {
         enter_seq_record(handle);
     }
-
     else if(handle->event.external.name == EVT_EXT_PETCALL_SCORE_PLAY)
     {
         enter_seq_play(handle);

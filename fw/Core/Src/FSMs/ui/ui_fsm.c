@@ -735,7 +735,7 @@ static void petcall_config_on_react(ui_handle_t handle)
         case EVT_EXT_BTN_RIGHT_PRESSED:
         {
             petcall_menu_right_left_key_pressed(handle);
-            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS + 15000);
         }
         break;
 
@@ -744,7 +744,7 @@ static void petcall_config_on_react(ui_handle_t handle)
         {
 
             petcall_menu_up_down_pressed(handle);
-            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS + 15000);
         }
         break;
 
@@ -753,7 +753,7 @@ static void petcall_config_on_react(ui_handle_t handle)
             if(petcall_menu_enter_key_pressed(handle))
                 time_event_start(&handle->event.time.cursor_inact, NOTIFICATION_MSG_MS);
             else
-                time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+                time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS + 15000);
         }
         break;
 
@@ -1532,15 +1532,13 @@ static bool petcall_menu_enter_key_pressed(ui_handle_t handle)
             if(ui_config->en_dis == PETCALL_ENABLE)
             {
                 ui_config->en_dis = PETCALL_DISABLE;
-                event.info.name = EVT_EXT_PETCALL_ENABLE;
+                event.info.name = EVT_EXT_PETCALL_DISABLE;       
             }
             else 
             {
                 ui_config->en_dis = PETCALL_ENABLE;
-                event.info.name = EVT_EXT_PETCALL_DISABLE;       
+                event.info.name = EVT_EXT_PETCALL_ENABLE;
             }
-
-            printf("petcall status [%s]\r\n", ui_config->en_dis == PETCALL_ENABLE ? "enable" : "disable");
         } break;
 
         case UI_PETCALL_CNF_REC_ACTION:   {
