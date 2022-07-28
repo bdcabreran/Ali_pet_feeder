@@ -86,6 +86,7 @@ typedef struct
 typedef struct 
 {
     petcall_ev_ext_name_t name;
+    uint8_t src;     
 }petcall_ev_ext_t;
 
 

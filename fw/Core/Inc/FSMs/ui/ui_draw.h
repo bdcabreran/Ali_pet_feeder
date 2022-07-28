@@ -211,6 +211,9 @@ typedef struct
 
     ui_time_t time;
     ui_date_t date;
+    ui_window_t hour_title;
+    ui_window_t date_title;
+
 }ui_date_time_menu_t;
 
 typedef struct

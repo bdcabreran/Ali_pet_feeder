@@ -291,6 +291,28 @@ static void send_drawer_request(drawer_ctrl_ev_ext_name_t evt_name, drawer_no_t 
     event_manager_write(event_manager_fsm_get(), &event);
 }
 
+static void send_play_petcall_request(feeder_handle_t handle)
+{
+    petcall_config_info_t *info = petcall_fsm_get_info();
+
+    if(info->petcall_status == PETCALL_ENABLE)
+    {
+        feeder_dbg("sending play request to petcall fsm \r\n");
+
+        event_t event; 
+        event.info.name = EVT_EXT_PETCALL_SCORE_PLAY;
+        event.info.fsm.src = FEEDER_FSM;
+        event.info.fsm.dst = PETCALL_FSM;
+        event.info.data_len = 0;
+        
+        event_manager_write(event_manager_fsm_get(), &event);
+    }
+    else
+    {
+        feeder_dbg("petcall disable, play request not sent\r\n");
+    }
+}
+
 
 static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
 {
@@ -335,6 +357,7 @@ static void check_if_feeding_time_is_elapsed(feeder_handle_t handle)
             /* check if open time matches */
             if (time_match(&meal_data->time.open, &rtc_time))
             {
+                send_play_petcall_request(handle);
 
                 feeder_dbg("Open drawer no [%d] - Date { DD/MM : %.2d/%.2d } Time { hh:mm %.2d:%.2d %s } Meal {%s}\r\n",
                            drawer_idx + 1, meal_data->date.day, meal_data->date.month, meal_data->time.open.hour, meal_data->time.open.minute,

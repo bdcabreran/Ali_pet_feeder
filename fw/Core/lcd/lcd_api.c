@@ -1154,7 +1154,6 @@ void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit, uint16_t col
   volatile uint16_t x[7] = {0};
   volatile uint16_t y[7] = {0};
     
-
   BSP_LCD_SetTextColor(color);
 
     x[0] = xpos;
@@ -1199,7 +1198,7 @@ void BSP_LCD_DrawDigits(uint16_t xpos,uint16_t ypos, uint8_t digit, uint16_t col
          BSP_LCD_FillRect(xrect,yrect, width, height ); 
       }
       else{
-           BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+           BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
            BSP_LCD_FillRect(xrect,yrect, width, height );
       }
     }

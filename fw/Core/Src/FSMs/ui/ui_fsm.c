@@ -27,6 +27,7 @@
 
 #define UPDATE_GUI_MS           (1000)
 #define CURSOR_INACTIVITY_MS    (5000)
+#define CURSOR_INACTIVITY_FEEDER_MENU_MS    (15000)
 #define NOTIFICATION_MSG_MS     (2000)
 
 /**
@@ -507,7 +508,7 @@ static void entry_action_feeder_config(ui_handle_t handle)
     ui_feeder_menu_set_config(&ui_feeder_menu, config);
 
     /*wait up to 5s for user input*/
-    time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS );
+    time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_FEEDER_MENU_MS );
 }
 
 static void exit_action_feeder_config(ui_handle_t handle)
@@ -526,7 +527,7 @@ static void feeder_config_on_react(ui_handle_t handle)
         case EVT_EXT_BTN_RIGHT_PRESSED:
         {
             feeder_config_right_left_key_pressed(handle);
-            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_FEEDER_MENU_MS);
         }
         break;
 
@@ -534,7 +535,7 @@ static void feeder_config_on_react(ui_handle_t handle)
         case EVT_EXT_BTN_DOWN_PRESSED:
         {
             feeder_config_up_down_pressed(handle);
-            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_MS);
+            time_event_start(&handle->event.time.cursor_inact, CURSOR_INACTIVITY_FEEDER_MENU_MS);
         }
         break;
 
@@ -1295,12 +1296,12 @@ static void date_time_config_left_right_key_pressed(ui_handle_t handle)
         if (handle->iface.cursor.item > DATE_TIME_CNF_HOUR)
             handle->iface.cursor.item--;
         else
-            handle->iface.cursor.item =  DATE_TIME_CNF_MONTH;
+            handle->iface.cursor.item =  DATE_TIME_CNF_DAY;
     }
 
     else if (handle->event.btn ==  EVT_EXT_BTN_RIGHT_PRESSED)
     {
-        if(handle->iface.cursor.item < DATE_TIME_CNF_MONTH)
+        if(handle->iface.cursor.item < DATE_TIME_CNF_DAY)
             handle->iface.cursor.item++;
         else
             handle->iface.cursor.item  = DATE_TIME_CNF_HOUR;
@@ -1556,16 +1557,23 @@ static bool petcall_menu_enter_key_pressed(ui_handle_t handle)
         } break;
 
         case UI_PETCALL_CNF_SCORE_ACTION: {
-
-            if (ui_config->score_action == PETCALL_SCORE_ACTION_PLAY)
+            
+            if(info->rec_file == PETCALL_REC_FILE_AVAILABLE)
             {
-                ui_config->score_action = PETCALL_SCORE_ACTION_STOP;
-                event.info.name = EVT_EXT_PETCALL_SCORE_PLAY;
+                if (ui_config->score_action == PETCALL_SCORE_ACTION_PLAY)
+                {
+                    ui_config->score_action = PETCALL_SCORE_ACTION_STOP;
+                    event.info.name = EVT_EXT_PETCALL_SCORE_PLAY;
+                }
+                else
+                {
+                    ui_config->score_action = PETCALL_SCORE_ACTION_PLAY;
+                    event.info.name = EVT_EXT_PETCALL_RECORD_STOP;
+                }
             }
             else
             {
-                ui_config->score_action = PETCALL_SCORE_ACTION_PLAY;
-                event.info.name = EVT_EXT_PETCALL_RECORD_STOP;
+                ui_fsm_dbg("no recording file available\r\n");
             }
         } break;
 

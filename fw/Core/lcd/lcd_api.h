@@ -70,8 +70,11 @@
 #define LCD_INIT_CLEAR           1
 
 /* some colors */
+/* https://ee-programming-notepad.blogspot.com/2016/10/16-bit-color-generator-picker.html */
+
 #define LCD_COLOR_BLACK         RC(0x0000)
-#define LCD_COLOR_GRAY          RC(0xF7DE)
+// #define LCD_COLOR_GRAY          RC(0xF7DE)
+#define LCD_COLOR_GRAY          RC(0xDEFB)
 #define LCD_COLOR_BLUE          RC(0x001F)
 #define LCD_COLOR_RED           RC(0xF800)
 #define LCD_COLOR_GREEN         RC(0x07E0)

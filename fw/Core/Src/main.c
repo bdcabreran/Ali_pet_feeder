@@ -33,7 +33,7 @@
 static void print_startup_msg(void)
 {
   printf("#########################################\r\n");
-  printf("Author :\t Embedded-Tech\r\n");
+  printf("Author :\t BitHive\r\n");
   printf("Project:\t pet-feeder v%s\r\n", FW_VERSION);
   printf("Updated:\t %s\r\n", __DATE__);
   printf("#########################################\r\n");

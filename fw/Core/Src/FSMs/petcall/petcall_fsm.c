@@ -23,7 +23,7 @@
 
 
 #define RECORDING_TIMEOUT_MS        (8000)
-#define PLAY_PETCALL_TIMEOUT_MS     (5000)
+#define PLAY_PETCALL_TIMEOUT_MS     (10000)
 
 const char *petcall_ext_evt_str[EVT_EXT_PETCALL_LAST] =
 {
@@ -95,20 +95,25 @@ struct petcall_fsm_t
 static struct petcall_fsm_t petcall_fsm;
 
 /*********** Static FSM Functions Declaration **********/
-static void enter_seq_inactive(petcall_handle_t handle);
 static void enter_seq_active(petcall_handle_t handle);
-static void enter_seq_record(petcall_handle_t handle);
-static void enter_seq_play(petcall_handle_t handle);
-
-static void inactive_on_react(petcall_handle_t handle);
+static void entry_action_active(petcall_handle_t handle);
 static void active_on_react(petcall_handle_t handle);
+
+static void enter_seq_inactive(petcall_handle_t handle);
+static void entry_action_inactive(petcall_handle_t handle);
+static void inactive_on_react(petcall_handle_t handle);
+
+static void enter_seq_record(petcall_handle_t handle);
+static void entry_action_record(petcall_handle_t handle);
 static void record_on_react(petcall_handle_t handle);
+
+static void enter_seq_play(petcall_handle_t handle);
+static void entry_action_play(petcall_handle_t handle);
 static void play_on_react(petcall_handle_t handle);
 
-static void entry_action_record(petcall_handle_t handle);
-static void entry_action_play(petcall_handle_t handle);
-static void entry_action_inactive(petcall_handle_t handle);
-static void entry_action_active(petcall_handle_t handle);
+// static void enter_seq_delete(petcall_handle_t handle);
+// static void entry_action_delete(petcall_handle_t handle);
+// static void delete_on_react(petcall_handle_t handle);
 
 /*********** Static Miscellaneous Functions Declaration **********/
 static void petcall_remove_rec_file(petcall_handle_t handle);
@@ -184,6 +189,7 @@ void petcall_fsm_run(petcall_handle_t handle)
     case ST_PETCALL_ACTIVE:   active_on_react(handle); break;
     case ST_PETCALL_RECORD:   record_on_react(handle); break;
     case ST_PETCALL_PLAY:     play_on_react(handle); break;
+    
     default:
         break;
     }
@@ -194,7 +200,9 @@ void petcall_fsm_write_event(petcall_handle_t handle, event_t *event)
     if(IS_PETCALL_EXT_EVT(event->info.name))
     {
         handle->event.external.name = event->info.name;
-        petcall_dbg("event -> [ %s ]\r\n", petcall_ext_evt_str[handle->event.external.name]);
+        handle->event.external.src = event->info.fsm.src;
+
+        // petcall_dbg("event -> [ %s ]\r\n", petcall_ext_evt_str[handle->event.external.name]);
 
         if (handle->event.external.name == EVT_EXT_PETCALL_ENABLE ||
             handle->event.external.name == EVT_EXT_PETCALL_DISABLE)
@@ -257,6 +265,12 @@ static void inactive_on_react(petcall_handle_t handle)
     {
         enter_seq_play(handle);
     }
+    else if(handle->event.external.name == EVT_EXT_PETCALL_DELETE)
+    {
+        petcall_remove_rec_file(handle);
+        handle->event.external.name = EVT_EXT_PETCALL_INVALID;
+    }
+
 }
 
 /* State RECORD Related Functions */
@@ -305,13 +319,17 @@ static void enter_seq_play(petcall_handle_t handle)
 static void entry_action_play(petcall_handle_t handle)
 {
     petcall_score_play(handle);
-    time_event_start(&handle->event.time.play_timeout, PLAY_PETCALL_TIMEOUT_MS);
+
+    if(handle->event.external.src == FEEDER_FSM)
+        time_event_start(&handle->event.time.play_timeout, PLAY_PETCALL_TIMEOUT_MS);
+    else
+        time_event_start(&handle->event.time.play_timeout, PLAY_PETCALL_TIMEOUT_MS + 20000); // 1min 
 }
 
 static void play_on_react(petcall_handle_t handle)
 {
-    if (handle->event.external.name == EVT_EXT_PETCALL_SCORE_STOP ||
-        time_event_is_raised(&handle->event.time.play_timeout) == true)
+
+    if ( time_event_is_raised(&handle->event.time.play_timeout) == true)
     {
         petcall_score_stop(handle);
         
@@ -320,6 +338,18 @@ static void play_on_react(petcall_handle_t handle)
         else
             enter_seq_inactive(handle);
     }
+    
+    if(handle->event.external.name == EVT_EXT_PETCALL_RECORD_STOP)
+    {
+        petcall_score_stop(handle);
+        
+        if (handle->iface.petcall_info.petcall_status == PETCALL_ENABLE)
+            enter_seq_active(handle);
+        else
+            enter_seq_inactive(handle);
+    }
+    else
+    { }
 }
 
 
@@ -351,6 +381,11 @@ static void active_on_react(petcall_handle_t handle)
     {
         enter_seq_play(handle);
     }
+    else if(handle->event.external.name == EVT_EXT_PETCALL_DELETE)
+    {
+        petcall_remove_rec_file(handle);
+        handle->event.external.name = EVT_EXT_PETCALL_INVALID;
+    }
 }
 
 /*********** Static Miscellaneous Functions Definition  **********/
@@ -360,6 +395,8 @@ static void petcall_remove_rec_file(petcall_handle_t handle)
     petcall_dbg("deleting petcall rec file ...\r\n");
     /*!< TODO : implement remove petcall routine */
     handle->iface.petcall_info.rec_file = PETCALL_REC_FILE_NOT_AVAILABLE;
+    petcall_dbg("saving new config to flash..\r\n");
+    user_config_set();
 }
 
 static void petcall_record_start(petcall_handle_t handle)
@@ -367,7 +404,8 @@ static void petcall_record_start(petcall_handle_t handle)
     petcall_dbg("petcall record start\r\n");
     handle->iface.petcall_info.rec_file = PETCALL_REC_FILE_AVAILABLE;
     /*!<TODO : start petcall record*/
-
+    petcall_dbg("saving new config to flash..\r\n");
+    user_config_set();
 }
 
 static void petcall_record_stop(petcall_handle_t handle)

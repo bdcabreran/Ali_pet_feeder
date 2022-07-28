@@ -90,6 +90,17 @@ static void ui_fill_window(ui_window_t *win, uint16_t color)
     BSP_LCD_SetTextColor(LCD_DEFAULT_TEXTCOLOR); 
 }
 
+static void ui_display_string_test(ui_window_t *win, char *text, sFONT *font, uint16_t text_color, uint16_t back_color)
+{
+    BSP_LCD_SetTextColor(text_color);
+    BSP_LCD_SetFont(font);
+    BSP_LCD_SetBackColor(back_color);
+    BSP_LCD_DisplayStringAt(win->x, win->y, (uint8_t*)text, LEFT_MODE);
+    BSP_LCD_SetFont(&LCD_DEFAULT_FONT);
+    BSP_LCD_SetBackColor(LCD_DEFAULT_BACKCOLOR);
+}
+
+
 static void ui_display_string(ui_window_t *win, char *text, sFONT *font, uint16_t color)
 {
     BSP_LCD_SetTextColor(color);
@@ -101,6 +112,7 @@ static void ui_display_string(ui_window_t *win, char *text, sFONT *font, uint16_
 
 static void ui_display_digits(ui_window_t *win, char *text, uint16_t color)
 {
+    BSP_LCD_SetBackColor(LCD_COLOR_GRAY);
     BSP_LCD_SetTextColor(color);
     BSP_LCD_DisplayDigits(win->x, win->y, text, color);
     BSP_LCD_SetBackColor(LCD_DEFAULT_BACKCOLOR);
@@ -300,39 +312,42 @@ void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawers_config_t *config)
 //////////////////////////////////// Feeder Config Menu Related Functions //////////////////////////////////////////
 void ui_feeder_menu_init(ui_feeder_menu_t *menu)
 {
+    #define MEALS_SPACING_PIXELS_Y  (30)
+
     /*position in the screen */
     menu->win.main.x = 19;
     menu->win.main.y = 98;
     menu->win.main.w = 442;
-    menu->win.main.h = 216;
+    menu->win.main.h = 206;
     menu->win.daily.x = menu->win.main.x + 393;
-    menu->win.daily.y = menu->win.main.y + 39;
-    menu->win.daily.w = 36;
-    menu->win.daily.h = 18;
+    menu->win.daily.y = menu->win.main.y + MEALS_SPACING_PIXELS_Y;
+    menu->win.daily.w = 25;
+    menu->win.daily.h = 20;
+
 
     for (int i = 0; i < FEEDER_MEALn; i++)
     {
         // open hour 
         menu->meal_td[i].time.open.hour.x    = menu->win.main.x + (10 + 102);
-        menu->meal_td[i].time.open.hour.y    = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.open.hour.y    = menu->win.main.y + (i+1)*(MEALS_SPACING_PIXELS_Y);
         menu->meal_td[i].time.open.min.x     = menu->win.main.x + (10 + 102 + 30);
-        menu->meal_td[i].time.open.min.y     = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.open.min.y     = menu->win.main.y + (i+1)*(MEALS_SPACING_PIXELS_Y);
         menu->meal_td[i].time.open.am_pm.x   = menu->win.main.x + (10 + 102 + 50);
-        menu->meal_td[i].time.open.am_pm.y   = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.open.am_pm.y   = menu->win.main.y + (i+1)*(MEALS_SPACING_PIXELS_Y);
 
         // close hour
         menu->meal_td[i].time.close.hour.x   = menu->win.main.x + (10 + 209);
-        menu->meal_td[i].time.close.hour.y   = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.close.hour.y   = menu->win.main.y + (i+1)*(MEALS_SPACING_PIXELS_Y);
         menu->meal_td[i].time.close.min.x    = menu->win.main.x + (10 + 209 + 30);
-        menu->meal_td[i].time.close.min.y    = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.close.min.y    = menu->win.main.y + (i+1)*(MEALS_SPACING_PIXELS_Y);
         menu->meal_td[i].time.close.am_pm.x  = menu->win.main.x + (10 + 209 + 50);
-        menu->meal_td[i].time.close.am_pm.y  = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].time.close.am_pm.y  = menu->win.main.y + (i+1)*(MEALS_SPACING_PIXELS_Y);
 
         // date 
-        menu->meal_td[i].date.day.x        = menu->win.main.x + (10 + 316);
-        menu->meal_td[i].date.month.x      = menu->win.main.x + (10 + 316 + 30);
-        menu->meal_td[i].date.day.y        = menu->win.main.y + (i+1)*(33);
-        menu->meal_td[i].date.month.y      = menu->win.main.y + (i+1)*(33);
+        menu->meal_td[i].date.month.x        = menu->win.main.x + (10 + 316);
+        menu->meal_td[i].date.month.y        = menu->win.main.y + (i+1)*(MEALS_SPACING_PIXELS_Y);
+        menu->meal_td[i].date.day.x      = menu->win.main.x + (10 + 316 + 30);
+        menu->meal_td[i].date.day.y      = menu->win.main.y + (i+1)*(MEALS_SPACING_PIXELS_Y);
     }
 
 
@@ -360,7 +375,7 @@ void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show)
             // meal selection 
             ui_window_t text_pos;
             text_pos.x = menu->win.main.x + 2;
-            text_pos.y = menu->win.main.y + 33*(i + 1);
+            text_pos.y = menu->win.main.y + MEALS_SPACING_PIXELS_Y*(i + 1);
             ui_display_string(&text_pos, meals[i], &Font16, LCD_DEFAULT_TEXTCOLOR);
 
             // Open time
@@ -374,8 +389,8 @@ void ui_feeder_menu_show(ui_feeder_menu_t *menu, bool show)
             ui_display_string(&menu->meal_td[i].time.close.am_pm, (char*)am_pm_str[TIME_AM], &Font16, LCD_DEFAULT_TEXTCOLOR);
 
             // Day Month
-            ui_display_string(&menu->meal_td[i].date.day, "--/", &Font16, LCD_DEFAULT_TEXTCOLOR);
-            ui_display_string(&menu->meal_td[i].date.month, "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].date.day, "--", &Font16, LCD_DEFAULT_TEXTCOLOR);
+            ui_display_string(&menu->meal_td[i].date.month, "--/", &Font16, LCD_DEFAULT_TEXTCOLOR);
         }
     }
     else
@@ -475,27 +490,36 @@ void ui_date_time_menu_init(ui_date_time_menu_t *menu)
     menu->win.main.w = 442;
     menu->win.main.h = 161;
 
-    menu->time.hour.x  = menu->win.main.x + 50;
-    menu->time.hour.y  = menu->win.main.y + 29;
-    menu->time.min.x   = menu->win.main.x + 191;
-    menu->time.min.y   = menu->win.main.y + 29;
-    menu->time.am_pm.x   = menu->win.main.x + 290;
-    menu->time.am_pm.y   = menu->win.main.y + 70;
-    menu->date.day.x   = menu->win.main.x + 340;
-    menu->date.day.y   = menu->win.main.y + 50;
-    menu->date.month.x = menu->win.main.x + 389;
-    menu->date.month.y = menu->win.main.y + 50;
+    menu->time.hour.x    = menu->win.main.x + 50 - 10;
+    menu->time.hour.y    = menu->win.main.y + 29;
+    menu->time.min.x     = menu->win.main.x + 191 - 10;
+    menu->time.min.y     = menu->win.main.y + 29;
+    menu->time.am_pm.x   = menu->win.main.x + 290 - 10;
+    menu->time.am_pm.y   = menu->win.main.y + 80;
+    menu->date.month.x   = menu->win.main.x + 340;
+    menu->date.month.y   = menu->win.main.y + 50;
+    menu->date.day.x     = menu->win.main.x + 389;
+    menu->date.day.y     = menu->win.main.y + 50;
+    menu->date_title.x   = menu->win.main.x + 355;
+    // menu->date_title.y   = menu->win.main.y + 85;
+    menu->date_title.y   = menu->win.main.y + 115;
+    menu->hour_title.x   = menu->win.main.x + 135 - 10;
+    menu->hour_title.y   = menu->win.main.y + 115;
 }
 
 void ui_date_time_menu_show(ui_date_time_menu_t *menu, bool show)
 {
     if(show)
     {
+        /*Display Fixed text */
+        ui_fill_window(&menu->win.main, LCD_COLOR_GRAY);
         ui_display_digits(&menu->time.hour, "00:", LCD_DEFAULT_TEXTCOLOR);
         ui_display_digits(&menu->time.min, "00", LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->time.am_pm, "NA",&Font24, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->date.day, "00/", &Font24, LCD_DEFAULT_TEXTCOLOR);
-        ui_display_string(&menu->date.month, "00", &Font24, LCD_DEFAULT_TEXTCOLOR);
+        ui_display_string_test(&menu->time.am_pm, "NA",&Font24, LCD_DEFAULT_TEXTCOLOR, LCD_COLOR_GRAY);
+        ui_display_string_test(&menu->date.day, "00", &Font24, LCD_DEFAULT_TEXTCOLOR, LCD_COLOR_GRAY);
+        ui_display_string_test(&menu->date.month, "00/", &Font24, LCD_DEFAULT_TEXTCOLOR, LCD_COLOR_GRAY);
+        ui_display_string_test(&menu->hour_title, "Time", &Font20, LCD_DEFAULT_TEXTCOLOR, LCD_COLOR_GRAY);
+        ui_display_string_test(&menu->date_title, "Date", &Font20, LCD_DEFAULT_TEXTCOLOR, LCD_COLOR_GRAY);
 
         ui_draw_window(&menu->win.main, LCD_DEFAULT_TEXTCOLOR, true);
     }
@@ -533,17 +557,17 @@ void ui_date_time_menu_set_config(ui_date_time_menu_t *menu, ui_date_time_config
 
     case DATE_TIME_CNF_AM_PM : {
             sprintf(str, "%s", am_pm_str[config->dt_config.time.am_pm]);
-            ui_display_string(&menu->time.am_pm, str, &Font24, single_color_sel);
+            ui_display_string_test(&menu->time.am_pm, str, &Font24, single_color_sel,LCD_COLOR_GRAY);
     } break;
 
     case DATE_TIME_CNF_DAY: {
             sprintf(str, "%.2d", config->dt_config.date.day);
-            ui_display_string(&menu->date.day, str, &Font24, single_color_sel);
+            ui_display_string_test(&menu->date.day, str, &Font24, single_color_sel,LCD_COLOR_GRAY);
     } break;
 
     case DATE_TIME_CNF_MONTH: {
             sprintf(str, "%.2d", config->dt_config.date.month);
-            ui_display_string(&menu->date.month, str, &Font24, single_color_sel);
+            ui_display_string_test(&menu->date.month, str, &Font24, single_color_sel,LCD_COLOR_GRAY);
     } break;
 
     default:
