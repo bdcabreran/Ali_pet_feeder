@@ -24,7 +24,7 @@
 #include "string.h"
 #include "ui_draw.h"
 #include "temp_ntc.h"
-#include "motor_ctrl.h"
+#include "NVF0XM.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -52,6 +52,10 @@ static void still_alive_msg(void)
   {
     counter_millis = HAL_GetTick();
 //    printf("MCU still alive...\r\n");
+//     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
+//     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
+//     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
+
   }
 
 }

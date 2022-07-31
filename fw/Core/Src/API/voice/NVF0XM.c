@@ -23,10 +23,11 @@ enum nvf_action{
 	NV_RECORD,
 };
 
-nvf_pins_t nvf_pins[NV04_PINS_USED]={
+nvf_pins_t nvf_pins[NV04n]={
 	{NV04_PLAY_PIN           , NV04_PLAY_GPIO},
 	{NV04_DELETE_PIN         , NV04_DELETE_GPIO},
-	{NV04_RECORDING_STOP_PIN , NV04_RECORDING_STOP_GPIO}
+	{NV04_RECORDING_STOP_PIN , NV04_RECORDING_STOP_GPIO},
+	{NV04_SHUTDOWN_PIN , NV04_SHUTDOWN_GPIO}
 };
 
 void NVF04_init(void) {
@@ -43,20 +44,34 @@ void NVF04_init(void) {
 }
 
 void NVF04_play_recording(void) {
-	NV04_PLAY_GPIO->BRR |=NV04_PLAY_PIN;
-	HAL_Delay(NV04_RECORDING_PRESS_TIME_MS);
-	NV04_PLAY_GPIO->BSRR |=NV04_PLAY_PIN;
+	HAL_GPIO_WritePin(nvf_pins[NV04_PLAY].gpio, nvf_pins[NV04_PLAY].pin, GPIO_PIN_RESET);
+	HAL_Delay(NV04_PLAY_PRESS_TIME_MS);
+	HAL_GPIO_WritePin(nvf_pins[NV04_PLAY].gpio, nvf_pins[NV04_PLAY].pin, GPIO_PIN_SET);
+
 }
 
-void NVF04_record(void) {
-	NV04_RECORDING_STOP_GPIO->BRR |=NV04_RECORDING_STOP_PIN;
-	HAL_Delay(NV04_RECORD_PRESS_TIME_MS);
-	NV04_RECORDING_STOP_GPIO->BSRR |=NV04_RECORDING_STOP_PIN;
+void NVF04_start_recording(void) {
+	HAL_GPIO_WritePin(nvf_pins[NV04_RECORDING_STOP].gpio, nvf_pins[NV04_RECORDING_STOP].pin, GPIO_PIN_RESET);
+	HAL_Delay(NV04_RECORDING_PRESS_TIME_MS);
+}
+
+void NVF04_stop_recording(void) {
+	HAL_GPIO_WritePin(nvf_pins[NV04_RECORDING_STOP].gpio, nvf_pins[NV04_RECORDING_STOP].pin, GPIO_PIN_SET);
 }
 
 void NVF04_delete_recording(void) {
 
-	NV04_DELETE_GPIO->BRR |=NV04_DELETE_PIN;
+	HAL_GPIO_WritePin(nvf_pins[NV04_DELETE].gpio, nvf_pins[NV04_DELETE].pin, GPIO_PIN_RESET);
 	HAL_Delay(NV04_DELETE_PRESS_TIME_MS);
-	NV04_DELETE_GPIO->BSRR |=NV04_DELETE_PIN;
+	HAL_GPIO_WritePin(nvf_pins[NV04_DELETE].gpio, nvf_pins[NV04_DELETE].pin, GPIO_PIN_SET);
+}
+
+void NVF04_turn_off(void)
+{
+	HAL_GPIO_WritePin(nvf_pins[NV04_SHUTDOWN].gpio, nvf_pins[NV04_SHUTDOWN].pin, GPIO_PIN_RESET);
+}
+
+void NVF04_turn_on(void)
+{
+	HAL_GPIO_WritePin(nvf_pins[NV04_SHUTDOWN].gpio, nvf_pins[NV04_SHUTDOWN].pin, GPIO_PIN_SET);
 }

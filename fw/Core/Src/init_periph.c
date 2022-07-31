@@ -331,6 +331,7 @@ static void switches_gpio_init(void)
   GPIO_InitStruct.Pin = S1_Pin|S2_Pin|S3_Pin|S8_Pin|S6_Pin|S7_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins :  S4_Pin */
@@ -343,6 +344,7 @@ static void switches_gpio_init(void)
   GPIO_InitStruct.Pin = S5_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(S5_GPIO_Port, &GPIO_InitStruct);
 
 }
@@ -371,34 +373,52 @@ static void buttons_gpio_init(void)
   HAL_NVIC_EnableIRQ(EXTI4_IRQn);   // left -> C4, 
 }
 
-static void petcall_gpio_init(void)
+ static void petcall_gpio_init(void)
 {
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+  
+  // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);
+
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /*Configure GPIO pins :  RECORDING_STOP_Pin */
   GPIO_InitStruct.Pin = RECORDING_STOP_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(RECORDING_STOP_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PLAY_Pin */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
+
+
+  // /*Configure GPIO pins : PLAY_Pin */
   GPIO_InitStruct.Pin = PLAY_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(PLAY_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : REC_DELETION_Pin */
   GPIO_InitStruct.Pin = REC_DELETION_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(REC_DELETION_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SHUTDOWN_Pin  */
+  HAL_GPIO_WritePin(REC_DELETION_GPIO_Port, REC_DELETION_Pin, GPIO_PIN_SET);
+
   GPIO_InitStruct.Pin = SHUTDOWN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(SHUTDOWN_GPIO_Port, &GPIO_InitStruct);
 
+  // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
+  // HAL_Delay(500);
+  // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_SET);
 }
 
 /**
@@ -461,7 +481,7 @@ static void MX_GPIO_Init(void)
   buttons_gpio_init();
 
   /*petcall GPIOs Init*/
-  // petcall_gpio_init();
+  petcall_gpio_init();
 }
 
 
