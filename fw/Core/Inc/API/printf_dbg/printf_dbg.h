@@ -18,7 +18,7 @@
 #include "itm_dbg.h"
 #include "init_periph.h"
 
-#define USE_PRINTF_ITM   (1)
+#define USE_PRINTF_ITM   (0)
 #define USE_PRINTF_UART2 (0)
 
 #define USE_PRINTF_COLOR (0)

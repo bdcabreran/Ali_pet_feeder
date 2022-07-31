@@ -4,7 +4,7 @@
 
 
 /**@brief Enable/Disable debug messages */
-#define BUTTONS_DEBUG 0
+#define BUTTONS_DEBUG 1
 #define BUTTONS_TAG "buttons dbg : "
 
 /**@brief uart debug function for server comm operations  */
@@ -184,7 +184,7 @@ static void poll_down_key_pressed(navigation_btn_t *btn)
 void btn_debounce_run(navigation_btn_t *btn)
 {
     /*down button cannot be set IT mode, we have to do polling*/
-    poll_down_key_pressed(btn);
+    // poll_down_key_pressed(btn);
 
     /*update debounce time for all buttons */
     uint8_t btn_cnt = sizeof(navigation_btn_t)/sizeof(push_button_t);
@@ -202,6 +202,7 @@ void btn_debounce_run(navigation_btn_t *btn)
         }
         btn_ptr++;
     }
+
 
     /*Notify events*/
     event_t event;

@@ -17,11 +17,12 @@
 #include "rtc_1307.h"
 #include "motor_ctrl.h"
 
-#define USE_DS18B20  (1)
+#define USE_DS18B20  (0)
 
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+ADC_HandleTypeDef hadc2;
 I2C_HandleTypeDef hi2c1;
 TIM_HandleTypeDef htim3; // for lcd brightness 
 TIM_HandleTypeDef htim4; // for ds18b sensor (temperature)
@@ -98,6 +99,37 @@ static void SystemClock_Config(void)
   {
 	Error_Handler();
   }
+}
+
+
+static void MX_ADC2_Init(void)
+{
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /** Common config
+  */
+  hadc2.Instance = ADC2;
+  hadc2.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  hadc2.Init.ContinuousConvMode = DISABLE;
+  hadc2.Init.DiscontinuousConvMode = DISABLE;
+  hadc2.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc2.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc2.Init.NbrOfConversion = 1;
+  if (HAL_ADC_Init(&hadc2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
 }
 
 
@@ -291,7 +323,7 @@ static void MX_DMA_Init(void)
   HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 }
 
-static void drawer_switch_gpio_init(void)
+static void switches_gpio_init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -312,6 +344,60 @@ static void drawer_switch_gpio_init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(S5_GPIO_Port, &GPIO_InitStruct);
+
+}
+
+static void buttons_gpio_init(void)
+{
+  /*Navigation Buttons IRQ enable */
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  /*Configure GPIO pins : UP_Pin */
+  GPIO_InitStruct.Pin = LEFT_Pin|RIGHT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING ;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : UP_Pin DOWN_Pin */
+  GPIO_InitStruct.Pin =  DOWN_Pin|ENTER_Pin|UP_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING ;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);   // up -> B0
+  HAL_NVIC_EnableIRQ(EXTI1_IRQn);   // down  -> B1
+  HAL_NVIC_EnableIRQ(EXTI2_IRQn);   // enter -> B2
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn); // right -> C5
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);   // left -> C4, 
+}
+
+static void petcall_gpio_init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  /*Configure GPIO pins :  RECORDING_STOP_Pin */
+  GPIO_InitStruct.Pin = RECORDING_STOP_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(RECORDING_STOP_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PLAY_Pin */
+  GPIO_InitStruct.Pin = PLAY_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(PLAY_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : REC_DELETION_Pin */
+  GPIO_InitStruct.Pin = REC_DELETION_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(REC_DELETION_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : SHUTDOWN_Pin  */
+  GPIO_InitStruct.Pin = SHUTDOWN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(SHUTDOWN_GPIO_Port, &GPIO_InitStruct);
 
 }
 
@@ -348,17 +434,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(POWER_CONTROL_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : RECORDING_STOP_Pin PLAY_Pin */
-  GPIO_InitStruct.Pin = RECORDING_STOP_Pin|PLAY_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : FWD_1_Pin BWD_1_Pin FWD_2_Pin BWD_2_Pin
                            SHUTDOWN_Pin PA6_TEMPERATURE_Pin FWD_3_Pin BWD_3_Pin
                            FWD_4_Pin BWD_4_Pin */
   GPIO_InitStruct.Pin = FWD_1_Pin|BWD_1_Pin|FWD_2_Pin|BWD_2_Pin
-                          |SHUTDOWN_Pin|PA6_TEMPERATURE_Pin|FWD_3_Pin|BWD_3_Pin
+                          |PA6_TEMPERATURE_Pin|FWD_3_Pin|BWD_3_Pin
                           |FWD_4_Pin|BWD_4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -373,42 +454,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Drawer Switches */
-  drawer_switch_gpio_init();
+  /*Switches GPIOs Init */
+  switches_gpio_init();
 
-//////////////////////////////////////////////////////////////////////////////////////////
-  /*Navigation Buttons IRQ enable */
+  /*Buttons GPIOs Init */
+  buttons_gpio_init();
 
-  /*Configure GPIO pins : UP_Pin */
-  GPIO_InitStruct.Pin = UP_Pin|DOWN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING ;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : UP_Pin DOWN_Pin */
-  GPIO_InitStruct.Pin =  DOWN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT ;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : LEFT_Pin RIGHT_Pin */
-  GPIO_InitStruct.Pin = LEFT_Pin|RIGHT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING ;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : ENTER_Pin */
-  GPIO_InitStruct.Pin = ENTER_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(ENTER_GPIO_Port, &GPIO_InitStruct);
-
-
-  HAL_NVIC_EnableIRQ(EXTI0_IRQn);   // enter-> B0
-  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn); // left -> A5, right -> A7
-  HAL_NVIC_EnableIRQ(EXTI4_IRQn);   // up   -> C4, 
-//////////////////////////////////////////////////////////////////////////////////////////s
-
+  /*petcall GPIOs Init*/
+  // petcall_gpio_init();
 }
 
 
@@ -451,16 +504,17 @@ void init_peripherals(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ADC1_Init();
+  MX_ADC2_Init();
   MX_DMA_Init();
   MX_I2C1_Init();
 
-  #ifdef USE_UART2_PRINTF
+  #ifdef USE_UART2_PRINTFs
   /* Init UART for Debugging Purposes */
   MX_USART2_UART_Init();
   #endif
 
   /* Init ITM */
-  itm_enable();
+  // itm_enable();
   
   /* Initialize LCD drivers*/
   BSP_LCD_Init();
@@ -480,9 +534,12 @@ void init_peripherals(void)
   Ds18b20_Init();
   #endif
 
-  /*init voice controller */
-  NVF04_init();
+  // /*init voice controller */
+//  NVF04_init();
 
   /*Init TIM3 for LCD brighness */
   MX_TIM3_Init();
+
+  // init temperature sensor 
+  temp_ntc_init();
 }

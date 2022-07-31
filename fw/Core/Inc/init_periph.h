@@ -10,6 +10,7 @@ typedef struct
 }gpio_port_pin_t;
 
 extern ADC_HandleTypeDef  hadc1;
+extern ADC_HandleTypeDef  hadc2;
 extern I2C_HandleTypeDef  hi2c1;
 extern SPI_HandleTypeDef  hspi2;
 extern DMA_HandleTypeDef  hdma_spi2_rx;
@@ -28,37 +29,38 @@ void init_peripherals(void);
 /*Pin Labels */
 
 ///////// Navigation Buttons /////////////
-#define RIGHT_Pin           GPIO_PIN_7
-#define RIGHT_GPIO_Port     GPIOA
-#define UP_Pin              GPIO_PIN_4
-#define UP_GPIO_Port        GPIOC
-#define DOWN_Pin            GPIO_PIN_5
-#define DOWN_GPIO_Port      GPIOC
-#define ENTER_Pin           GPIO_PIN_0
+#define ENTER_Pin           GPIO_PIN_2
 #define ENTER_GPIO_Port     GPIOB
-#define LEFT_Pin            GPIO_PIN_5
-#define LEFT_GPIO_Port      GPIOA
+#define DOWN_Pin            GPIO_PIN_1
+#define DOWN_GPIO_Port      GPIOB
+#define UP_Pin              GPIO_PIN_0
+#define UP_GPIO_Port        GPIOB
+#define LEFT_Pin            GPIO_PIN_4
+#define LEFT_GPIO_Port      GPIOC
+#define RIGHT_Pin           GPIO_PIN_5
+#define RIGHT_GPIO_Port     GPIOC
 
 /*Battery ADC */
 #define BAT_DETEC_Pin GPIO_PIN_0
 #define BAT_DETEC_GPIO_Port GPIOC
 
 /* Cooler */
-#define POWER_CONTROL_Pin GPIO_PIN_1
-#define POWER_CONTROL_GPIO_Port GPIOC
+#define POWER_CONTROL_Pin GPIO_PIN_8
+#define POWER_CONTROL_GPIO_Port GPIOB
 
 /* Temperature Sensor 1-wire */
 #define PA6_TEMPERATURE_Pin GPIO_PIN_6
 #define PA6_TEMPERATURE_GPIO_Port GPIOA
 
-#define RECORDING_STOP_Pin GPIO_PIN_2
-#define RECORDING_STOP_GPIO_Port GPIOC
-
-#define PLAY_Pin GPIO_PIN_3
-#define PLAY_GPIO_Port GPIOC
-
-#define SHUTDOWN_Pin GPIO_PIN_4
-#define SHUTDOWN_GPIO_Port GPIOA
+/* Petcall Control */
+#define RECORDING_STOP_Pin GPIO_PIN_3
+#define RECORDING_STOP_GPIO_Port GPIOB
+#define PLAY_Pin GPIO_PIN_4
+#define PLAY_GPIO_Port GPIOB
+#define SHUTDOWN_Pin GPIO_PIN_5
+#define SHUTDOWN_GPIO_Port GPIOB
+#define REC_DELETION_Pin GPIO_PIN_2
+#define REC_DELETION_GPIO_Port GPIOD
 
 #define LCD_RESET_Pin GPIO_PIN_10
 #define LCD_RESET_GPIO_Port GPIOB

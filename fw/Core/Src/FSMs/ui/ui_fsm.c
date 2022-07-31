@@ -327,10 +327,10 @@ static void main_menu_button_pressed(ui_handle_t handle)
     case EVT_EXT_BTN_ENTER_PRESSED: { main_menu_enter_key_pressed(handle); } break;
 
     /*open/close drawer request */
-    case EVT_EXT_BTN_UP_AND_ENTER_PRESSED:   {drawer_cfg->drawer.no = DRAWER_NO_1; enter_seq_drawer_request(handle); } break;
-    case EVT_EXT_BTN_DOWN_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_2; enter_seq_drawer_request(handle); } break;
-    case EVT_EXT_BTN_LEFT_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_3; enter_seq_drawer_request(handle); } break;
-    case EVT_EXT_BTN_RIGHT_AND_ENTER_PRESSED:{drawer_cfg->drawer.no = DRAWER_NO_4; enter_seq_drawer_request(handle); } break;
+    case EVT_EXT_BTN_LEFT_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_1; enter_seq_drawer_request(handle); } break;
+    case EVT_EXT_BTN_RIGHT_AND_ENTER_PRESSED:{drawer_cfg->drawer.no = DRAWER_NO_2; enter_seq_drawer_request(handle); } break;
+    case EVT_EXT_BTN_UP_AND_ENTER_PRESSED:   {drawer_cfg->drawer.no = DRAWER_NO_3; enter_seq_drawer_request(handle); } break;
+    case EVT_EXT_BTN_DOWN_AND_ENTER_PRESSED: {drawer_cfg->drawer.no = DRAWER_NO_4; enter_seq_drawer_request(handle); } break;
 
     default:
         break;
@@ -611,15 +611,19 @@ static void entry_action_therm_config(ui_handle_t handle)
 
 static void exit_action_therm_config(ui_handle_t handle)
 {
-    ui_thermostat_menu_config_t *ui_config = &handle->iface.ui.therm_menu;
-    ui_config->set = handle->iface.cursor.item;
-    ui_config->select.single = UI_ITEM_DESELECT;
-    ui_config->select.main = UI_ITEM_DESELECT;
+    ui_thermostat_menu_config_t *config_1 = &handle->iface.ui.therm_menu;
+    config_1->set = handle->iface.cursor.item;
+    config_1->select.single = UI_ITEM_DESELECT;
+    config_1->select.main = UI_ITEM_DESELECT;
+    ui_thermostat_menu_set_config(&ui_therm_menu, config_1);
 
-    ui_thermostat_config_t *config =  &handle->iface.ui.therm;
-    config->select = UI_ITEM_DESELECT;
-    ui_thermostat_set_config(&ui_thermostat, config);
     
+    ui_thermostat_config_t *config_2 = &handle->iface.ui.therm;
+    config_2->set = THERM_ICON_CNF_INVALID;
+    config_2->select = UI_ITEM_DESELECT;
+    ui_thermostat_set_config(&ui_thermostat, config_2);
+
+
     ui_thermostat_menu_show(&ui_therm_menu, false);
 }
 
@@ -1399,32 +1403,47 @@ static void therm_menu_right_left_key_pressed(ui_handle_t handle)
     {
         case THERM_SET_TEMPERATURE: {
             if(left_pressed)
-                temperature_increase(&config->temp.val);
-            else 
                 temperature_decrease(&config->temp.val);
+            else 
+                temperature_increase(&config->temp.val);
         } break;
 
         case THERM_SET_UNIT: {
-            if (config->temp.unit == TEMP_UNITS_CELSIUS)
+
+            if(left_pressed)
             {
-                /*convert from celsius to fahrenheit */
-                config->temp.val = (int)((config->temp.val * 9 / 5) + 32);
-                config->temp.unit = TEMP_UNITS_FAHRENHEIT;
+                if (config->temp.unit == TEMP_UNITS_CELSIUS)
+                {
+                    /*convert from celsius to fahrenheit */
+                    config->temp.val = (int)((config->temp.val * 9 / 5) + 32);
+                    config->temp.unit = TEMP_UNITS_FAHRENHEIT;
+                }
+
             }
             else
             {
-                /*convert from fahrenheit to celsius */
-                config->temp.val = (int)((config->temp.val - 32) * 5/9);
-                config->temp.unit = TEMP_UNITS_CELSIUS;
+                if (config->temp.unit == TEMP_UNITS_FAHRENHEIT)
+                {
+                    /*convert from fahrenheit to celsius */
+                    config->temp.val = (int)((config->temp.val - 32) * 5/9);
+                    config->temp.unit = TEMP_UNITS_CELSIUS;
+                }
             }
         } break;
 
         case THERM_ENABLE_DISABLE: {
-            
-            if(config->temp.status == TEMP_CTRL_DISABLE)
-                config->temp.status = TEMP_CTRL_ENABLE;
+
+            if(left_pressed)
+            {
+                if(config->temp.status == TEMP_CTRL_DISABLE)
+                    config->temp.status = TEMP_CTRL_ENABLE;
+            }
             else
-                config->temp.status = TEMP_CTRL_DISABLE;
+            {
+                if(config->temp.status == TEMP_CTRL_ENABLE)
+                    config->temp.status = TEMP_CTRL_DISABLE;
+            }
+            
         } break;
 
     default: break;
@@ -1440,7 +1459,7 @@ ui_thermostat_menu_config_t *ui_config = &handle->iface.ui.therm_menu;
     ui_config->select.single = UI_ITEM_DESELECT;
     ui_thermostat_menu_set_config(&ui_therm_menu, ui_config);
 
-    if(handle->event.btn ==  EVT_EXT_BTN_DOWN_PRESSED)
+    if(handle->event.btn ==  EVT_EXT_BTN_UP_PRESSED)
     {
         if (handle->iface.cursor.item > THERM_SET_TEMPERATURE)
             handle->iface.cursor.item--;
@@ -1448,7 +1467,7 @@ ui_thermostat_menu_config_t *ui_config = &handle->iface.ui.therm_menu;
             handle->iface.cursor.item =  THERM_ENABLE_DISABLE;
     }
 
-    else if (handle->event.btn ==  EVT_EXT_BTN_UP_PRESSED)
+    else if (handle->event.btn ==  EVT_EXT_BTN_DOWN_PRESSED)
     {
         if(handle->iface.cursor.item < THERM_ENABLE_DISABLE)
             handle->iface.cursor.item++;
@@ -1681,24 +1700,23 @@ static void date_config_decrease_day(uint8_t *day)
     if ((*day) > 1)
         (*day)--;
     else
-        (*day) = 30;
+        (*day) = 31;
 }
 
-static void date_config_decrease_month(uint8_t *moth)
+static void date_config_decrease_month(uint8_t *month)
 {
-    if ((*moth) < 12)
-        (*moth)++;
+    if ((*month) > 1)
+        (*month)--;
     else
-        (*moth) = 1;
+        (*month) = 12;
 }
-static void date_config_increase_month(uint8_t *moth)
+static void date_config_increase_month(uint8_t *month)
 {
-    if ((*moth) > 1)
-        (*moth)--;
+    if ((*month) < 12)
+        (*month)++;
     else
-        (*moth) = 12;
+        (*month) = 1;
 }
-
 
 static void save_user_config_in_flash(void)
 {

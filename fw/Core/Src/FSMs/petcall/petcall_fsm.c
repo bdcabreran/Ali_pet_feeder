@@ -393,6 +393,11 @@ static void active_on_react(petcall_handle_t handle)
 static void petcall_remove_rec_file(petcall_handle_t handle)
 {
     petcall_dbg("deleting petcall rec file ...\r\n");
+    HAL_GPIO_WritePin(REC_DELETION_GPIO_Port, REC_DELETION_Pin, GPIO_PIN_RESET );
+    HAL_Delay(500);
+    HAL_GPIO_WritePin(REC_DELETION_GPIO_Port, REC_DELETION_Pin, GPIO_PIN_SET );
+
+
     /*!< TODO : implement remove petcall routine */
     handle->iface.petcall_info.rec_file = PETCALL_REC_FILE_NOT_AVAILABLE;
     petcall_dbg("saving new config to flash..\r\n");
@@ -404,6 +409,8 @@ static void petcall_record_start(petcall_handle_t handle)
     petcall_dbg("petcall record start\r\n");
     handle->iface.petcall_info.rec_file = PETCALL_REC_FILE_AVAILABLE;
     /*!<TODO : start petcall record*/
+    HAL_GPIO_WritePin(RECORDING_STOP_GPIO_Port, RECORDING_STOP_Pin, GPIO_PIN_RESET );
+
     petcall_dbg("saving new config to flash..\r\n");
     user_config_set();
 }
@@ -411,18 +418,25 @@ static void petcall_record_start(petcall_handle_t handle)
 static void petcall_record_stop(petcall_handle_t handle)
 {   
     petcall_dbg("petcall record stop\r\n");
+    HAL_GPIO_WritePin(RECORDING_STOP_GPIO_Port, RECORDING_STOP_Pin, GPIO_PIN_SET);
+
     /*!<TODO: stop petcall record*/
 }
 
 static void petcall_score_play(petcall_handle_t handle)
 {
     petcall_dbg("petcall score play\r\n");
+    HAL_GPIO_WritePin(RECORDING_STOP_GPIO_Port, RECORDING_STOP_Pin, SET );
+    HAL_Delay(100);
+    HAL_GPIO_WritePin(RECORDING_STOP_GPIO_Port, RECORDING_STOP_Pin, GPIO_PIN_RESET );
     /*!<TODO : start petcall audio play*/
 
 }
 static void petcall_score_stop(petcall_handle_t handle)
 {
     petcall_dbg("petcall score stop\r\n");
+    HAL_GPIO_WritePin(RECORDING_STOP_GPIO_Port, RECORDING_STOP_Pin, GPIO_PIN_SET);
+
     /*!<TODO : stop petcall audio play*/
 }
 

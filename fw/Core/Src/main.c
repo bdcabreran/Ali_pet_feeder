@@ -23,6 +23,8 @@
 #include "target_version.h"
 #include "string.h"
 #include "ui_draw.h"
+#include "temp_ntc.h"
+#include "motor_ctrl.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -42,7 +44,17 @@ static void print_startup_msg(void)
 uint8_t GUI_Initialized = 0;
 extern void MainTask(void);
 
-static void refresh_lcd_brightness(void);
+static void still_alive_msg(void)
+{
+  static uint32_t counter_millis = 0;
+
+  if(HAL_GetTick() - counter_millis > 1000)
+  {
+    counter_millis = HAL_GetTick();
+//    printf("MCU still alive...\r\n");
+  }
+
+}
 
 /**
   * @brief  The application entry point.
@@ -68,7 +80,7 @@ int main(void)
 
   /*Init UI */
   ui_handle_t ui_fsm = ui_fsm_get();
-  ui_fsm_init(ui_fsm);  
+  ui_fsm_init(ui_fsm);
 
   /*Init Temperature Control */
   temp_ctrl_handle_t temp_fsm = temp_ctrl_fsm_get();
@@ -96,6 +108,7 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
+    still_alive_msg();
     /* run FSMs : */
     ui_fsm_run(ui_fsm);
     temp_ctrl_fsm_run(temp_fsm);
@@ -104,11 +117,11 @@ int main(void)
     drawer_ctrl_fsm_run(drawer_fsm);
     petcall_fsm_run(petcall_fsm);
     power_fsm_run(power_fsm);
-
     /* update FSMs */
     time_events_poll_update();
   }
 }
+
 
 /**
   * @brief  This function is executed in case of error occurrence.

@@ -3,7 +3,7 @@
 #include "motor_ctrl.h"
 
 /**@brief Enable/Disable debug messages */
-#define DRAWERS_FSM_DBG 0
+#define DRAWERS_FSM_DBG 1
 #define DRAWER_FSM_TAG "drawer ctrl : "
 
 /**@brief uart debug function for server comm operations  */

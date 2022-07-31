@@ -66,6 +66,21 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     HAL_GPIO_Init(BAT_DETEC_GPIO_Port, &GPIO_InitStruct);
   }
+  else if(hadc->Instance==ADC2)
+  {
+
+    /* Peripheral clock enable */
+    __HAL_RCC_ADC2_CLK_ENABLE();
+
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    /**ADC2 GPIO Configuration
+    PA6     ------> ADC2_IN6
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  }
+
 
 }
 
@@ -87,7 +102,16 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     */
     HAL_GPIO_DeInit(BAT_DETEC_GPIO_Port, BAT_DETEC_Pin);
   }
+  if(hadc->Instance==ADC2)
+  {
+    /* Peripheral clock disable */
+    __HAL_RCC_ADC2_CLK_DISABLE();
 
+    /**ADC2 GPIO Configuration
+    PA6     ------> ADC2_IN6
+    */
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_6);
+  }
 }
 
 /**

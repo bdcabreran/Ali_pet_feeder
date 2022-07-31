@@ -30,7 +30,9 @@
         "stdio.h": "c",
         "new": "c",
         "cmath": "c",
-        "rtc_1307.h": "c"
+        "rtc_1307.h": "c",
+        "filter_sma.h": "c",
+        "ntc_table.h": "c"
     },
     "cSpell.words": [
         "inact",

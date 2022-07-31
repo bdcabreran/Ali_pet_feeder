@@ -25,6 +25,7 @@ int _write(int file, char *ptr, int len)
     return len;
 #endif
 
+ return len;
 }
 
 void print_buffer(uint8_t format, uint8_t *buff, uint8_t len)

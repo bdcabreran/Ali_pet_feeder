@@ -17,18 +17,30 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim1;
 motor_ctrl_t motor_handle[MOTORn];
 
+
 void tim1_init(void)
 {
-
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
 
-  htim1.Instance = TIM2;
+  htim1.Instance = TIM1;
   htim1.Init.Prescaler = MOTOR_PWM_PRESCALER;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = MOTOR_PWM_PERIOD;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
   if (HAL_TIM_PWM_Init(&htim1) != HAL_OK)
   {
     Error_Handler();
@@ -66,8 +78,9 @@ void tim1_init(void)
 /*Enable PWM in CH1, CH2, CH3, CH4*/ 
 void tim2_init(void)
 {
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
 
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = MOTOR_PWM_PRESCALER;
@@ -75,6 +88,17 @@ void tim2_init(void)
   htim2.Init.Period = MOTOR_PWM_PERIOD;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
   if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
   {
     Error_Handler();
@@ -165,60 +189,3 @@ void dc_motor_stop(motor_no_t no)
   HAL_TIM_PWM_Stop(motor_ptr->pwm.tim, motor_ptr->pwm.ch_fwd);
 }
 
-
-#if 0
-void control_motor(int drawer, int fwd, int bwd)
-{
-    if(drawer == 1){
-      TIM2->CCR1 = fwd;
-      TIM2->CCR2 = bwd;
-    }
-
-    if(drawer == 2){
-      TIM2->CCR3 = fwd;
-      TIM2->CCR4 = bwd;
-    }
-
-    if(drawer == 3){
-      TIM1->CCR1 = fwd;
-      TIM1->CCR2 = bwd;
-    }
-
-    if(drawer == 4){
-      TIM1->CCR3 = fwd;
-      TIM1->CCR4 = bwd;
-    }    
-}
-#endif
-
-#if 0
-
-void main()
-{
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // Init channel 1 PWM
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2); // Init channel 2 PWM
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3); // Init channel 3 PWM
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4); // Init channel 4 PWM
-
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // Init channel 1 PWM
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2); // Init channel 2 PWM
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3); // Init channel 3 PWM
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4); // Init channel 4 PWM
-
-  //TIM2->CCR1 = arr_max; // Timer channel 1 output value
-  //TIM2->CCR2 = arr_min; // Timer channel 2 output value
-  //TIM2->CCR3 = 10000; // Timer channel 3 output value
-  //TIM2->CCR4 = 5000;  // Timer channel 4 output value
-
-  while(1)
-  {
-    TIM1->CCR4 = 300;  // Timer channel 4 output value
-    control_motor(1, 360, 0); // Forward drawer 1
-    control_motor(2, 0, 360); // Backward drawer 2
-    control_motor(3, 360, 0); // Forward drawer 3
-    control_motor(4, 0, 360); // Backward drawer 4
-  }
-}
-
-
-#endif 

@@ -4,9 +4,10 @@
 #include "temp_ctrl_fsm.h"
 #include "cooler.h"
 #include "ds18b20.h"
+#include "temp_ntc.h"
 
 /**@brief Enable/Disable debug messages */
-#define TEMP_CTRL_FSM_DBG 1
+#define TEMP_CTRL_FSM_DBG 0
 #define TEMP_CTRL_TAG "temp ctrl : "
 
 /**@brief uart debug function for server comm operations  */
@@ -327,16 +328,14 @@ static bool is_valid_therm_config(thermostat_config_info_t *info)
 
 static int  sensor_read_temperature_in_celsius(void)
 {
-    float temp_celcius;
-    Ds18b20_ManualConvert(&temp_celcius);
-    return (int)temp_celcius;
+    float temp_celsius = temp_ntc_read_celsius();
+    return (int)temp_celsius;
 }
 
 static int  sensor_read_temperature_in_fahrenheit(void)
 {
-    float temp_celcius;
-    Ds18b20_ManualConvert(&temp_celcius);
-    return (int)((temp_celcius * 9 / 5) + 32);
+    float temp_celsius = temp_ntc_read_celsius();
+    return (int)((temp_celsius * 9 / 5) + 32);
 }
 
 static bool get_user_configuration_from_flash(temp_ctrl_handle_t handle)
