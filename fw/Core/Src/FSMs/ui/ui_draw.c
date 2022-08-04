@@ -252,9 +252,17 @@ void ui_drawers_show(ui_drawers_t *drawers, bool show)
             drawers->shape.single.y = drawers->shape.main.y + drawer_pos[i].y;
             ui_draw_window(&drawers->shape.single, LCD_DEFAULT_TEXTCOLOR, true);
 
+            ui_window_t win = {
+                .x = drawers->shape.single.x + 1,
+                .y = drawers->shape.single.y + 1,
+                .w = drawers->shape.single.w - 2,
+                .h = drawers->shape.single.h - 2,
+            };
+            ui_clear_window(&win);
+
             ui_window_t text_pos;
-            text_pos.x = drawers->shape.single.x + 15;
-            text_pos.y = drawers->shape.single.y + 4;
+            text_pos.x = drawers->shape.single.x + 18;
+            text_pos.y = drawers->shape.single.y + 6;
             sprintf(str_buff,"%d", i + 1);
             ui_display_string(&text_pos, str_buff, &Font16, LCD_DEFAULT_TEXTCOLOR);
         }
@@ -268,7 +276,9 @@ void ui_drawers_show(ui_drawers_t *drawers, bool show)
 void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawers_config_t *config)
 {   
     ui_drawers_show(drawers, true);
-    sFONT    *font = &Font20;
+    sFONT *font = &Font20;
+    static drawer_no_t prev_drawer_no = DRAWER_NO_1;
+    static const pos_t drawer_pos[DRAWERn] = { {7, 7}, {66, 7}, {7, 41}, {66, 41} };
 
     /*Paint select battery item property*/
     if (config->select.main == UI_ITEM_SELECT)
@@ -284,16 +294,19 @@ void ui_drawers_set_config(ui_drawers_t *drawers, ui_drawers_config_t *config)
     /*Paint select battery item property*/
     if (config->select.single == UI_ITEM_SELECT)
     {
-        static const pos_t drawer_pos[DRAWERn] = { {7, 7}, {66, 7}, {7, 41}, {66, 41} };
+        char str_buff[5];
+        prev_drawer_no = config->drawer.no;
+
+        ui_drawers_show(drawers, true);
+
         drawers->shape.single.x = drawers->shape.main.x + drawer_pos[config->drawer.no].x;
         drawers->shape.single.y = drawers->shape.main.y + drawer_pos[config->drawer.no].y;
         ui_draw_window(&drawers->shape.single, UI_SELECTION_COLOR, true);
 
         ui_window_t text_pos;
-        text_pos.x = drawers->shape.single.x + 15;
+        text_pos.x = drawers->shape.single.x + 18;
         text_pos.y = drawers->shape.single.y + 4;
 
-        char str_buff[5];
         sprintf(str_buff, "%d", config->drawer.no + 1);
         ui_display_string(&text_pos, str_buff, font, UI_SELECTION_COLOR);
     }

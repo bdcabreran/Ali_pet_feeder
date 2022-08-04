@@ -1,6 +1,7 @@
 #include "petcall_fsm.h"
 #include "event_manager_fsm.h"
 #include "printf_dbg.h"
+#include "NVF0XM.h"
 
 /**@brief Enable/Disable debug messages */
 #define PETCALL_FSM_DBG 1
@@ -396,7 +397,6 @@ static void petcall_remove_rec_file(petcall_handle_t handle)
 {
     petcall_dbg("deleting petcall rec file ...\r\n");
     NVF04_delete_recording();
-
     handle->iface.petcall_info.rec_file = PETCALL_REC_FILE_NOT_AVAILABLE;
     petcall_dbg("saving new config to flash..\r\n");
     user_config_set();

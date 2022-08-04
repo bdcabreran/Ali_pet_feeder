@@ -377,7 +377,7 @@ static void buttons_gpio_init(void)
 {
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
-  
+
   // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);
@@ -411,7 +411,7 @@ static void buttons_gpio_init(void)
   HAL_GPIO_WritePin(REC_DELETION_GPIO_Port, REC_DELETION_Pin, GPIO_PIN_SET);
 
   GPIO_InitStruct.Pin = SHUTDOWN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(SHUTDOWN_GPIO_Port, &GPIO_InitStruct);
